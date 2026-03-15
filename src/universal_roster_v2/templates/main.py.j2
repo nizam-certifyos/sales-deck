@@ -1,0 +1,51 @@
+"""Auto-generated standalone roster pipeline main."""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import pandas as pd
+
+from processor import compile_validation_sql, process_roster
+
+
+def load_input(file_path: str) -> pd.DataFrame:
+    path = Path(file_path)
+    if path.suffix.lower() == ".csv":
+        return pd.read_csv(path, dtype=str)
+    return pd.read_excel(path, dtype=str)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Run generated Universal Roster processor")
+    parser.add_argument("input_file", help="Input CSV/XLSX path")
+    parser.add_argument("--output-dir", default=None, help="Optional output directory")
+    parser.add_argument("--table-id", default="project.dataset.staging", help="BQ staging table id for SQL preview")
+    args = parser.parse_args()
+
+    input_path = Path(args.input_file).expanduser().resolve()
+    output_dir = Path(args.output_dir).expanduser().resolve() if args.output_dir else input_path.parent
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    df = load_input(str(input_path))
+    clean_df, errors_df, stats = process_roster(df, file_name=str(input_path))
+
+    base = output_dir / input_path.stem
+    clean_path = base.with_name(base.name + "_clean.csv")
+    errors_path = base.with_name(base.name + "_errors.csv")
+    sql_path = base.with_name(base.name + "_bq_validations.sql")
+
+    clean_df.to_csv(clean_path, index=False)
+    errors_df.to_csv(errors_path, index=False)
+    sql_path.write_text(compile_validation_sql(args.table_id), encoding="utf-8")
+
+    print("Stats:", stats)
+    print("Clean output:", clean_path)
+    print("Error output:", errors_path)
+    print("Validation SQL:", sql_path)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

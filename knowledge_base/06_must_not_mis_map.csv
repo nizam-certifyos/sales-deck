@@ -1,0 +1,54 @@
+target_field,criticality,validation_expectation,error_count_in_kb,owner,active
+practitionerNpi,blocker,"Must be 10-digit NPI; never map to facilityNpi, groupNpi, or groupTin",7,provider_data,true
+groupTin,blocker,Tax ID / TIN / EIN; never confuse with NPI or bed count,6,billing_ops,true
+firstName,blocker,Practitioner first name; only use credentialingContactFirstName if credentialing explicitly stated,5,provider_data,true
+lastName,blocker,Practitioner last name; only use credentialingContactLastName if credentialing explicitly stated,5,provider_data,true
+facilityNpi,blocker,Must be facility-specific NPI; never swap with practitionerNpi,0,provider_data,true
+dateOfBirth,blocker,"Must be DOB; never confuse with effective dates, expiration dates, or issue dates",0,clinical_ops,true
+ssn,blocker,"Social Security Number; extremely sensitive; never confuse with other IDs like CDS, NPI",0,compliance,true
+groupPracticeLocationAddressLine1,high,Default address in practitioner roster; only use billing if Billing keyword present,45,network_ops,true
+groupPracticeLocationZip,high,Frequently mis-mapped (27 corrections found),27,mapping_ops,true
+groupPracticeLocationPhone,high,Frequently mis-mapped (27 corrections found),27,mapping_ops,true
+stateLicenseExpirationDate,high,Frequently mis-mapped (24 corrections found),24,mapping_ops,true
+practitionerDea,high,DEA number; never confuse with groupDea or CDS numbers,18,clinical_ops,true
+stateLicenseNumber,high,"State license; state prefix in header indicates issuing state, not license type",16,credentialing_ops,true
+practitionerDeaExpirationDate,high,Frequently mis-mapped (16 corrections found),16,mapping_ops,true
+practitionerPrimaryHospitalAffiliation,high,Frequently mis-mapped (15 corrections found),15,mapping_ops,true
+groupName,high,Frequently mis-mapped (13 corrections found),13,mapping_ops,true
+practitionerControlledSubstanceNumber,high,CDS number; never confuse with CLIA or DEA,12,clinical_ops,true
+practitionerControlledSubstanceExpirationDate,high,Frequently mis-mapped (12 corrections found),12,mapping_ops,true
+initialCredentialingDate,high,Frequently mis-mapped (11 corrections found),11,mapping_ops,true
+groupPracticeLocationFax,high,Frequently mis-mapped (9 corrections found),9,mapping_ops,true
+groupPracticeLocationCity,high,Frequently mis-mapped (8 corrections found),8,mapping_ops,true
+providerType,high,Degree-based type (MD/DO); not to be confused with practitionerRole (PCP/Specialist),7,credentialing_ops,true
+practitionerRole,high,Role semantics (PCP/Specialist); not to be confused with providerType (MD/DO),7,credentialing_ops,true
+groupPracticeLocationState,high,Frequently mis-mapped (7 corrections found),7,mapping_ops,true
+groupPracticeLocationAddressLine2,high,Frequently mis-mapped (7 corrections found),7,mapping_ops,true
+educationToDate,high,Frequently mis-mapped (7 corrections found),7,mapping_ops,true
+practitionerPrimaryTaxonomy,high,Taxonomy code; use for practitioner when solo taxonomy column,6,credentialing_ops,true
+groupPracticeLocationCounty,high,Frequently mis-mapped (6 corrections found),6,mapping_ops,true
+groupPractitionerLocationType,high,Frequently mis-mapped (6 corrections found),6,mapping_ops,true
+groupNpi,high,Frequently mis-mapped (6 corrections found),6,mapping_ops,true
+internshipSchoolName,high,Frequently mis-mapped (6 corrections found),6,mapping_ops,true
+practitionerPrimarySpecialtyBoardCertificationName,high,Frequently mis-mapped (6 corrections found),6,mapping_ops,true
+fellowshipToDate,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+fellowshipSchoolName,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+internshipToDate,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+practitionerMalpracticeCarrierName,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+practitionerMalpracticeExpiryDate,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+educationSchoolName,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+acceptsNewPatients,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+practitionerPrimarySpecialtyBoardCertificationIssueDate,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+practitionerPrimarySpecialtyBoardCertificationExpirationDate,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+residencyToDate,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+residencySchoolName,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+udfHealthPlanSpecialty,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+practitionerPrimarySpecialtyBoardCertified,high,Frequently mis-mapped (5 corrections found),5,mapping_ops,true
+groupBillingLocationPhone,high,Phone/fax must never cross-map,3,billing_ops,true
+includePractitionerLocationInDirectory,high,Practitioner vs group directory semantics must be preserved,3,credentialing_ops,true
+practitionerPrimaryHospitalAffiliationStatus,high,Frequently mis-mapped (3 corrections found),3,mapping_ops,true
+groupBillingAddress1,high,Frequently mis-mapped (3 corrections found),3,mapping_ops,true
+stateLicenseIssuingState,high,Frequently mis-mapped (3 corrections found),3,mapping_ops,true
+acceptingMinimumPatientAge,high,Min age; never swap with acceptingMaximumPatientAge,2,network_ops,true
+groupBillingLocationFax,high,Phone/fax must never cross-map,1,billing_ops,true
+acceptingMaximumPatientAge,high,Max age; never swap with acceptingMinimumPatientAge,0,network_ops,true

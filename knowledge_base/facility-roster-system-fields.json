@@ -1,0 +1,4613 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "classpath:/schemas/facility-roster-system-fields.json",
+  "title": "Facility Roster Schema",
+  "description": "JSON Schema for facility roster validation",
+  "type": "object",
+  "properties": {
+    "pdmTransactionType": {
+      "type": ["string", "null"],
+      "title": "PDM Transaction Type",
+      "description": "Type of PDM transaction",
+      "enum": [
+        "New",
+        "Add to Plan",
+        "Add to Network",
+        "Add to Group",
+        "Add Role",
+        "Add Specialty",
+        "Add Location",
+        "Add Enrollment",
+        "Add Contract",
+        "Terminate from Network",
+        "Terminate from Group",
+        "Terminate from Location",
+        "Update Information"
+      ],
+      "metadata": {
+        "systemRequired": false,
+        "validationBasedOnEnum": true,
+        "mappedKey": "pdmTransactionType"
+      },
+      "message": {
+        "enum": "Invalid PDM Transaction Type, must be one of the following: New, Add to Plan, Add to Network, Add to Group, Add Role, Add Specialty, Add Location, Add Enrollment, Add Contract, Add Termination"
+      }
+    },
+    "pdmTransactionTypeDescription": {
+      "type": ["string", "null"],
+      "title": "PDM Transaction Type Description",
+      "description": "Description of PDM transaction type",
+      "metadata": {
+        "systemRequired": false
+      }
+    },
+    "pdmTransactionTypeEventDate": {
+      "type": ["string", "null"],
+      "title": "PDM Transaction Type Event Date",
+      "description": "Event date for PDM transaction type",
+      "format": "date",
+      "metadata": {
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "facilityName": {
+      "type": ["string"],
+      "title": "Facility Name",
+      "description": "Name of facility",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "name",
+        "systemRequired": true
+      },
+      "message": {
+        "type": "Facility Name is required"
+      }
+    },
+    "facilityNpi": {
+      "type": ["string"],
+      "title": "Facility NPI",
+      "description": "National Provider Identifier for facility",
+      "pattern": "^\\d{10}$",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "npi",
+        "systemRequired": true,
+        "npiApiCheck": true,
+        "npiCheckErrorMessage": "NPI couldn't be validated with NPPES"
+      },
+      "message": {
+        "type": "Facility NPI is required",
+        "pattern": "Must be exactly 10 characters in length"
+      }
+    },
+    "facilityTin": {
+      "type": ["string"],
+      "title": "Facility TIN",
+      "description": "Tax Identification Number for facility",
+      "pattern": "^\\d{9}$",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "tin",
+        "systemRequired": true
+      },
+      "message": {
+        "type": "Facility TIN is required",
+        "pattern": "Must be exactly 9 characters in length"
+      }
+    },
+    "facilityExternalId": {
+      "type": ["string", "null"],
+      "title": "Facility External ID",
+      "description": "External identifier for facility. Required when tenant is configured to use External ID for facility uniqueness. Must be unique per Facility NPI, Tenant ID, and Facility TIN combination.",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "externalId",
+        "systemRequired": false,
+        "conditionallyRequired": {
+          "condition": "tenantFacilityUniquenessMode",
+          "value": "EXTERNAL_ID",
+          "message": "Facility External ID is required when tenant is configured to use External ID for facility uniqueness"
+        }
+      },
+      "message": {
+        "type": "Facility External ID is required when tenant is configured to use External ID for facility uniqueness"
+      }
+    },
+    "facilityType": {
+      "type": ["string", "null"],
+      "title": "Facility Type",
+      "description": "Type of facility",
+      "enum": [
+        "Ambulatory Surgical Center",
+        "Assisted Living Facility",
+        "Behavioral Health (Outpatient)",
+        "Community Mental Health Center",
+        "Comprehensive Outpatient Rehabilitation Facility (CORF)",
+        "Custodial Care",
+        "Emergency Department",
+        "Federally Qualified Health Center (FQHC)",
+        "Hemodialysis Centre",
+        "Home Health Services",
+        "Hospice / Palliative Care",
+        "Hospital (Inpatient)",
+        "Hospital (Outpatient)",
+        "Imaging / Radiology",
+        "Inpatient Psychiatric Facility",
+        "Intermediate Care Facility for Individuals with Intellectual Disabilities (ICF/IID)",
+        "Laboratory Services",
+        "Long-Term Care",
+        "Mobile Ambulance",
+        "Mobile Clinic",
+        "Other (Unclassified)",
+        "Primary Care Clinic",
+        "Public Health Clinic",
+        "Rehabilitation Services",
+        "Rural Health Clinic (RHC)",
+        "Skilled Nursing Facility (SNF)",
+        "Specialty Care Clinic",
+        "Surgical Services (ASC)",
+        "Telehealth / Virtual",
+        "Urgent Care",
+        null
+      ],
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "facilityType",
+        "systemRequired": false
+      },
+      "message": {
+        "enum": "Invalid Facility Type, must be one of the valid facility types"
+      }
+    },
+    "statesToCredential": {
+      "type": ["string", "null"],
+      "title": "States to Credential",
+      "description": "States to credential the practitioner for",
+      "enum": [
+        "AK",
+        "AL",
+        "AR",
+        "AS",
+        "AZ",
+        "CA",
+        "CO",
+        "CT",
+        "DC",
+        "DE",
+        "FL",
+        "FM",
+        "GA",
+        "GU",
+        "HI",
+        "IA",
+        "ID",
+        "IL",
+        "IN",
+        "KS",
+        "KY",
+        "LA",
+        "MA",
+        "MD",
+        "ME",
+        "MH",
+        "MI",
+        "MN",
+        "MO",
+        "MP",
+        "MS",
+        "MT",
+        "NC",
+        "ND",
+        "NE",
+        "NH",
+        "NJ",
+        "NM",
+        "NV",
+        "NY",
+        "OH",
+        "OK",
+        "OR",
+        "PA",
+        "PR",
+        "PW",
+        "RI",
+        "SC",
+        "SD",
+        "TN",
+        "TX",
+        "UT",
+        "UM",
+        "VA",
+        "VI",
+        "VT",
+        "WA",
+        "WI",
+        "WV",
+        "WY",
+        null
+      ],
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "statesToCredential",
+        "systemRequired": false,
+        "enumClass": "State",
+        "valueArrayGrouping": {
+          "enabled": true,
+          "defaultValue": null
+        }
+      }
+    },
+    "facilityLocationExternalId": {
+      "type": ["string", "null"],
+      "title": "Facility Location External ID",
+      "description": "External identifier for facility location",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "externalId",
+        "systemRequired": false
+      }
+    },
+    "facilityReimbursementCode": {
+      "type": ["string", "null"],
+      "title": "Facility Reimbursement Code",
+      "description": "Reimbursement code for facility",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "reimbursementCode",
+        "systemRequired": false
+      }
+    },
+    "facilityRemittanceType": {
+      "type": ["string", "null"],
+      "title": "Facility Remittance Type",
+      "description": "Remittance type for facility",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "remittanceType",
+        "systemRequired": false
+      }
+    },
+    "facilityPaymentType": {
+      "type": ["string", "null"],
+      "title": "Facility Payment Type",
+      "description": "Payment type for facility",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "paymentType",
+        "systemRequired": false
+      }
+    },
+
+    "isFacilityFederallyQualifiedHealthCenter": {
+      "type": ["string", "null"],
+      "title": "Is Facility Federally Qualified Health Center",
+      "description": "Whether the facility is a federally qualified health center",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "isFederallyQualifiedHealthCenter",
+        "systemRequired": false
+      }
+    },
+    "delegationStatus": {
+      "type": ["string", "null"],
+      "title": "Credentialing Delegation Status",
+      "description": "Credentialing delegation status of the facility",
+      "enum": ["Direct", "Delegated", null],
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "delegationStatus",
+        "systemRequired": false
+      }
+    },
+    "lineOfBusiness": {
+      "type": ["string", "null"],
+      "title": "Line of Business",
+      "description": "Line of business for the facility",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "lineOfBusiness",
+        "systemRequired": false,
+        "valueArrayGrouping": {
+          "enabled": true,
+          "defaultValue": null
+        }
+      }
+    },
+    "jurisdictionOfInterest": {
+      "type": ["string", "null"],
+      "title": "Jurisdiction of Interest",
+      "description": "Jurisdiction of interest for the facility",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "jurisdictionOfInterest",
+        "systemRequired": false
+      }
+    },
+    "udfRosterSourceFileID": {
+      "type": ["string", "null"],
+      "title": "[UDF] Roster Source File ID",
+      "description": "Roster source file id",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfRosterSourceFileID",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfOrgNpi": {
+      "type": ["string", "null"],
+      "title": "[UDF] Org NPI",
+      "description": "Org NPI of the facility",
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "udfOrgNpi",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfFacilityRecordId": {
+      "type": ["string", "null"],
+      "title": "[UDF] Facility Record ID",
+      "description": "Facility record id",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfFacilityRecordId",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfUSTHCreationDate": {
+      "type": ["string", "null"],
+      "title": "[UDF] USTH Creation Date",
+      "description": "USTH creation date of the facility",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfUSTHCreationDate",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfUSTHModifiedDate": {
+      "type": ["string", "null"],
+      "title": "[UDF] Modified Date",
+      "description": "Modified date of the facility",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfUSTHModifiedDate",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfUSTHVersion": {
+      "type": ["string", "null"],
+      "title": "[UDF] USTH Version",
+      "description": "USTH version of the facility",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfUSTHVersion",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfUSTHVersionDate": {
+      "type": ["string", "null"],
+      "title": "[UDF] USTH Version Date",
+      "description": "USTH version date of the facility",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfUSTHVersionDate",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "medicareId": {
+      "type": ["string", "null"],
+      "title": "Medicare ID",
+      "description": "Facility Location's Medicare identifier",
+      "pattern": "^[a-zA-Z0-9]{5,20}$",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "medicare",
+        "systemRequired": false,
+        "errorMessage": "Medicare ID must be 5-20 alphanumeric characters",
+        "message": {
+          "pattern": "Medicare ID must be 5-20 alphanumeric characters"
+        }
+      }
+    },
+    "medicaidId": {
+      "type": ["string", "null"],
+      "title": "Medicaid ID",
+      "description": "Facility's Medicaid identifier",
+      "pattern": "^[a-zA-Z0-9]{5,20}$",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entity2": "facility.medicaid",
+        "entityKey": "medicaidNumber",
+        "dependency": [
+          { "key": "medicaidNumber", "default": null },
+          { "key": "medicaidState", "default": null },
+          { "key": "cdsNumber", "default": "" },
+          { "key": "state", "default": "" }
+        ],
+        "systemRequired": false,
+        "errorMessage": "Medicaid ID must be 5-20 alphanumeric characters",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "medicaid",
+          "defaultValues": {
+            "medicaidNumber": null,
+            "medicaidState": null,
+            "cdsNumber": "",
+            "state": ""
+          }
+        }
+      },
+      "message": {
+        "pattern": "Medicaid ID must be 5-20 alphanumeric characters"
+      }
+    },
+    "stateLicenseNumber": {
+      "type": ["string", "null"],
+      "title": "Facility State License Number",
+      "description": "State license number of facility",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "licenseNumber",
+        "systemRequired": false,
+        "errorMessage": "State License Number must be 5-20 alphanumeric characters",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "licenses",
+          "defaultValues": {
+            "licenseNumber": null,
+            "expiration": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "stateLicenseIssuingState": {
+      "type": ["string", "null"],
+      "title": "State License Issuing State",
+      "description": "State License Issuing State (State Abbreviation code)",
+      "enum": [
+        "AK",
+        "AL",
+        "AR",
+        "AS",
+        "AZ",
+        "CA",
+        "CO",
+        "CT",
+        "DC",
+        "DE",
+        "FL",
+        "FM",
+        "GA",
+        "GU",
+        "HI",
+        "IA",
+        "ID",
+        "IL",
+        "IN",
+        "KS",
+        "KY",
+        "LA",
+        "MA",
+        "MD",
+        "ME",
+        "MH",
+        "MI",
+        "MN",
+        "MO",
+        "MP",
+        "MS",
+        "MT",
+        "NC",
+        "ND",
+        "NE",
+        "NH",
+        "NJ",
+        "NM",
+        "NV",
+        "NY",
+        "OH",
+        "OK",
+        "OR",
+        "PA",
+        "PR",
+        "PW",
+        "RI",
+        "SC",
+        "SD",
+        "TN",
+        "TX",
+        "UT",
+        "UM",
+        "VA",
+        "VI",
+        "VT",
+        "WA",
+        "WI",
+        "WV",
+        "WY",
+        null
+      ],
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "state",
+        "systemRequired": false,
+        "errorMessage": "State License Issuing State must be a valid state abbreviation",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "licenses",
+          "defaultValues": {
+            "licenseNumber": null,
+            "expiration": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "stateLicenseExpirationDate": {
+      "type": ["string", "null"],
+      "title": "State License Expiration Date (YYYY-MM-DD)",
+      "description": "State License Expiration Date",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "expiration",
+        "systemRequired": false,
+        "errorMessage": "State License Expiration Date must be a valid date (YYYY-MM-DD)",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "licenses",
+          "defaultValues": {
+            "licenseNumber": null,
+            "expiration": null,
+            "state": null
+          }
+        }
+      }
+    },
+
+    "facilityDea": {
+      "type": ["string", "null"],
+      "title": "DEA",
+      "description": "Drug Enforcement Administration number",
+      "pattern": "^[A-Z][A-Z9]\\d{7,8}$",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "number",
+        "systemRequired": false,
+        "errorMessage": "DEA number must be 9 characters: 2 letters followed by 7 digits (e.g., AB1234567)",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "dea",
+          "defaultValues": {
+            "number": null,
+            "expireDate": null,
+            "state": null
+          }
+        }
+      },
+      "message": {
+        "pattern": "DEA number must be 9 characters: 2 letters followed by 7 digits (e.g., AB1234567)"
+      }
+    },
+    "facilityDeaExpirationDate": {
+      "type": ["string", "null"],
+      "title": "DEA Expiration Date (YYYY-MM-DD)",
+      "description": "DEA Expiration Date",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "expireDate",
+        "systemRequired": false,
+        "errorMessage": "DEA Expiration Date must be a valid date (YYYY-MM-DD)",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "dea",
+          "defaultValues": {
+            "number": null,
+            "expireDate": null,
+            "state": null
+          }
+        }
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "facilityControlledSubstanceNumber": {
+      "type": ["string", "null"],
+      "title": "Controlled Substance Number",
+      "description": "Controlled Substance Number",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "number",
+        "systemRequired": false,
+        "errorMessage": "Controlled Substance Number must be 5-20 alphanumeric characters",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "dea",
+          "defaultValues": {
+            "number": null,
+            "expireDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "facilityControlledSubstanceState": {
+      "type": ["string", "null"],
+      "title": "Controlled Substance State",
+      "description": "Controlled Substance Issuing State",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "state",
+        "systemRequired": false,
+        "errorMessage": "Controlled Substance State must be a valid state abbreviation",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "dea",
+          "defaultValues": {
+            "number": null,
+            "expireDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "facilityControlledSubstanceExpirationDate": {
+      "type": ["string", "null"],
+      "title": "Controlled Substance Expiration Date (YYYY-MM-DD)",
+      "description": "Controlled Substance Expiration Date",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "expireDate",
+        "systemRequired": false,
+        "errorMessage": "Controlled Substance Expiration Date must be a valid date (YYYY-MM-DD)",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "dea",
+          "defaultValues": {
+            "number": null,
+            "expireDate": null,
+            "state": null
+          }
+        }
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "cliaCertificateNumber": {
+      "type": ["string", "null"],
+      "title": "CLIA Certificate Number",
+      "description": "CLIA Certificate Number",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "certificateNumber",
+        "systemRequired": false,
+        "errorMessage": "CLIA Certificate Number must be 5-20 alphanumeric characters",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "cliaCertificates",
+          "defaultValues": {
+            "certificateNumber": null,
+            "expirationDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "cliaCertificateExpirationDate": {
+      "type": ["string", "null"],
+      "title": "CLIA Certificate Expiration Date (YYYY-MM-DD)",
+      "description": "CLIA Certificate Expiration Date",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "expirationDate",
+        "systemRequired": false,
+        "errorMessage": "CLIA Certificate Expiration Date must be a valid date",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "cliaCertificates",
+          "defaultValues": {
+            "certificateNumber": null,
+            "expirationDate": null,
+            "state": null
+          }
+        }
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "xRayLicenseNumber": {
+      "type": ["string", "null"],
+      "title": "X-Ray License Number",
+      "description": "X-Ray License Number",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "licenseNumber",
+        "systemRequired": false,
+        "errorMessage": "X-Ray License Number must be 5-20 alphanumeric characters",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "xRayLicenses",
+          "defaultValues": {
+            "licenseNumber": null,
+            "expirationDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "xRayLicenseExpirationDate": {
+      "type": ["string", "null"],
+      "title": "X-Ray License Expiration Date (YYYY-MM-DD)",
+      "description": "X-Ray License Expiration Date",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "expirationDate",
+        "systemRequired": false,
+        "errorMessage": "X-Ray License Expiration Date must be a valid date (YYYY-MM-DD)",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "xRayLicenses",
+          "defaultValues": {
+            "licenseNumber": null,
+            "expirationDate": null,
+            "state": null
+          }
+        }
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "primaryFacilityAccreditation": {
+      "type": ["string", "null"],
+      "title": "Primary Facility Accreditation",
+      "description": "Primary Facility Accreditation",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "accreditationBody",
+        "systemRequired": false,
+        "errorMessage": "Primary Facility Accreditation must be 5-20 alphanumeric characters",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "accreditations",
+          "defaultValues": {
+            "accreditationBody": null,
+            "accreditationDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "additionalFacilityAccreditation": {
+      "type": ["string", "null"],
+      "title": "Additional Facility Accreditation",
+      "description": "Additional Facility Accreditation",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "accreditationBody",
+        "systemRequired": false,
+        "errorMessage": "Additional Facility Accreditation must be 5-20 alphanumeric characters",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "accreditations",
+          "defaultValues": {
+            "accreditationBody": null,
+            "accreditationDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "facilityMalpracticeCarrierName": {
+      "type": ["string", "null"],
+      "title": "Facility Malpractice Carrier Name",
+      "description": "Malpractice carrier name",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "carrierName",
+        "systemRequired": false,
+        "errorMessage": "Malpractice Carrier Name must be 5-20 alphanumeric characters",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "malpracticeInsurance",
+          "defaultValues": {
+            "carrierName": null,
+            "occuranceCoverageAmount": null,
+            "aggregateCoverageAmount": null,
+            "effectiveDate": null,
+            "expiryDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "facilityMalpracticeOccuranceCoverageAmount": {
+      "type": ["string", "null"],
+      "title": "Facility Malpractice Occurrence Coverage Amount",
+      "description": "Malpractice occurrence coverage amount",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "occuranceCoverageAmount",
+        "systemRequired": false,
+        "errorMessage": "Malpractice Coverage Claim Amount must be a valid number",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "malpracticeInsurance",
+          "defaultValues": {
+            "carrierName": null,
+            "occuranceCoverageAmount": null,
+            "aggregateCoverageAmount": null,
+            "effectiveDate": null,
+            "expiryDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "facilityMalpracticeAggregateCoverageAmount": {
+      "type": ["string", "null"],
+      "title": "Facility Malpractice Aggregate Coverage Amount",
+      "description": "Malpractice aggregate coverage amount",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "aggregateCoverageAmount",
+        "systemRequired": false,
+        "errorMessage": "Malpractice Coverage Aggregrate Amount must be a valid number",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "malpracticeInsurance",
+          "defaultValues": {
+            "carrierName": null,
+            "occuranceCoverageAmount": null,
+            "aggregateCoverageAmount": null,
+            "effectiveDate": null,
+            "expiryDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "facilityMalpracticeEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "Facility Malpractice Effective Date (YYYY-MM-DD)",
+      "description": "Malpractice effective date",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "effectiveDate",
+        "errorMessage": "Malpractice Coverage Effective Date must be a valid date (YYYY-MM-DD)",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "malpracticeInsurance",
+          "defaultValues": {
+            "carrierName": null,
+            "occuranceCoverageAmount": null,
+            "aggregateCoverageAmount": null,
+            "effectiveDate": null,
+            "expiryDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "facilityMalpracticeExpiryDate": {
+      "type": ["string", "null"],
+      "title": "Facility Malpractice Expiry Date (YYYY-MM-DD)",
+      "description": "Malpractice expiry date",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "expiryDate",
+        "systemRequired": false,
+        "errorMessage": "Malpractice Coverage End Date must be a valid date (YYYY-MM-DD)",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "malpracticeInsurance",
+          "defaultValues": {
+            "carrierName": null,
+            "occuranceCoverageAmount": null,
+            "aggregateCoverageAmount": null,
+            "effectiveDate": null,
+            "expiryDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "facilityLocationAddressLine1": {
+      "type": ["string", "null"],
+      "title": "Facility Location Address Line 1",
+      "description": "Address line 1 of facility location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "addressLine1",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "facilityLocationAddressLine2": {
+      "type": ["string", "null"],
+      "title": "Facility Location Address Line 2",
+      "description": "Address line 2 of facility location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "addressLine2",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "facilityLocationCity": {
+      "type": ["string", "null"],
+      "title": "Facility Location City",
+      "description": "City of facility location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "city",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "facilityLocationState": {
+      "type": ["string", "null"],
+      "title": "Facility Location State",
+      "description": "State of facility location",
+      "enum": [
+        "AK",
+        "AL",
+        "AR",
+        "AS",
+        "AZ",
+        "CA",
+        "CO",
+        "CT",
+        "DC",
+        "DE",
+        "FL",
+        "FM",
+        "GA",
+        "GU",
+        "HI",
+        "IA",
+        "ID",
+        "IL",
+        "IN",
+        "KS",
+        "KY",
+        "LA",
+        "MA",
+        "MD",
+        "ME",
+        "MH",
+        "MI",
+        "MN",
+        "MO",
+        "MP",
+        "MS",
+        "MT",
+        "NC",
+        "ND",
+        "NE",
+        "NH",
+        "NJ",
+        "NM",
+        "NV",
+        "NY",
+        "OH",
+        "OK",
+        "OR",
+        "PA",
+        "PR",
+        "PW",
+        "RI",
+        "SC",
+        "SD",
+        "TN",
+        "TX",
+        "UT",
+        "UM",
+        "VA",
+        "VI",
+        "VT",
+        "WA",
+        "WI",
+        "WV",
+        "WY",
+        null
+      ],
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "state",
+        "systemRequired": false,
+        "enumClass": "State",
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "facilityLocationZip": {
+      "type": ["string", "null"],
+      "title": "Facility Location Zip",
+      "description": "Zip code of facility location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "zip",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "facilityLocationLatitude": {
+      "type": ["string", "null"],
+      "title": "Facility Location Latitude",
+      "description": "Latitude of facility location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "latitude",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "facilityLocationLongitude": {
+      "type": ["string", "null"],
+      "title": "Facility Location Longitude",
+      "description": "Longitude of facility location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "longitude",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "facilityLocationCounty": {
+      "type": ["string", "null"],
+      "title": "Facility Location County",
+      "description": "County of facility location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "county",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "facilityLocationName": {
+      "type": ["string", "null"],
+      "title": "Facility Location Name",
+      "description": "Name of the facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "name",
+        "systemRequired": false
+      }
+    },
+    "facilityLocationWebsite": {
+      "type": ["string", "null"],
+      "title": "Facility Location Website",
+      "description": "Website URL of the facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "website",
+        "systemRequired": false
+      }
+    },
+    "locationAmendmentEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "Location Amendment Effective Date (YYYY-MM-DD)",
+      "description": "Effective date for the location amendment",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "effectiveDate",
+        "systemRequired": false
+      }
+    },
+    "facilityLocationPhone": {
+      "type": ["string", "null"],
+      "title": "Facility Location Phone",
+      "description": "Phone number of facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "phone",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "facilityLocationFax": {
+      "type": ["string", "null"],
+      "title": "Facility Location Fax",
+      "description": "Fax number of facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "fax",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "facilityLocationProviderFax": {
+      "type": ["string", "null"],
+      "title": "Facility Location Provider Fax",
+      "description": "Provider fax number of facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "providerFax",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "facilityLocationAppointmentPhone": {
+      "type": ["string", "null"],
+      "title": "Facility Location Appointment Phone",
+      "description": "Appointment phone number of facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "appointmentPhone",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "facilityLocationAfterHoursPhone": {
+      "type": ["string", "null"],
+      "title": "Facility Location After Hours Phone",
+      "description": "After hours phone number of facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "afterHoursPhone",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "facilityLocationEmail": {
+      "type": ["string", "null"],
+      "title": "Facility Location Email",
+      "description": "Email of facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "email",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "deviceForDeafNumber": {
+      "type": ["string", "null"],
+      "title": "Device For Deaf Number",
+      "description": "Device for deaf number of facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "deviceForDeafNumber",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "textTelephonyNumber": {
+      "type": ["string", "null"],
+      "title": "Text Telephony Number",
+      "description": "Text telephony number of facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "textTelephonyNumber",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "locationEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "Location Effective Date",
+      "description": "Date when location becomes effective",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "effectiveDate",
+        "systemRequired": false
+      }
+    },
+    "locationTerminationDate": {
+      "type": ["string", "null"],
+      "title": "Location Termination Date",
+      "description": "Date when location was/will be terminated",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "terminationDate",
+        "systemRequired": false
+      }
+    },
+    "locationChangeEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "Location Change Effective Date",
+      "description": "Date when location was/will be changed",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "changeEffectiveDate",
+        "systemRequired": false
+      }
+    },
+    "locationDeviceForDeafNumber": {
+      "type": ["string", "null"],
+      "title": "Device For Deaf Number (alias)",
+      "description": "Alias to match JSON mapping for device for deaf number",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "deviceForDeafNumber",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "locationTextTelephonyNumber": {
+      "type": ["string", "null"],
+      "title": "Text Telephony Number (alias)",
+      "description": "Alias to match JSON mapping for TTY number",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "textTelephonyNumber",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "facilityRemittanceAddress1": {
+      "type": ["string", "null"],
+      "title": "Facility Remittance Address Line 1",
+      "description": "Address line 1 of facility remittance address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "addressLine1",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "remittance"
+          }
+        }
+      }
+    },
+    "facilityRemittanceAddress2": {
+      "type": ["string", "null"],
+      "title": "Facility Remittance Address Line 2",
+      "description": "Address line 2 of facility remittance address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "addressLine2",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "remittance"
+          }
+        }
+      }
+    },
+    "facilityBillingCounty": {
+      "type": ["string", "null"],
+      "title": "Facility Billing County",
+      "description": "Billing county for the facility",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "county",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "remittance"
+          }
+        }
+      }
+    },
+    "facilityRemittanceCity": {
+      "type": ["string", "null"],
+      "title": "Facility Remittance City",
+      "description": "City of facility remittance address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "city",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "remittance"
+          }
+        }
+      }
+    },
+    "facilityRemittanceState": {
+      "type": ["string", "null"],
+      "title": "Facility Remittance State",
+      "description": "State of facility remittance address",
+      "enum": [
+        "AK",
+        "AL",
+        "AR",
+        "AS",
+        "AZ",
+        "CA",
+        "CO",
+        "CT",
+        "DC",
+        "DE",
+        "FL",
+        "FM",
+        "GA",
+        "GU",
+        "HI",
+        "IA",
+        "ID",
+        "IL",
+        "IN",
+        "KS",
+        "KY",
+        "LA",
+        "MA",
+        "MD",
+        "ME",
+        "MH",
+        "MI",
+        "MN",
+        "MO",
+        "MP",
+        "MS",
+        "MT",
+        "NC",
+        "ND",
+        "NE",
+        "NH",
+        "NJ",
+        "NM",
+        "NV",
+        "NY",
+        "OH",
+        "OK",
+        "OR",
+        "PA",
+        "PR",
+        "PW",
+        "RI",
+        "SC",
+        "SD",
+        "TN",
+        "TX",
+        "UT",
+        "UM",
+        "VA",
+        "VI",
+        "VT",
+        "WA",
+        "WI",
+        "WV",
+        "WY",
+        null
+      ],
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "state",
+        "systemRequired": false,
+        "enumClass": "State",
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "remittance"
+          }
+        }
+      }
+    },
+    "facilityRemittanceZip": {
+      "type": ["string", "null"],
+      "title": "Facility Remittance Zip",
+      "description": "Zip code of facility remittance address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "zip",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "remittance"
+          }
+        }
+      }
+    },
+    "facilityRemittanceName": {
+      "type": ["string", "null"],
+      "title": "Facility Remittance Name",
+      "description": "Name for facility remittance address",
+      "metadata": {
+        "entity": "GroupEntityAddress",
+        "entityKey": "name",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "remittance"
+          }
+        }
+      }
+    },
+    "facilityMailingAddressLine1": {
+      "type": ["string", "null"],
+      "title": "Facility Mailing Address Line 1",
+      "description": "Address line 1 of facility mailing address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "addressLine1",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "mailing"
+          }
+        }
+      }
+    },
+    "facilityMailingAddressLine2": {
+      "type": ["string", "null"],
+      "title": "Facility Mailing Address Line 2",
+      "description": "Address line 2 of facility mailing address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "addressLine2",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "mailing"
+          }
+        }
+      }
+    },
+    "facilityMailingCity": {
+      "type": ["string", "null"],
+      "title": "Facility Mailing City",
+      "description": "City of facility mailing address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "city",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "mailing"
+          }
+        }
+      }
+    },
+    "facilityMailingState": {
+      "type": ["string", "null"],
+      "title": "Facility Mailing State",
+      "description": "State of facility mailing address",
+      "enum": [
+        "AK",
+        "AL",
+        "AR",
+        "AS",
+        "AZ",
+        "CA",
+        "CO",
+        "CT",
+        "DC",
+        "DE",
+        "FL",
+        "FM",
+        "GA",
+        "GU",
+        "HI",
+        "IA",
+        "ID",
+        "IL",
+        "IN",
+        "KS",
+        "KY",
+        "LA",
+        "MA",
+        "MD",
+        "ME",
+        "MH",
+        "MI",
+        "MN",
+        "MO",
+        "MP",
+        "MS",
+        "MT",
+        "NC",
+        "ND",
+        "NE",
+        "NH",
+        "NJ",
+        "NM",
+        "NV",
+        "NY",
+        "OH",
+        "OK",
+        "OR",
+        "PA",
+        "PR",
+        "PW",
+        "RI",
+        "SC",
+        "SD",
+        "TN",
+        "TX",
+        "UT",
+        "UM",
+        "VA",
+        "VI",
+        "VT",
+        "WA",
+        "WI",
+        "WV",
+        "WY",
+        null
+      ],
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "state",
+        "systemRequired": false,
+        "enumClass": "State",
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "mailing"
+          }
+        }
+      }
+    },
+    "facilityMailingZip": {
+      "type": ["string", "null"],
+      "title": "Facility Mailing Zip",
+      "description": "Zip code of facility mailing address",
+      "pattern": "^\\d{5}(-\\d{4})?$",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "zip",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "mailing"
+          }
+        }
+      },
+      "message": {
+        "pattern": "Must be either 5 digits or 9 digits (with optional hyphen)"
+      }
+    },
+    "facilityMailingCounty": {
+      "type": ["string", "null"],
+      "title": "Facility Mailing County",
+      "description": "County of facility mailing address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "county",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "mailing"
+          }
+        }
+      }
+    },
+    "facilityMailingPhoneNumber": {
+      "type": ["string", "null"],
+      "title": "Facility Mailing Phone Number",
+      "description": "Phone number for facility mailing address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "phone",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "mailing"
+          }
+        }
+      }
+    },
+    "facilityMailingFax": {
+      "type": ["string", "null"],
+      "title": "Facility Mailing Fax",
+      "description": "Fax number for facility mailing address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "fax",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "mailing"
+          }
+        }
+      }
+    },
+    "facilityW9AddressLine1": {
+      "type": ["string", "null"],
+      "title": "Facility W9 Address Line 1",
+      "description": "Address line 1 of facility W9 address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "addressLine1",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "w9"
+          }
+        }
+      }
+    },
+    "facilityW9AddressLine2": {
+      "type": ["string", "null"],
+      "title": "Facility W9 Address Line 2",
+      "description": "Address line 2 of facility W9 address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "addressLine2",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "w9"
+          }
+        }
+      }
+    },
+    "facilityW9City": {
+      "type": ["string", "null"],
+      "title": "Facility W9 City",
+      "description": "City of facility W9 address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "city",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "w9"
+          }
+        }
+      }
+    },
+    "facilityW9State": {
+      "type": ["string", "null"],
+      "title": "Facility W9 State",
+      "description": "State of facility W9 address",
+      "enum": [
+        "AK",
+        "AL",
+        "AR",
+        "AS",
+        "AZ",
+        "CA",
+        "CO",
+        "CT",
+        "DC",
+        "DE",
+        "FL",
+        "FM",
+        "GA",
+        "GU",
+        "HI",
+        "IA",
+        "ID",
+        "IL",
+        "IN",
+        "KS",
+        "KY",
+        "LA",
+        "MA",
+        "MD",
+        "ME",
+        "MH",
+        "MI",
+        "MN",
+        "MO",
+        "MP",
+        "MS",
+        "MT",
+        "NC",
+        "ND",
+        "NE",
+        "NH",
+        "NJ",
+        "NM",
+        "NV",
+        "NY",
+        "OH",
+        "OK",
+        "OR",
+        "PA",
+        "PR",
+        "PW",
+        "RI",
+        "SC",
+        "SD",
+        "TN",
+        "TX",
+        "UT",
+        "UM",
+        "VA",
+        "VI",
+        "VT",
+        "WA",
+        "WI",
+        "WV",
+        "WY",
+        null
+      ],
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "state",
+        "systemRequired": false,
+        "enumClass": "State",
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "w9"
+          }
+        }
+      }
+    },
+    "facilityW9Zip": {
+      "type": ["string", "null"],
+      "title": "Facility W9 Zip",
+      "description": "Zip code of facility W9 address",
+      "pattern": "^\\d{5}(-\\d{4})?$",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "zip",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "w9"
+          }
+        }
+      },
+      "message": {
+        "pattern": "Must be either 5 digits or 9 digits (with optional hyphen)"
+      }
+    },
+    "facilityW9County": {
+      "type": ["string", "null"],
+      "title": "Facility W9 County",
+      "description": "County of facility W9 address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "county",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "w9"
+          }
+        }
+      }
+    },
+    "facilityW9PhoneNumber": {
+      "type": ["string", "null"],
+      "title": "Facility W9 Phone Number",
+      "description": "Phone number for facility W9 address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "phone",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "w9"
+          }
+        }
+      }
+    },
+    "facilityW9Fax": {
+      "type": ["string", "null"],
+      "title": "Facility W9 Fax",
+      "description": "Fax number for facility W9 address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "fax",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "w9"
+          }
+        }
+      }
+    },
+    "facilityOpen24Hours": {
+      "type": ["string", "null"],
+      "title": "Facility Open 24 Hours",
+      "description": "Whether facility is open 24 hours",
+      "enum": ["Y", "N", null],
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "isOpen24Hours",
+        "systemRequired": false
+      },
+      "message": {
+        "enum": "Must be Y or N"
+      }
+    },
+    "facilityOpenTimeSun": {
+      "type": ["string", "null"],
+      "title": "Facility Open Time Sunday",
+      "description": "Sunday opening time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "openTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Sun",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityCloseTimeSun": {
+      "type": ["string", "null"],
+      "title": "Facility Close Time Sunday",
+      "description": "Sunday closing time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "closeTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Sun",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityOpenTimeMon": {
+      "type": ["string", "null"],
+      "title": "Facility Open Time Monday",
+      "description": "Monday opening time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "openTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Mon",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityCloseTimeMon": {
+      "type": ["string", "null"],
+      "title": "Facility Close Time Monday",
+      "description": "Monday closing time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "closeTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Mon",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityOpenTimeTue": {
+      "type": ["string", "null"],
+      "title": "Facility Open Time Tuesday",
+      "description": "Tuesday opening time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "openTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Tue",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityCloseTimeTue": {
+      "type": ["string", "null"],
+      "title": "Facility Close Time Tuesday",
+      "description": "Tuesday closing time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "closeTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Tue",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityOpenTimeWed": {
+      "type": ["string", "null"],
+      "title": "Facility Open Time Wednesday",
+      "description": "Wednesday opening time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "openTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Wed",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityCloseTimeWed": {
+      "type": ["string", "null"],
+      "title": "Facility Close Time Wednesday",
+      "description": "Wednesday closing time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "closeTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Wed",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityOpenTimeThu": {
+      "type": ["string", "null"],
+      "title": "Facility Open Time Thursday",
+      "description": "Thursday opening time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "openTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Thu",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityCloseTimeThu": {
+      "type": ["string", "null"],
+      "title": "Facility Close Time Thursday",
+      "description": "Thursday closing time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "closeTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Thu",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityOpenTimeFri": {
+      "type": ["string", "null"],
+      "title": "Facility Open Time Friday",
+      "description": "Friday opening time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "openTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Fri",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityCloseTimeFri": {
+      "type": ["string", "null"],
+      "title": "Facility Close Time Friday",
+      "description": "Friday closing time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "closeTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Fri",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityOpenTimeSat": {
+      "type": ["string", "null"],
+      "title": "Facility Open Time Saturday",
+      "description": "Saturday opening time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "openTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Sat",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "facilityCloseTimeSat": {
+      "type": ["string", "null"],
+      "title": "Facility Close Time Saturday",
+      "description": "Saturday closing time for facility",
+      "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+      "message": {
+        "pattern": "Must be in the format HH:MM"
+      },
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "closeTime",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "officeHours",
+          "defaultValues": {
+            "openTime": null,
+            "closeTime": null,
+            "dayOfWeek": "Sat",
+            "isClosed": null
+          }
+        }
+      }
+    },
+    "locationPrimaryLanguage": {
+      "type": ["string", "null"],
+      "title": "Facility Primary Language",
+      "description": "Primary language of the facility",
+      "enum": [
+        "Abkhaz",
+        "Afar",
+        "Afrikaans",
+        "Akan",
+        "Albanian",
+        "Amharic",
+        "Arabic",
+        "Aragonese",
+        "Aramaic",
+        "Armenian",
+        "Assamese",
+        "Avaric",
+        "Avestan",
+        "Aymara",
+        "Azerbaijani",
+        "Bambara",
+        "Bashkir",
+        "Basque",
+        "Belarusian",
+        "Bemba",
+        "Bengali",
+        "Bihari",
+        "Bislama",
+        "Bosnian",
+        "Breton",
+        "Bulgarian",
+        "Burmese",
+        "Cantonese",
+        "Castilian",
+        "Catalan - Valencian",
+        "Cebuano",
+        "Chamorro",
+        "Chechen",
+        "Chichewa - Chewa - Nyanja",
+        "Chinese",
+        "Chuvash",
+        "Cornish",
+        "Corsican",
+        "Cree",
+        "Croatian",
+        "Czech",
+        "Danish",
+        "Divehi - Dhivehi - Maldivian",
+        "Dutch",
+        "Dzongkha",
+        "English",
+        "Esperanto",
+        "Estonian",
+        "Ethiopian",
+        "Ewe",
+        "Faroese",
+        "Fijian",
+        "Finnish",
+        "French",
+        "Fula - Fulah - Pulaar - Pular",
+        "Galician",
+        "Ganda",
+        "Georgian",
+        "German",
+        "Greek (modern)",
+        "Greek",
+        "Guaraní",
+        "Gujarati",
+        "Haitian Creole",
+        "Hausa",
+        "Hebrew",
+        "Herero",
+        "Hindi",
+        "Hiri Motu",
+        "Hungarian",
+        "Icelandic",
+        "Ido",
+        "Igbo",
+        "Indonesian",
+        "Interlingua",
+        "Interlingue",
+        "Inuktitut",
+        "Inupiaq",
+        "Irish",
+        "Italian",
+        "Jamaican Patois",
+        "Japanese",
+        "Javanese",
+        "Kalaallisut - Greenlandic",
+        "Kannada",
+        "Kanuri",
+        "Kashmiri",
+        "Kazakh",
+        "Khmer",
+        "Kikuyu - Gikuyu",
+        "Kinyarwanda",
+        "Kirundi",
+        "Komi",
+        "Konkani",
+        "Kongo",
+        "Korean",
+        "Kurdish",
+        "Kwanyama - Kuanyama",
+        "Kyrgyz",
+        "Lao",
+        "Latin",
+        "Latvian",
+        "Limburgish - Limburgan - Limburger",
+        "Lingala",
+        "Lithuanian",
+        "Luba-katanga",
+        "Luxembourgish - Letzeburgesch",
+        "Macedonian",
+        "Malagasy",
+        "Malay",
+        "Malayalam",
+        "Maltese",
+        "Mandarin Chinese",
+        "Manx",
+        "Māori",
+        "Marathi (marāṭhī)",
+        "Marshallese",
+        "Mongolian",
+        "Nauru",
+        "Navajo, Navaho",
+        "Ndonga",
+        "Nepali",
+        "North Ndebele",
+        "Northern Sami",
+        "Norwegian",
+        "Norwegian Bokmål",
+        "Norwegian Nynorsk",
+        "Nuosu",
+        "Occitan",
+        "Ojibwe, Ojibwa",
+        "Old Church Slavonic - Church Slavonic - Old Bulgarian",
+        "Oriya",
+        "Oromo",
+        "Ossetian - Ossetic",
+        "Other",
+        "Pāli",
+        "Punjabi",
+        "Pashto - Pushto",
+        "Persian (Farsi)",
+        "Polish",
+        "Portuguese",
+        "Quechua",
+        "Romanian",
+        "Romansh",
+        "Russian",
+        "Samoan",
+        "Sango",
+        "Sanskrit (saṁskṛta)",
+        "Sardinian",
+        "Scottish Gaelic - Gaelic",
+        "Serbian",
+        "Shona",
+        "Sindhi",
+        "Singhalese",
+        "Slovak",
+        "Somali",
+        "South Azerbaijani",
+        "South Ndebele",
+        "Southern Sotho",
+        "Spanish",
+        "Sundanese",
+        "Swahili",
+        "Swati",
+        "Swedish",
+        "Tagalog",
+        "Tahitian",
+        "Tajik",
+        "Tamil",
+        "Tatar",
+        "Telugu",
+        "Thai",
+        "Tibetan",
+        "Tigrinya",
+        "Tonga (tonga Islands)",
+        "Tsonga",
+        "Tswana",
+        "Turkish",
+        "Turkmen",
+        "Twi",
+        "Ukrainian",
+        "Urdu",
+        "Uyghur - Uighur",
+        "Uzbek",
+        "Venda",
+        "Vietnamese",
+        "Volapük",
+        "Walloon",
+        "Welsh",
+        "Western Frisian",
+        "Wolof",
+        "Xhosa",
+        "Yiddish",
+        "Yoruba",
+        "Zhuang - Chuang",
+        "Zulu",
+        "American Sign Language (ASL)",
+        "Not Disclosed",
+        "Not Known",
+        null
+      ],
+      "metadata": {
+        "entity": "CoreLocation",
+        "dependency": [
+          { "key": "language", "default": null },
+          { "key": "isPrimary", "default": true }
+        ],
+        "entityKey": "language",
+        "systemRequired": false,
+        "enumClass": "Language",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "languages",
+          "defaultValues": {
+            "language": null,
+            "isPrimary": true
+          }
+        }
+      }
+    },
+    "locationAdditionalLanguage": {
+      "type": ["string", "null"],
+      "title": "Facility Additional Language",
+      "description": "Additional language of the facility",
+      "enum": [
+        "Abkhaz",
+        "Afar",
+        "Afrikaans",
+        "Akan",
+        "Albanian",
+        "Amharic",
+        "Arabic",
+        "Aragonese",
+        "Aramaic",
+        "Armenian",
+        "Assamese",
+        "Avaric",
+        "Avestan",
+        "Aymara",
+        "Azerbaijani",
+        "Bambara",
+        "Bashkir",
+        "Basque",
+        "Belarusian",
+        "Bemba",
+        "Bengali",
+        "Bihari",
+        "Bislama",
+        "Bosnian",
+        "Breton",
+        "Bulgarian",
+        "Burmese",
+        "Cantonese",
+        "Castilian",
+        "Catalan - Valencian",
+        "Cebuano",
+        "Chamorro",
+        "Chechen",
+        "Chichewa - Chewa - Nyanja",
+        "Chinese",
+        "Chuvash",
+        "Cornish",
+        "Corsican",
+        "Cree",
+        "Croatian",
+        "Czech",
+        "Danish",
+        "Divehi - Dhivehi - Maldivian",
+        "Dutch",
+        "Dzongkha",
+        "English",
+        "Esperanto",
+        "Estonian",
+        "Ethiopian",
+        "Ewe",
+        "Faroese",
+        "Fijian",
+        "Finnish",
+        "French",
+        "Fula - Fulah - Pulaar - Pular",
+        "Galician",
+        "Ganda",
+        "Georgian",
+        "German",
+        "Greek (modern)",
+        "Greek",
+        "Guaraní",
+        "Gujarati",
+        "Haitian Creole",
+        "Hausa",
+        "Hebrew",
+        "Herero",
+        "Hindi",
+        "Hiri Motu",
+        "Hungarian",
+        "Icelandic",
+        "Ido",
+        "Igbo",
+        "Indonesian",
+        "Interlingua",
+        "Interlingue",
+        "Inuktitut",
+        "Inupiaq",
+        "Irish",
+        "Italian",
+        "Jamaican Patois",
+        "Japanese",
+        "Javanese",
+        "Kalaallisut - Greenlandic",
+        "Kannada",
+        "Kanuri",
+        "Kashmiri",
+        "Kazakh",
+        "Khmer",
+        "Kikuyu - Gikuyu",
+        "Kinyarwanda",
+        "Kirundi",
+        "Komi",
+        "Konkani",
+        "Kongo",
+        "Korean",
+        "Kurdish",
+        "Kwanyama - Kuanyama",
+        "Kyrgyz",
+        "Lao",
+        "Latin",
+        "Latvian",
+        "Limburgish - Limburgan - Limburger",
+        "Lingala",
+        "Lithuanian",
+        "Luba-katanga",
+        "Luxembourgish - Letzeburgesch",
+        "Macedonian",
+        "Malagasy",
+        "Malay",
+        "Malayalam",
+        "Maltese",
+        "Mandarin Chinese",
+        "Manx",
+        "Māori",
+        "Marathi (marāṭhī)",
+        "Marshallese",
+        "Mongolian",
+        "Nauru",
+        "Navajo, Navaho",
+        "Ndonga",
+        "Nepali",
+        "North Ndebele",
+        "Northern Sami",
+        "Norwegian",
+        "Norwegian Bokmål",
+        "Norwegian Nynorsk",
+        "Nuosu",
+        "Occitan",
+        "Ojibwe, Ojibwa",
+        "Old Church Slavonic - Church Slavonic - Old Bulgarian",
+        "Oriya",
+        "Oromo",
+        "Ossetian - Ossetic",
+        "Other",
+        "Pāli",
+        "Punjabi",
+        "Pashto - Pushto",
+        "Persian (Farsi)",
+        "Polish",
+        "Portuguese",
+        "Quechua",
+        "Romanian",
+        "Romansh",
+        "Russian",
+        "Samoan",
+        "Sango",
+        "Sanskrit (saṁskṛta)",
+        "Sardinian",
+        "Scottish Gaelic - Gaelic",
+        "Serbian",
+        "Shona",
+        "Sindhi",
+        "Singhalese",
+        "Slovak",
+        "Somali",
+        "South Azerbaijani",
+        "South Ndebele",
+        "Southern Sotho",
+        "Spanish",
+        "Sundanese",
+        "Swahili",
+        "Swati",
+        "Swedish",
+        "Tagalog",
+        "Tahitian",
+        "Tajik",
+        "Tamil",
+        "Tatar",
+        "Telugu",
+        "Thai",
+        "Tibetan",
+        "Tigrinya",
+        "Tonga (tonga Islands)",
+        "Tsonga",
+        "Tswana",
+        "Turkish",
+        "Turkmen",
+        "Twi",
+        "Ukrainian",
+        "Urdu",
+        "Uyghur - Uighur",
+        "Uzbek",
+        "Venda",
+        "Vietnamese",
+        "Volapük",
+        "Walloon",
+        "Welsh",
+        "Western Frisian",
+        "Wolof",
+        "Xhosa",
+        "Yiddish",
+        "Yoruba",
+        "Zhuang - Chuang",
+        "Zulu",
+        "American Sign Language (ASL)",
+        "Not Disclosed",
+        "Not Known",
+        null
+      ],
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "language",
+        "systemRequired": false,
+        "enumClass": "Language",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "languages",
+          "defaultValues": {
+            "language": null,
+            "isPrimary": false
+          }
+        }
+      }
+    },
+    "locationPrimaryPracticeLimitation": {
+      "type": ["string", "null"],
+      "title": "Location Primary Practice Limitation",
+      "description": "Primary practice limitation for the location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "limitation",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "practiceLimitations",
+          "defaultValues": {
+            "limitation": null,
+            "isPrimary": true
+          }
+        }
+      }
+    },
+    "locationAdditionalPracticeLimitation": {
+      "type": ["string", "null"],
+      "title": "Location Additional Practice Limitation",
+      "description": "Additional practice limitation for the location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "limitation",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "practiceLimitations",
+          "defaultValues": {
+            "limitation": null,
+            "isPrimary": false
+          }
+        }
+      }
+    },
+    "facilityLocationAdditionalPracticeLimitation": {
+      "type": ["string", "null"],
+      "title": "Facility Location Additional Practice Limitation",
+      "description": "Additional practice limitation for the facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "limitation",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "practiceLimitations",
+          "defaultValues": {
+            "limitation": null,
+            "isPrimary": false
+          }
+        }
+      }
+    },
+
+    "facilityLocationPrimaryService": {
+      "type": ["string", "null"],
+      "title": "Facility Location Primary Service",
+      "description": "Primary service for the facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "service",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "services",
+          "defaultValues": {
+            "service": null,
+            "isPrimary": true
+          }
+        }
+      }
+    },
+    "facilityLocationAdditionalService": {
+      "type": ["string", "null"],
+      "title": "Facility Location Additional Service",
+      "description": "Additional service for the facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "service",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "services",
+          "defaultValues": {
+            "service": null,
+            "isPrimary": false
+          }
+        }
+      }
+    },
+
+    "locationAccessibility": {
+      "type": ["string", "null"],
+      "title": "Location Accessibility",
+      "description": "Accessibility of the location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "systemRequired": false,
+        "isArray": true,
+        "isDynamicQuestionnaire": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "accessibility",
+          "defaultValues": {}
+        }
+      }
+    },
+    "locationAdaAccessibility": {
+      "type": ["string", "null"],
+      "title": "Location ADA Accessibility",
+      "description": "ADA accessibility features of the location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "systemRequired": false,
+        "isArray": true,
+        "isDynamicQuestionnaire": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "adaAccessibility",
+          "defaultValues": {}
+        }
+      }
+    },
+    "locationPrimaryService": {
+      "type": ["string", "null"],
+      "title": "Location Primary Service",
+      "description": "Primary service of the location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "service",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "services",
+          "defaultValues": {
+            "service": null,
+            "isPrimary": true
+          }
+        }
+      }
+    },
+    "locationAdditionalService": {
+      "type": ["string", "null"],
+      "title": "Location Additional Service",
+      "description": "Additional service of the location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "service",
+        "systemRequired": false,
+        "isArray": true
+      }
+    },
+    "facilityLocationType": {
+      "type": ["string", "null"],
+      "title": "Facility Location Type",
+      "description": "Type of the facility location (e.g., Clinic, Hospital, Office)",
+      "enum": ["PRI", "PRA", null],
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "locationType",
+        "systemRequired": false
+      },
+      "message": {
+        "enum": "Invalid Facility Location Type, must be PRI or PRA"
+      }
+    },
+    "facilityLocationNpi": {
+      "type": ["string", "null"],
+      "title": "Facility Location NPI",
+      "description": "National Provider Identifier for facility location. This is a unique type 2 NPI where each address can have more than 1 NPI. The multiple NPI can be added via multiple rows.",
+      "pattern": "^\\d{10}$",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "npi",
+        "systemRequired": false,
+        "isArray": true,
+        "npiApiCheck": true,
+        "npiCheckErrorMessage": "NPI couldn't be validated with NPPES",
+        "valueArrayGrouping": {
+          "enabled": true,
+          "defaultValue": null
+        }
+      },
+      "message": {
+        "pattern": "Must be exactly 10 characters in length"
+      }
+    },
+    "facilityLocationAccreditationName": {
+      "type": ["string", "null"],
+      "title": "Facility Location Accreditation Name",
+      "description": "Name of the accreditation for facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "accreditationBody",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "accreditations",
+          "defaultValues": {
+            "accreditationBody": null,
+            "expirationDate": null,
+            "state": null
+          }
+        }
+      }
+    },
+    "facilityLocationAccreditationExpiryDate": {
+      "type": ["string", "null"],
+      "title": "Facility Location Accreditation Expiry Date (YYYY-MM-DD)",
+      "description": "Expiry date of the accreditation for facility location",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "expirationDate",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "accreditations",
+          "defaultValues": {
+            "accreditationBody": null,
+            "expirationDate": null,
+            "state": null
+          }
+        }
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "includeFacilityLocationInDirectory": {
+      "type": ["string", "null"],
+      "title": "Include Facility Location In Directory",
+      "description": "Whether to include the facility location in directories",
+      "enum": ["Y", "N", "Yes", "No", null],
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "includeLocationInDirectory",
+        "systemRequired": false
+      }
+    },
+    "includeGroupInDirectory": {
+      "type": ["string", "null"],
+      "title": "Include Group In Directory",
+      "description": "Whether to include the group in directories",
+      "enum": ["Y", "N", "Yes", "No", null],
+      "metadata": {
+        "entity": "TenantGroupFacilityNetwork",
+        "entityKey": "includeGroupInDirectory",
+        "systemRequired": false
+      }
+    },
+    "suppressSiteFromDirectory": {
+      "type": ["string", "null"],
+      "title": "Suppress Site From Directory",
+      "description": "Whether to hide the site from directories",
+      "enum": ["Y", "N", null],
+      "metadata": {
+        "entity": "GroupLocation",
+        "entityKey": "suppressSiteFromDirectory",
+        "systemRequired": false
+      },
+      "message": {
+        "enum": "Must be Y or N"
+      }
+    },
+    "acceptsNewPatients": {
+      "type": ["string", "null"],
+      "title": "Accepts New Patients",
+      "description": "Whether the location accepts new patients",
+      "enum": ["Accepting New", "Closed", "Existing Patients Only", null],
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "acceptsNewPatients",
+        "systemRequired": false
+      },
+      "message": {
+        "enum": "Must be Accepting New, Closed, or Existing Patients Only"
+      }
+    },
+    "facilityLocationGenderAccepted": {
+      "type": ["string", "null"],
+      "title": "Gender Accepted",
+      "description": "Gender accepted at the location",
+      "enum": ["Both", "Male", "Female", null],
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "genderAccepted",
+        "systemRequired": false
+      }
+    },
+    "acceptingMinimumPatientAge": {
+      "type": ["string", "null"],
+      "title": "Accepting Minimum Patient Age",
+      "description": "Minimum patient age accepted",
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "acceptingMinimumPatientAge",
+        "systemRequired": false
+      }
+    },
+    "acceptingMaximumPatientAge": {
+      "type": ["string", "null"],
+      "title": "Accepting Maximum Patient Age",
+      "description": "Maximum patient age accepted",
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "acceptingMaximumPatientAge",
+        "systemRequired": false
+      }
+    },
+    "udfZingSupplierLinkId": {
+      "type": ["string", "null"],
+      "title": "[UDF] Zing Supplier Link ID",
+      "description": "Zing supplier link id",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "udfZingSupplierLinkId",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfNewRecords": {
+      "type": ["string", "null"],
+      "title": "[UDF] New Records",
+      "description": "UDF field for new records",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfNewRecords",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfProviderLinkedToMoreThanOneContract": {
+      "type": ["string", "null"],
+      "title": "[UDF] Provider Linked To More Than One Contract",
+      "description": "UDF field indicating if provider is linked to multiple contracts",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfProviderLinkedToMoreThanOneContract",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfFlaggedAddress": {
+      "type": ["string", "null"],
+      "title": "[UDF] Flagged Address",
+      "description": "UDF field for flagged address",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "udfFlaggedAddress",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "udfNotes": {
+      "type": ["string", "null"],
+      "title": "[UDF] Notes",
+      "description": "UDF field for notes",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfNotes",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfTooltipHeader": {
+      "type": ["string", "null"],
+      "title": "[UDF] Tooltip Header",
+      "description": "UDF field for tooltip header",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfTooltipHeader",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfTooltipDescription": {
+      "type": ["string", "null"],
+      "title": "[UDF] Tooltip Description",
+      "description": "UDF field for tooltip description",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfTooltipDescription",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfTdiProviderSpecialty": {
+      "type": ["string", "null"],
+      "title": "[UDF] TDI Provider Specialty",
+      "description": "UDF field for TDI provider specialty",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "udfTdiProviderSpecialty",
+        "systemRequired": false,
+        "valueArrayGrouping": {
+          "enabled": true,
+          "defaultValue": null,
+          "objectKey": "userDefinedFields",
+          "groupObjects": {
+            "arrayKey": "udfSpecialties",
+            "indexField": "specialtyIndex"
+          }
+        }
+      }
+    },
+    "udfContractedThrough": {
+      "type": ["string", "null"],
+      "title": "[UDF] Contracted Through",
+      "description": "Indicates through whom/which entity the facility is contracted",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfContractedThrough",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfFacilityEmployed": {
+      "type": ["string", "null"],
+      "title": "[UDF] Facility Employed",
+      "description": "UDF field indicating if facility is employed",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfFacilityEmployed",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfAppliesAllPractitioners": {
+      "type": ["string", "null"],
+      "title": "[UDF] Applies All Practitioners",
+      "description": "UDF field indicating if this applies to all practitioners",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfAppliesAllPractitioners",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfGroupTypeIdentifier": {
+      "type": ["string", "null"],
+      "title": "[UDF] Group Type Identifier",
+      "description": "UDF field for group type identifier",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "udfGroupTypeIdentifier",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfEvrySpecialty": {
+      "type": ["string", "null"],
+      "title": "[UDF] Evry Specialty",
+      "description": "Evry Specialty value mapped per specialty name; supports multiple specialties",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "udfEvrySpecialty",
+        "systemRequired": false,
+        "valueArrayGrouping": {
+          "enabled": true,
+          "defaultValue": null,
+          "objectKey": "userDefinedFields",
+          "groupObjects": {
+            "arrayKey": "udfSpecialties",
+            "indexField": "specialtyIndex"
+          }
+        }
+      }
+    },
+    "udfProviderDirectorySpecialty": {
+      "type": ["string", "null"],
+      "title": "[UDF] Provider Directory Specialty",
+      "description": "Provider directory specialty value",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "udfProviderDirectorySpecialty",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "facilityLocationServicePhone": {
+      "type": ["string", "null"],
+      "title": "Facility Location Service Phone",
+      "description": "Service phone number for facility location",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "phone",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "facilityLocationServiceFax": {
+      "type": ["string", "null"],
+      "title": "Facility Location Service Fax",
+      "description": "Service fax number for facility location",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "fax",
+        "systemRequired": false,
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "phone": null,
+            "fax": null,
+            "appointmentPhone": null,
+            "afterHoursPhone": null,
+            "email": null,
+            "deviceForDeafNumber": null,
+            "textTelephonyNumber": null
+          }
+        }
+      }
+    },
+    "udfMedstarSpecialty": {
+      "type": ["string", "null"],
+      "title": "[UDF] Medstar Specialty",
+      "description": "Medstar Specialty value mapped per specialty name; supports multiple specialties",
+      "metadata": {
+        "entity": "TenantFacilitySpecialty",
+        "entityKey": "udfMedstarSpecialty",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {}
+        }
+      }
+    },
+    "facilityStatusInNetwork": {
+      "type": ["string", "null"],
+      "title": "Facility Status In Network",
+      "description": "Status of the facility in the network",
+      "enum": ["Active", "Inactive", null],
+      "metadata": {
+        "entity": "TenantGroupFacilityNetwork",
+        "entityKey": "statusInNetwork",
+        "systemRequired": false,
+        "enumClass": "StatusInNetwork"
+      }
+    },
+    "networkTerminationReason": {
+      "type": ["string", "null"],
+      "title": "Network Termination Reason",
+      "description": "Reason provided during termination of a facility from network",
+      "metadata": {
+        "entity": "TenantGroupFacilityNetwork",
+        "entityKey": "networkTerminationReason",
+        "systemRequired": false
+      }
+    },
+    "networkTermInformedDate": {
+      "type": ["string", "null"],
+      "title": "Network Termination Informed Date (YYYY-MM-DD)",
+      "description": "Date when network termination was informed",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupFacilityNetwork",
+        "entityKey": "networkTermInformedDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "groupTerminationReason": {
+      "type": ["string", "null"],
+      "title": "Group Termination Reason",
+      "description": "Reason provided during termination of a facility from group",
+      "metadata": {
+        "entity": "TenantGroupFacility",
+        "entityKey": "groupTerminationReason",
+        "systemRequired": false
+      }
+    },
+    "locationTerminationReason": {
+      "type": ["string", "null"],
+      "title": "Location Termination Reason",
+      "description": "Reason provided during termination of a facility from location",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "locationTerminationReason",
+        "systemRequired": false
+      }
+    },
+    "contractName": {
+      "type": ["string", "null"],
+      "title": "Contract Name",
+      "description": "Name of the contract",
+      "metadata": {
+        "entity": "Contract",
+        "entityKey": "name",
+        "systemRequired": false
+      }
+    },
+    "contractEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "Facility Contract Effective Date (YYYY-MM-DD)",
+      "description": "Effective date for the contract",
+      "format": "date",
+      "metadata": {
+        "entity": "Contract",
+        "entityKey": "effectiveDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "contractStatus": {
+      "type": ["string", "null"],
+      "title": "Contract Status",
+      "description": "Status of the contract",
+      "enum": ["Active", "Terminated", "Pending", null],
+      "metadata": {
+        "entity": "Contract",
+        "entityKey": "status",
+        "systemRequired": false,
+        "enumClass": "ContractStatus"
+      }
+    },
+    "credentialingStatus": {
+      "type": ["string", "null"],
+      "title": "Facility Credentialing Status",
+      "description": "Credentialing status of the facility",
+      "enum": [
+        "Pending",
+        "Approved",
+        "Denied",
+        "In Progress",
+        "Cred Approved",
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "OUTREACH_IN_PROGRESS",
+        "DATA_MISSING",
+        "PSV_COMPLETED",
+        "PSV_READY",
+        "SENT_TO_COMMITTEE",
+        "TABLED",
+        "WITHDRAWN_CANCELLED",
+        "CRED_DENIED",
+        "CRED_APPROVED",
+        null
+      ],
+      "metadata": {
+        "entity": "TenantGroupFacility",
+        "entityKey": "credentialingStatus",
+        "systemRequired": false,
+        "enumClass": "CredentialingStatus"
+      }
+    },
+    "credentialingAffiliation": {
+      "type": ["string", "null"],
+      "title": "Credentialing Affiliation",
+      "description": "Facility's credentialing affiliation",
+      "enum": ["Direct", "Delegated", null],
+      "metadata": {
+        "entity": "TenantGroupFacility",
+        "entityKey": "credentialingAffiliation",
+        "systemRequired": false
+      }
+    },
+    "udfContractStatus": {
+      "type": ["string", "null"],
+      "title": "[UDF] Contracting Status",
+      "description": "Contracting status of the facility",
+      "metadata": {
+        "entity": "TenantGroupFacility",
+        "entityKey": "udfContractStatus",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfContractName": {
+      "type": ["string", "null"],
+      "title": "[UDF] Contract Name",
+      "description": "Name of the contract",
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "udfContractName",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfFacilityEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "[UDF] Facility Effective Date",
+      "description": "Effective date for the facility",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "udfFacilityEffectiveDate",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfNetworkName": {
+      "type": ["string", "null"],
+      "title": "[UDF] Network Name",
+      "description": "Name of the network",
+      "metadata": {
+        "entity": "TenantGroupFacility",
+        "entityKey": "udfNetworkName",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "udfContractEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "[UDF] Contract Effective Date (YYYY-MM-DD)",
+      "description": "Effective date for the contract",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupFacilityLocation",
+        "entityKey": "udfContractEffectiveDate",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "udfAddressStatus": {
+      "type": ["string", "null"],
+      "title": "[UDF] Address Status",
+      "description": "UDF field for address status",
+      "metadata": {
+        "entity": "TenantGroupFacility",
+        "entityKey": "udfAddressStatus",
+        "systemRequired": false,
+        "objectGrouping": {
+          "enabled": true,
+          "objectKey": "userDefinedFields",
+          "defaultValues": {}
+        }
+      }
+    },
+    "payorName": {
+      "type": ["string", "null"],
+      "title": "Payor Name",
+      "description": "Name of the payor",
+      "metadata": {
+        "entity": "Payer",
+        "entityKey": "name",
+        "systemRequired": false
+      }
+    },
+    "planName": {
+      "type": ["string", "null"],
+      "title": "Plan Name",
+      "description": "Name of the plan",
+      "metadata": {
+        "entity": "Plan",
+        "entityKey": "name",
+        "systemRequired": false
+      }
+    },
+    "bedCount": {
+      "type": ["integer", "null"],
+      "title": "Bed Count",
+      "description": "Number of beds in facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "bedCount",
+        "systemRequired": false
+      }
+    },
+    "billingGroupName": {
+      "type": ["string", "null"],
+      "title": "Billing Group Name",
+      "description": "Name of the billing group",
+      "metadata": {
+        "systemRequired": false
+      }
+    },
+    "planEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "Plan Effective Date (YYYY-MM-DD)",
+      "description": "The date when facility got effective with the plan",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupFacilityNetworkPlan",
+        "entityKey": "effectiveDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "locationFipsCode": {
+      "type": ["string", "null"],
+      "title": "Location FIPS Code",
+      "description": "FIPS code for facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "fipsCode",
+        "systemRequired": false
+      }
+    },
+    "facilityServiceLocationLatitude": {
+      "type": ["string", "null"],
+      "title": "Facility Service Location Latitude",
+      "description": "Latitude of facility service location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "latitude",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "facilityServiceLocationLongitude": {
+      "type": ["string", "null"],
+      "title": "Facility Service Location Longitude",
+      "description": "Longitude of facility service location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "longitude",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "service"
+          }
+        }
+      }
+    },
+    "facilityRemittanceLatitude": {
+      "type": ["string", "null"],
+      "title": "Facility Remittance Latitude",
+      "description": "Latitude of facility remittance location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "latitude",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "remittance"
+          }
+        }
+      }
+    },
+    "facilityRemittanceLongitude": {
+      "type": ["string", "null"],
+      "title": "Facility Remittance Longitude",
+      "description": "Longitude of facility remittance location",
+      "metadata": {
+        "entity": "CoreEntityAddress",
+        "entityKey": "longitude",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "addressType": "remittance"
+          }
+        }
+      }
+    },
+
+    "culturalCompetencyCompleted": {
+      "type": ["string", "null"],
+      "title": "Cultural Competency Training Completed",
+      "description": "Cultural competency training completed",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "culturalCompetency",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "complianceTrainings",
+          "defaultValues": {
+            "modelOfCareTraining": null,
+            "annualFWATraining": null,
+            "culturalCompetency": null,
+            "criticalIncidentTraining": null
+          }
+        }
+      }
+    },
+    "annualFWATrainingCompleted": {
+      "type": ["string", "null"],
+      "title": "Annual FWA Training Completed",
+      "description": "Whether annual Fraud, Waste, and Abuse training has been completed",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "annualFWATraining",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "complianceTrainings",
+          "defaultValues": {
+            "modelOfCareTraining": null,
+            "annualFWATraining": null,
+            "culturalCompetency": null,
+            "criticalIncidentTraining": null
+          }
+        }
+      }
+    },
+    "modelOfCareTrainingCompleted": {
+      "type": ["string", "null"],
+      "title": "Model of Care Training Completed",
+      "description": "Whether model of care training has been completed",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "modelOfCareTraining",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "complianceTrainings",
+          "defaultValues": {
+            "modelOfCareTraining": null,
+            "annualFWATraining": null,
+            "culturalCompetency": null,
+            "criticalIncidentTraining": null
+          }
+        }
+      }
+    },
+    "criticalIncidentTrainingCompleted": {
+      "type": ["string", "null"],
+      "title": "Critical Incident Training Completed",
+      "description": "Whether critical incident training has been completed",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "criticalIncidentTraining",
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "complianceTrainings",
+          "defaultValues": {
+            "modelOfCareTraining": null,
+            "annualFWATraining": null,
+            "culturalCompetency": null,
+            "criticalIncidentTraining": null
+          }
+        }
+      }
+    },
+    "facilityDba": {
+      "type": ["string", "null"],
+      "title": "Facility DBA",
+      "description": "Doing Business As name for facility",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "dba",
+        "systemRequired": false
+      }
+    },
+    "facilityEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "Facility Effective Date (YYYY-MM-DD)",
+      "description": "Effective date for the facility",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "effectiveDate",
+        "systemRequired": false
+      }
+    },
+    "facilityTaxEntityChangeDate": {
+      "type": ["string", "null"],
+      "title": "Facility Tax Entity Change Date (YYYY-MM-DD)",
+      "description": "Tax entity change date for the facility",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "facilityTaxEntityChangeDate",
+        "systemRequired": false
+      }
+    },
+    "facilityTermDate": {
+      "type": ["string", "null"],
+      "title": "Facility Termination Date (YYYY-MM-DD)",
+      "description": "Termination date for the facility",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupFacilityNetwork",
+        "entityKey": "terminationDate",
+        "systemRequired": false
+      }
+    },
+    "networkTermDate": {
+      "type": ["string", "null"],
+      "title": "Network Termination Date (YYYY-MM-DD)",
+      "description": "Network termination date",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupLocationNetwork",
+        "entityKey": "terminationDate",
+        "systemRequired": false
+      }
+    },
+    "locationTermDate": {
+      "type": ["string", "null"],
+      "title": "Location Termination Date (YYYY-MM-DD)",
+      "description": "Location termination date",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantFacilityLocation",
+        "entityKey": "terminationDate",
+        "systemRequired": false
+      }
+    },
+    "groupLocationTerminationDate": {
+      "type": ["string", "null"],
+      "title": "Group Location Termination Date (YYYY-MM-DD)",
+      "description": "Termination date for group location",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupLocation",
+        "entityKey": "terminationDate",
+        "systemRequired": false
+      }
+    },
+    "facilityNetworkTerminationDate": {
+      "type": ["string", "null"],
+      "title": "Facility Network Termination Date (YYYY-MM-DD)",
+      "description": "Network termination date for facility",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupFacilityNetwork",
+        "entityKey": "terminationDate",
+        "systemRequired": false
+      }
+    },
+    "networkGroupTerminationDate": {
+      "type": ["string", "null"],
+      "title": "Network Group Termination Date (YYYY-MM-DD)",
+      "description": "Group termination date for network",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupNetwork",
+        "entityKey": "terminationDate",
+        "systemRequired": false
+      }
+    },
+    "networkName": {
+      "type": ["string", "null"],
+      "title": "Network Name",
+      "description": "Name of the network",
+      "metadata": {
+        "entity": "Network",
+        "entityKey": "name",
+        "entityAlias": "Network",
+        "systemRequired": false
+      }
+    },
+    "networkNpi": {
+      "type": ["string", "null"],
+      "title": "Network NPI",
+      "description": "National Provider Identifier for network",
+      "pattern": "^\\d{10}$",
+      "metadata": {
+        "entity": "TenantGroupNetwork",
+        "entityKey": "npi",
+        "systemRequired": false,
+        "npiApiCheck": true,
+        "npiCheckErrorMessage": "NPI couldn't be validated with NPPES"
+      },
+      "message": {
+        "pattern": "Must be exactly 10 characters in length"
+      }
+    },
+    "networkEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "Network Effective Date",
+      "description": "Effective Date of the network",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupNetwork",
+        "entityKey": "effectiveDate",
+        "entityAlias": "Network",
+        "systemRequired": false
+      }
+    },
+    "networkType": {
+      "type": ["string", "null"],
+      "title": "Network Type",
+      "description": "Type of network",
+      "enum": ["PPO", "HMO", "POS", "EPO", "HSA", "HDHP", "Other", null],
+      "metadata": {
+        "entity": "Network",
+        "entityKey": "type",
+        "systemRequired": false
+      }
+    },
+    "groupName": {
+      "type": ["string", "null"],
+      "title": "Group Name",
+      "description": "Name of the medical group",
+      "metadata": {
+        "entity": "Group",
+        "entityKey": "name",
+        "systemRequired": false
+      }
+    },
+    "groupLegalBusinessName": {
+      "type": ["string", "null"],
+      "title": "Group Legal Business Name",
+      "description": "Legal business name of the medical group",
+      "metadata": {
+        "entity": "Group",
+        "entityKey": "legalBusinessName",
+        "systemRequired": false
+      }
+    },
+    "groupNpi": {
+      "type": ["string", "null"],
+      "title": "Group NPI",
+      "description": "National Provider Identifier for the group billing",
+      "pattern": "^\\d{10}$",
+      "metadata": {
+        "entity": "Group",
+        "entityKey": "npi",
+        "systemRequired": false,
+        "npiApiCheck": true,
+        "npiCheckErrorMessage": "NPI couldn't be validated with NPPES"
+      },
+      "message": {
+        "pattern": "Must be exactly 10 characters in length"
+      }
+    },
+    "groupTin": {
+      "type": ["string", "null"],
+      "title": "Group Tax Identification Number",
+      "description": "Tax Identification Number for the group",
+      "pattern": "^\\w{2}-?\\d{7}$",
+      "message": {
+        "pattern": "Group Tin must follow the format XX-YYYYYYY or XXYYYYYYY, where X is exactly 2 letters/digits and Y is exactly 7 digits"
+      },
+      "metadata": {
+        "mappedKey": "groupTin",
+        "entity": "Group",
+        "entityKey": "tin",
+        "systemRequired": false,
+        "errorMessage": "Group Tax Identification Number must follow the format XX-YYYYYYY or XXYYYYYYY, where X is exactly 2 letters/digits and Y is exactly 7 digits"
+      }
+    },
+    "groupExternalId": {
+      "type": ["string", "null"],
+      "title": "Group External ID",
+      "description": "External identifier for the group",
+      "metadata": {
+        "entity": "Group",
+        "entityKey": "externalId",
+        "systemRequired": false
+      }
+    },
+    "credentialingContactFirstName": {
+      "type": ["string", "null"],
+      "title": "Credentialing Contact First Name",
+      "metadata": {
+        "entity": "Group",
+        "entity2": "Group.contacts",
+        "entityKey": "firstName",
+        "isArray": true,
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "firstName": null,
+            "lastName": null,
+            "phone": null,
+            "fax": null,
+            "email": null
+          }
+        }
+      }
+    },
+    "credentialingContactlastName": {
+      "type": ["string", "null"],
+      "title": "Credentialing Contact Last Name",
+      "metadata": {
+        "entity": "Group",
+        "entity2": "Group.contacts",
+        "entityKey": "lastName",
+        "isArray": true,
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "firstName": null,
+            "lastName": null,
+            "phone": null,
+            "fax": null,
+            "email": null
+          }
+        }
+      }
+    },
+    "credentialingContactPhone": {
+      "type": ["string", "null"],
+      "title": "Credentialing Contact Phone",
+      "metadata": {
+        "entity": "Group",
+        "entity2": "Group.contacts",
+        "entityKey": "phone",
+        "isArray": true,
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "firstName": null,
+            "lastName": null,
+            "phone": null,
+            "fax": null,
+            "email": null
+          }
+        }
+      }
+    },
+    "credentialingContactFax": {
+      "type": ["string", "null"],
+      "title": "Credentialing Contact Fax",
+      "metadata": {
+        "entity": "Group",
+        "entity2": "Group.contacts",
+        "entityKey": "fax",
+        "isArray": true,
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "firstName": null,
+            "lastName": null,
+            "phone": null,
+            "fax": null,
+            "email": null
+          }
+        }
+      }
+    },
+    "credentialingContactEmail": {
+      "type": ["string", "null"],
+      "title": "Credentialing Contact Email",
+      "metadata": {
+        "entity": "Group",
+        "entity2": "Group.contacts",
+        "entityKey": "email",
+        "isArray": true,
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "firstName": null,
+            "lastName": null,
+            "phone": null,
+            "fax": null,
+            "email": null
+          }
+        }
+      }
+    },
+    "facilityContactFirstName": {
+      "type": ["string", "null"],
+      "title": "Facility Contact First Name",
+      "description": "First name of facility contact",
+      "metadata": {
+        "entity": "TenantGroupFacility",
+        "entity2": "TenantGroupFacility.contacts",
+        "entityKey": "firstName",
+        "isArray": true,
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "firstName": null,
+            "lastName": null,
+            "email": null
+          }
+        }
+      }
+    },
+    "facilityContactLastName": {
+      "type": ["string", "null"],
+      "title": "Facility Contact Last Name",
+      "description": "Last name of facility contact",
+      "metadata": {
+        "entity": "TenantGroupFacility",
+        "entity2": "TenantGroupFacility.contacts",
+        "entityKey": "lastName",
+        "isArray": true,
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "firstName": null,
+            "lastName": null,
+            "email": null
+          }
+        }
+      }
+    },
+    "facilityContactEmail": {
+      "type": ["string", "null"],
+      "title": "Facility Contact Email",
+      "description": "Email address of facility contact",
+      "format": "email",
+      "metadata": {
+        "entity": "TenantGroupFacility",
+        "entity2": "TenantGroupFacility.contacts",
+        "entityKey": "email",
+        "isArray": true,
+        "systemRequired": false,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "contacts",
+          "defaultValues": {
+            "firstName": null,
+            "lastName": null,
+            "email": null
+          }
+        }
+      },
+      "message": {
+        "format": "Invalid email format"
+      }
+    },
+    "facilityPrimarySpecialty": {
+      "type": ["string", "null"],
+      "title": "Facility Primary Specialty Name",
+      "description": "Primary specialty name of the facility",
+      "metadata": {
+        "entity": "TenantSpecialty",
+        "entityKey": "displayName",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "status": "active",
+            "isPrimary": true
+          }
+        }
+      }
+    },
+    "facilityPrimaryTaxonomy": {
+      "type": ["string", "null"],
+      "title": "Facility Primary Taxonomy",
+      "description": "Primary taxonomy of the facility",
+      "metadata": {
+        "entity": "NuccSpecialty",
+        "entityKey": "specialtyNuccTaxonomyCode",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "status": "active",
+            "isPrimary": true
+          }
+        }
+      }
+    },
+    "facilityAdditionalSpecialty": {
+      "type": ["string", "null"],
+      "title": "Facility Additional Specialty",
+      "description": "Additional specialty of the facility",
+      "metadata": {
+        "entity": "TenantSpecialty",
+        "entityKey": "displayName",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "status": "active",
+            "isPrimary": false
+          }
+        }
+      }
+    },
+    "facilityAdditionalTaxonomy": {
+      "type": ["string", "null"],
+      "title": "Facility Additional Taxonomy",
+      "description": "Additional taxonomy of the facility",
+      "metadata": {
+        "entity": "NuccSpecialty",
+        "entityKey": "specialtyNuccTaxonomyCode",
+        "systemRequired": false,
+        "entityInstanceGrouping": {
+          "enabled": true,
+          "defaultValues": {
+            "status": "active",
+            "isPrimary": false
+          }
+        }
+      }
+    },
+
+    "facilityLegalBusinessName": {
+      "type": ["string", "null"],
+      "title": "Facility Legal Business Name",
+      "description": "Legal business name of the facility",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "legalName",
+        "systemRequired": false
+      }
+    },
+    "officeHours": {
+      "type": ["array", "null"],
+      "title": "Office Hours",
+      "description": "Office hours of the facility",
+      "items": {
+        "type": "object",
+        "properties": {
+          "dayOfWeek": {
+            "type": ["string", "null"],
+            "title": "Day of Week",
+            "description": "Day of the week",
+            "enum": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", null],
+            "metadata": {
+              "systemRequired": false,
+              "enumClass": "DayOfWeek",
+              "entity": "CoreFacility",
+              "entityKey": "officeHours"
+            }
+          },
+          "openTime": {
+            "type": ["string", "null"],
+            "title": "Open Time",
+            "description": "Open time of the facility",
+            "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+            "message": {
+              "pattern": "Must be in the format HH:MM"
+            },
+            "metadata": {
+              "systemRequired": false,
+              "entity": "CoreFacility",
+              "entityKey": "officeHours"
+            }
+          },
+          "closeTime": {
+            "type": ["string", "null"],
+            "title": "Close Time",
+            "description": "Close time of the facility",
+            "pattern": "^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$",
+            "message": {
+              "pattern": "Must be in the format HH:MM"
+            },
+            "metadata": {
+              "systemRequired": false,
+              "entity": "CoreFacility",
+              "entityKey": "officeHours"
+            }
+          },
+          "isClosed": {
+            "type": ["boolean", "null"],
+            "title": "Is Closed",
+            "description": "Whether the facility is closed on this day",
+            "metadata": {
+              "systemRequired": false,
+              "entity": "CoreFacility",
+              "entityKey": "officeHours"
+            }
+          }
+        }
+      }
+    },
+    "locationUpdateDate": {
+      "type": ["string", "null"],
+      "title": "Location Update Date (YYYY-MM-DD)",
+      "description": "Date when location information was updated",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "locationUpdateDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "lastCredentialingDate": {
+      "type": ["string", "null"],
+      "title": "Last Credentialing Date (YYYY-MM-DD)",
+      "description": "Date of the last credentialing",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "lastCredentialedDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "nextCredentialingDate": {
+      "type": ["string", "null"],
+      "title": "Next Credentialing Date (YYYY-MM-DD)",
+      "description": "Date of the next credentialing due",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "nextCredentialingDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "initialCredentialingDate": {
+      "type": ["string", "null"],
+      "title": "Initial Credentialing Date (YYYY-MM-DD)",
+      "description": "Date of the initial credentialing",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "initialCredentialingDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "penultimateCredentialingDate": {
+      "type": ["string", "null"],
+      "title": "Penultimate Credentialing Date (YYYY-MM-DD)",
+      "description": "Date of the penultimate credentialing",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "penultimateCredentialingDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "recredApprovalDate": {
+      "type": ["string", "null"],
+      "title": "Recredentialing Approval Date (YYYY-MM-DD)",
+      "description": "Date of the recredentialing approval",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "recredApprovalDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "facilityChangeEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "Facility Change Effective Date (YYYY-MM-DD)",
+      "description": "Effective date of facility change",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "facilityChangeEffectiveDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "credentialingType": {
+      "type": ["string", "null"],
+      "title": "Credentialing Type",
+      "description": "Type of credentialing (I = Initial, R = Recredentialing)",
+      "enum": ["I", "R", null],
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "credentialingType",
+        "systemRequired": false
+      }
+    },
+    "stateLicenseIssueDate": {
+      "type": ["string", "null"],
+      "title": "State License Issue Date (YYYY-MM-DD)",
+      "description": "State License Issue Date",
+      "format": "date",
+      "metadata": {
+        "entity": "CoreFacility",
+        "entityKey": "issueDate",
+        "systemRequired": false,
+        "errorMessage": "State License Issue Date must be a valid date (YYYY-MM-DD)",
+        "isArray": true,
+        "objectArrayGrouping": {
+          "enabled": true,
+          "arrayKey": "licenses",
+          "defaultValues": {
+            "licenseNumber": null,
+            "expiration": null,
+            "state": null,
+            "issueDate": null
+          }
+        }
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "facilityNetworkEffectiveDate": {
+      "type": ["string", "null"],
+      "title": "Facility Network Effective Date",
+      "description": "Effective date for the facility in the network",
+      "format": "date",
+      "metadata": {
+        "entity": "TenantGroupFacilityNetwork",
+        "entityKey": "effectiveDate",
+        "systemRequired": false
+      },
+      "message": {
+        "format": "Incorrect date format. Supported date format: YYYY-MM-DD"
+      }
+    },
+    "includeFacilityInNetworkDirectory": {
+      "type": ["string", "null"],
+      "title": "Include Facility In Network Directory",
+      "description": "Whether to include the facility in the network directory",
+      "enum": ["Y", "N", "Yes", "No", null],
+      "metadata": {
+        "entity": "TenantGroupFacilityNetwork",
+        "entityKey": "includeFacilityInNetworkDirectory",
+        "systemRequired": false
+      }
+    },
+    "locationSiteReviewName": {
+      "type": ["string", "null"],
+      "title": "Location Site Review Name",
+      "description": "Name of the site review for the facility location",
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "siteReviewName",
+        "systemRequired": false
+      }
+    },
+    "locationSiteReviewCompleted": {
+      "type": ["string", "null"],
+      "title": "Location Site Review Completed",
+      "description": "Whether the site review has been completed for the facility location",
+      "enum": ["Y", "N", "Yes", "No", null],
+      "metadata": {
+        "entity": "CoreLocation",
+        "entityKey": "siteReviewCompleted",
+        "systemRequired": false
+      }
+    }
+  },
+
+  "additionalProperties": true,
+  "addressApiCheck": [
+    {
+      "fields": {
+        "addressLine1": "facilityLocationAddressLine1",
+        "addressLine2": "facilityLocationAddressLine2",
+        "city": "facilityLocationCity",
+        "state": "facilityLocationState",
+        "zipCode": "facilityLocationZip"
+      },
+      "errorMessage": "Facility Location verification failed"
+    },
+    {
+      "fields": {
+        "addressLine1": "facilityRemittanceAddress1",
+        "addressLine2": "facilityRemittanceAddress2",
+        "city": "facilityRemittanceCity",
+        "state": "facilityRemittanceState",
+        "zipCode": "facilityRemittanceZip"
+      },
+      "errorMessage": "Facility Remittance verification failed"
+    }
+  ]
+}

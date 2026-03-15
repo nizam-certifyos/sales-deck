@@ -1,0 +1,8 @@
+rule_order,rule_name,description,applies_to,active
+1,kb_correction_override,"Accepted correction is final authority for target selection",all,true
+2,scope_specific_correction,"Scoped correction beats unscoped/global correction",all,true
+3,scope_specific_alias,"Scoped alias evidence beats unscoped/global alias evidence",all,true
+4,schema_constraint_evidence,"Enum/pattern/format constraints resolve lexical ties",all,true
+5,semantic_profile,"Semantic likelihoods increase weight for noisy/abbrev headers",all,true
+6,template_prior,"Template prior can boost or defer when ambiguous",all,true
+7,section_consistency,"Cross-item consistency applies unless correction override exists",all,true

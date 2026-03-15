@@ -1,0 +1,90 @@
+{
+  "actionTypeValidationRules": {
+    "Add to Plan": {
+      "practitioner": {
+        "requiredFields": ["planName", "planEffectiveDate"],
+        "description": "Requires Plan Name and Plan Effective Date for the record even if the template has configured them as optional."
+      },
+      "facility": {
+        "requiredFields": ["planName", "planEffectiveDate"],
+        "description": "Requires Plan Name and Plan Effective Date for the record even if the template has configured them as optional."
+      }
+    },
+    "Add to Network": {
+      "practitioner": {
+        "requiredFields": ["networkName", "groupPractitionerNetworkEffectiveDate"],
+        "description": "Requires Network Name and Network Effective Date for the record even if the template has configured them as optional."
+      },
+      "facility": {
+        "requiredFields": ["networkName", "networkEffectiveDate"],
+        "description": "Requires Network Name and Network Effective Date for the record even if the template has configured them as optional."
+      }
+    },
+    "Add to Group": {
+      "practitioner": {
+        "requiredFields": ["groupName", "groupNpi", "practitionerEffectiveDateInGroup"],
+        "description": "Requires Group Name, Group NPI and Practitioner's Effective Date in Group for the record even if the template has configured them as optional."
+      },
+      "facility": {
+        "requiredFields": ["groupName", "groupNpi", "practitionerEffectiveDateInGroup"],
+        "description": "Requires Group Name, Group NPI and Practitioner's Effective Date in Group for the record even if the template has configured them as optional."
+      }
+    },
+    "Add Role": {
+      "practitioner": {
+        "requiredFields": ["practitionerRole", "roleEffectiveDate"],
+        "description": "Requires Practitioner Role and Role Effective Date for the record even if the template has configured them as optional."
+      },
+      "facility": {
+        "requiredFields": ["practitionerRole", "roleEffectiveDate"],
+        "description": "Requires Practitioner Role and Role Effective Date for the record even if the template has configured them as optional."
+      }
+    },
+    "Add Specialty": {
+      "practitioner": {
+        "requiredFields": ["specialtyName", "specialtyEffectiveDate"],
+        "description": "Requires Specialty Name, and Specialty Effective Date for the record even if the template has configured them as optional."
+      },
+      "facility": {
+        "requiredFields": ["specialtyName", "specialtyEffectiveDate"],
+        "description": "Requires Specialty Name, and Specialty Effective Date for the record even if the template has configured them as optional."
+      }
+    },
+    "Terminate from Group": {
+      "practitioner": {
+        "requiredFields": ["groupName", "groupNpi", "groupTin", "groupPractitionerEndDate"],
+        "description": "Requires Group Name, Group NPI, Group TIN, and Practitioner's Termination Date in Group for the record even if the template has configured them as optional."
+      }
+    },
+    "Terminate from Location": {
+      "practitioner": {
+        "requiredFields": ["groupPracticeLocationName", "groupPracticeLocationAddressLine1", "groupPracticeLocationCity", "groupPracticeLocationState", "groupPracticeLocationZip", "firstName", "lastName", "practitionerNpi", "practitionerLocationTermEffectiveDate"],
+        "description": "Requires Location Name, Address 1, City, State, Zip, First Name, Last Name, NPI, and Location Termination Date for the record even if the template has configured them as optional."
+      },
+      "facility": {
+        "requiredFields": ["facilityLocationName", "facilityLocationAddressLine1", "facilityLocationCity", "facilityLocationState", "facilityLocationZip", "facilityName", "facilityNpi", "facilityTin", "locationTerminationDate"],
+        "description": "Requires Location Name, Address 1, City, State, Zip, Facility Name, Facility NPI, Facility TIN, and Location Termination Date for the record even if the template has configured them as optional."
+      }
+    },
+    "Terminate from Network": {
+      "practitioner": {
+        "requiredFields": ["networkName", "groupPractitionerNetworkTermEffectiveDate"],
+        "description": "Requires Network Name and Network Termination Date for the record even if the template has configured them as optional."
+      },
+      "facility": {
+        "requiredFields": ["networkName", "networkTermDate", "facilityName", "facilityNpi"],
+        "description": "Requires Network Name, Network Termination Date, Facility Name, and Facility NPI for the record even if the template has configured them as optional."
+      }
+    },
+    "Update Information": {
+      "practitioner": {
+        "requiredFields": ["practitionerNpi", "firstName", "lastName"],
+        "description": "Requires Practitioner NPI, First Name, and Last Name for the record even if the template has configured them as optional. If location data is provided, Location Update Date is also required."
+      },
+      "facility": {
+        "requiredFields": ["facilityNpi", "facilityName", "facilityTin"],
+        "description": "Requires Facility NPI, Facility Name, and Facility TIN for the record even if the template has configured them as optional. If location data is provided, Location Update Date is also required."
+      }
+    }
+  }
+} 

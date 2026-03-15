@@ -1,0 +1,142 @@
+{
+  "_description": "Complete transaction type business logic — what each type DOES in the CertifyOS system",
+  "_source": "core-data-access-layer-main + api-layer-main repos",
+  "_version": "2026-03-12",
+
+  "what_is_transaction_type": "pdmTransactionType defines what action the system performs on a roster record. It determines: required fields, database operations, and whether entities are created/updated/terminated.",
+
+  "transaction_types": {
+    "Add to Network": {
+      "description": "Provider joining a network for the first time or being added to a new network",
+      "database_action": "Creates TenantGroupPractitionerNetwork relationship",
+      "what_happens": "Links practitioner to network within their group, sets network effective date",
+      "required_practitioner": ["networkName", "groupPractitionerNetworkEffectiveDate"],
+      "required_facility": ["networkName", "networkEffectiveDate"],
+      "transaction_phase": 4,
+      "is_termination": false
+    },
+    "Add to Plan": {
+      "description": "Adding provider to a health plan within their network",
+      "database_action": "Creates TenantGroupNetworkPlan, TenantGroupLocationNetworkPlan relationships",
+      "what_happens": "Associates provider with a plan, sets plan effective date",
+      "required_both": ["planName", "planEffectiveDate"],
+      "transaction_phase": 6,
+      "is_termination": false
+    },
+    "Add to Group": {
+      "description": "Provider joining a new practice group",
+      "database_action": "Creates TenantGroupPractitioner relationship",
+      "what_happens": "Links practitioner to group with effective date",
+      "required_practitioner": ["groupName", "groupNpi", "practitionerEffectiveDateInGroup"],
+      "is_termination": false
+    },
+    "Add Role": {
+      "description": "Adding a new role (PCP/Specialist) to existing provider",
+      "database_action": "Creates role assignment records",
+      "required": ["practitionerRole", "roleEffectiveDate"],
+      "is_termination": false
+    },
+    "Add Specialty": {
+      "description": "Adding a new specialty to existing provider",
+      "database_action": "Creates TenantGroupSpecialty via SpecialtyMapper",
+      "required": ["specialtyName", "specialtyEffectiveDate"],
+      "is_termination": false
+    },
+    "Add Location": {
+      "description": "Adding provider to a new practice location",
+      "database_action": "Creates TenantGroupPractitionerLocation",
+      "what_happens": "Associates practitioner with a physical address, sets location type PRI/PRA",
+      "is_termination": false
+    },
+    "Add Enrollment": {
+      "description": "Adding payor enrollment record",
+      "database_action": "Creates enrollment relationship",
+      "is_termination": false
+    },
+    "Add Contract": {
+      "description": "Adding contract information",
+      "database_action": "Creates contract relationship",
+      "is_termination": false
+    },
+    "Update Information": {
+      "description": "Updating existing provider data (name, address, credentials, etc.)",
+      "database_action": "Updates existing entity records",
+      "what_happens": "Only changed fields are updated, no new relationships created",
+      "required_practitioner": ["practitionerNpi", "firstName", "lastName"],
+      "required_facility": ["facilityNpi", "facilityName", "facilityTin"],
+      "is_termination": false
+    },
+    "Terminate from Network": {
+      "description": "Provider LEAVING an entire network (all locations within that network are terminated)",
+      "database_action": "UPSERT_DATA on TenantGroupPractitionerNetwork with terminationDate, cascades to TenantGroupLocationPractitionerNetwork",
+      "what_happens": "1) Resolves NPI → certifyId → tenantPractitionerId. 2) Fetches all relationships. 3) Finds networkId. 4) Sets terminationDate on network record. 5) Cascades to all locations within that network.",
+      "required_practitioner": ["networkName", "groupPractitionerNetworkTermEffectiveDate"],
+      "required_facility": ["networkName", "networkTermDate", "facilityName", "facilityNpi"],
+      "is_termination": true,
+      "cascade": "Terminates ALL locations under this network for this provider"
+    },
+    "Terminate from Location": {
+      "description": "Provider LEAVING one specific location (other locations stay active)",
+      "database_action": "UPSERT_DATA on TenantGroupPractitionerLocation with terminationDate",
+      "what_happens": "1) Resolves NPI → practitioner IDs. 2) Finds specific location. 3) Sets terminationDate on location record only. 4) Removes location-network-specialty relationships.",
+      "required_practitioner": ["location address fields", "firstName", "lastName", "NPI", "practitionerLocationTermEffectiveDate"],
+      "required_facility": ["location address fields", "facility details", "locationTerminationDate"],
+      "is_termination": true,
+      "cascade": "Only terminates the specific location, NOT the network"
+    },
+    "Terminate from Group": {
+      "description": "Provider LEAVING an entire group (all networks, locations, specialties under that group are terminated)",
+      "database_action": "UPSERT_DATA on TenantGroupPractitioner with terminationDate",
+      "what_happens": "Terminates entire group relationship. Cascades to terminate ALL child relationships.",
+      "required_practitioner": ["groupName", "groupNpi", "groupTin", "groupPractitionerEndDate"],
+      "is_termination": true,
+      "cascade": "Terminates ALL networks, ALL locations, ALL specialties under this group"
+    }
+  },
+
+  "termination_hierarchy": {
+    "description": "Terminations cascade DOWN the hierarchy. Terminate from Group affects everything below it.",
+    "hierarchy": [
+      "Group (TenantGroupPractitioner)",
+      "  └─ Network (TenantGroupPractitionerNetwork)",
+      "       └─ Location (TenantGroupPractitionerLocation)",
+      "            └─ Specialty (location-network-specialty)",
+      "                 └─ Plan (location-network-plan)"
+    ],
+    "terminate_from_group": "Terminates: group + all networks + all locations + all specialties + all plans",
+    "terminate_from_network": "Terminates: network + all locations under that network + specialties + plans",
+    "terminate_from_location": "Terminates: location + specialties at that location only"
+  },
+
+  "processing_flow": {
+    "step_1": "CSV row parsed, pdmTransactionType extracted",
+    "step_2": "ActionTypeValidationService validates required fields for this transaction type",
+    "step_3_termination": "If termination: call terminatePractitionerFromHandler() with type=NETWORK/GROUP_LOCATIONS/GROUP",
+    "step_3_normal": "If non-termination: TransactionBuilderService.buildTransaction() maps CSV to entity operations",
+    "step_4_termination": "Fetch existing relationships, set terminationDate via UPSERT_DATA batch operations",
+    "step_4_normal": "Execute via Pub/Sub (async) or synchronous transactional batch",
+    "step_5": "Update roster record status: COMPLETED or FAILED"
+  },
+
+  "termination_date_field_standardization": {
+    "description": "All termination date fields are standardized to 'terminationDate' internally",
+    "mappings": {
+      "groupPractitionerNetworkTermEffectiveDate": "terminationDate (for Terminate from Network)",
+      "practitionerLocationTermEffectiveDate": "terminationDate (for Terminate from Location)",
+      "groupPractitionerEndDate": "terminationDate (for Terminate from Group)",
+      "locationTerminationDate": "terminationDate (for facility location termination)",
+      "networkTermDate": "terminationDate (for facility network termination)"
+    }
+  },
+
+  "database_operations": {
+    "CREATE": "Insert new entity record",
+    "UPDATE": "Update existing entity fields",
+    "FIND_OR_CREATE": "Find by key, create if not exists",
+    "FIND": "Read-only lookup",
+    "UPSERT": "Insert or update entire record",
+    "UPSERT_DATA": "Insert or update specific fields (used for terminations)"
+  },
+
+  "key_insight_for_ai": "When the AI sees a roster file, it must understand: 1) Non-term rows create NEW relationships in the system. 2) Term rows UPDATE existing relationships with termination dates. 3) Required fields differ per transaction type. 4) The effective date field CHANGES MEANING based on transaction type (network effective vs termination date). 5) Location Type (PRI/PRA) matters for Add operations."
+}

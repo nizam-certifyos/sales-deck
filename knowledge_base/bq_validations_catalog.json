@@ -1,0 +1,310 @@
+{
+  "_description": "Universal BigQuery validation SQL patterns \u2014 client-agnostic, applicable to any roster",
+  "_version": "2026-03-12",
+  "validation_structure": {
+    "pattern": "Each validation returns NULL (pass) or error message string (fail)",
+    "aggregation": "ARRAY_TO_STRING(ARRAY_AGG(err WHERE err IS NOT NULL), ', ') AS Business_Validations",
+    "separation": "Rows with non-empty Business_Validations \u2192 errors; empty \u2192 clean",
+    "nppes_join": "LEFT JOIN nppes_raw ON NPI for existence check",
+    "duplicate_check": "COUNT(*) OVER (PARTITION BY TO_JSON_STRING(row)) as dup_ct"
+  },
+  "validations": [
+    {
+      "id": "npi_format",
+      "field_type": "NPI",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": true,
+      "sql": "IF(IFNULL(TRIM(CAST(t.NPI AS STRING)), '') != '' AND NOT REGEXP_CONTAINS(CAST(t.NPI AS STRING), r'^\\d{10}$'), 'NPI must be exactly 10 digits', NULL)",
+      "error_message": "NPI must be exactly 10 digits"
+    },
+    {
+      "id": "npi_nppes_bq",
+      "field_type": "NPI",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": true,
+      "sql": "IF(IFNULL(TRIM(CAST(t.NPI AS STRING)), '') != '' AND n.NPI IS NULL, 'Invalid NPI as per NPPES Record', NULL)",
+      "error_message": "Invalid NPI as per NPPES Record",
+      "note": "Requires LEFT JOIN to nppes_raw table. Fallback to NPPES API for failed NPIs."
+    },
+    {
+      "id": "npi_nppes_name_match",
+      "field_type": "NPI",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(t.NPI), '') != '' AND n.NPI IS NOT NULL AND REGEXP_REPLACE(UPPER(TRIM(t.First_Name)), r'[^A-Z]', '') != REGEXP_REPLACE(UPPER(TRIM(n.Provider_First_Name)), r'[^A-Z]', ''), CONCAT('Provider Name is not matching with NPPES record - As per NPPES First Name: ', n.Provider_First_Name, ' Last Name: ', n.Provider_Last_Name), NULL)",
+      "error_message": "Provider Name is not matching with NPPES record",
+      "note": "Written to Warning column, NOT Business_Validations. Alpha-only case-insensitive comparison."
+    },
+    {
+      "id": "npi_entity_type_check",
+      "field_type": "NPI",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "Check enumeration_type from NPPES API response: NPI-1 = Individual, NPI-2 = Organization",
+      "note": "Only checked via API fallback, not in BQ SQL directly"
+    },
+    {
+      "id": "group_npi_format",
+      "field_type": "Group NPI",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(CAST(t.Group_NPI AS STRING)), '') != '' AND NOT REGEXP_CONTAINS(CAST(t.Group_NPI AS STRING), r'^\\d{10}$'), 'Group NPI must be exactly 10 digits', NULL)",
+      "error_message": "Group NPI must be exactly 10 digits"
+    },
+    {
+      "id": "group_npi_nppes",
+      "field_type": "Group NPI",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(CAST(t.Group_NPI AS STRING)), '') != '' AND gn.NPI IS NULL, 'Invalid Group NPI as per NPPES Record', NULL)",
+      "error_message": "Invalid Group NPI as per NPPES Record"
+    },
+    {
+      "id": "tin_format",
+      "field_type": "TIN",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": true,
+      "sql": "IF(IFNULL(TRIM(CAST(t.Tax_Identification_Number AS STRING)), '') != '' AND NOT REGEXP_CONTAINS(CAST(t.Tax_Identification_Number AS STRING), r'^\\d{9}$'), 'Tax ID must be exactly 9 digits', NULL)",
+      "error_message": "Tax ID must be exactly 9 digits"
+    },
+    {
+      "id": "ssn_format",
+      "field_type": "SSN",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(CAST(t.SSN AS STRING)), '') != '' AND NOT REGEXP_CONTAINS(CAST(t.SSN AS STRING), r'^\\d{9}$'), 'SSN must be exactly 9 digits', NULL)",
+      "error_message": "SSN must be exactly 9 digits"
+    },
+    {
+      "id": "caqh_format",
+      "field_type": "CAQH",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(CAST(t.CAQH_ID AS STRING)), '') != '' AND NOT REGEXP_CONTAINS(CAST(t.CAQH_ID AS STRING), r'^\\d{7,8}$'), 'CAQH ID must be 7 or 8 digits', NULL)",
+      "error_message": "CAQH ID must be 7 or 8 digits"
+    },
+    {
+      "id": "medicare_format",
+      "field_type": "Medicare ID",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(CAST(t.Medicare_ID AS STRING)), '') != '' AND NOT REGEXP_CONTAINS(CAST(t.Medicare_ID AS STRING), r'^[a-zA-Z0-9]{5,20}$'), 'Medicare ID must be 5-20 alphanumeric characters', NULL)",
+      "error_message": "Medicare ID must be 5-20 alphanumeric characters"
+    },
+    {
+      "id": "medicaid_format",
+      "field_type": "Medicaid ID",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(CAST(t.Medicaid_ID AS STRING)), '') != '' AND NOT REGEXP_CONTAINS(CAST(t.Medicaid_ID AS STRING), r'^[a-zA-Z0-9]{5,20}$'), 'Medicaid ID must be 5-20 alphanumeric characters', NULL)",
+      "error_message": "Medicaid ID must be 5-20 alphanumeric characters"
+    },
+    {
+      "id": "medicaid_state_required",
+      "field_type": "Medicaid State",
+      "entity": [
+        "practitioner"
+      ],
+      "required": "conditional",
+      "sql": "IF(IFNULL(TRIM(t.Medicaid_State), '') != '' AND IFNULL(TRIM(t.Medicaid_ID), '') = '', 'Medicaid ID is required when Medicaid State is provided', NULL)",
+      "error_message": "Medicaid ID is required when Medicaid State is provided"
+    },
+    {
+      "id": "zip_format",
+      "field_type": "ZIP",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(CAST(t.Zip AS STRING)), '') != '' AND NOT REGEXP_CONTAINS(CAST(t.Zip AS STRING), r'^(\\d{5}(-\\d{4})?|\\d{9})$'), 'Zip must be 5 digits, 5+4, or 9 digits', NULL)",
+      "error_message": "Zip must be 5 digits, 5+4, or 9 digits"
+    },
+    {
+      "id": "state_2letter",
+      "field_type": "State",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(CAST(t.State AS STRING)), '') != '' AND NOT REGEXP_CONTAINS(UPPER(CAST(t.State AS STRING)), r'^[A-Z]{2}$'), 'State must be a 2-letter code', NULL)",
+      "error_message": "State must be a 2-letter code"
+    },
+    {
+      "id": "state_reference",
+      "field_type": "State",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(t.State), '') != '' AND UPPER(TRIM(t.State)) NOT IN UNNEST(['AL','AK',...,'WY','DC','PR']), 'State must be a valid state per reference', NULL)",
+      "error_message": "State must be a valid state per reference"
+    },
+    {
+      "id": "name_characters",
+      "field_type": "Name",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(t.First_Name), '') != '' AND NOT REGEXP_CONTAINS(t.First_Name, r'^[A-Za-z\\s\\-\\']+$'), 'First Name can only contain letters, spaces, hyphens, and apostrophes', NULL)",
+      "error_message": "First Name can only contain letters, spaces, hyphens, and apostrophes"
+    },
+    {
+      "id": "email_format",
+      "field_type": "Email",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(t.Email), '') != '' AND NOT REGEXP_CONTAINS(t.Email, r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'), 'Email must be a valid email address', NULL)",
+      "error_message": "Email must be a valid email address"
+    },
+    {
+      "id": "gender_values",
+      "field_type": "Gender",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(t.Gender), '') != '' AND UPPER(TRIM(t.Gender)) NOT IN ('M','F','U','UNKNOWN','NOT LISTED'), 'Gender must be M, F, U, Unknown, or Not Listed', NULL)",
+      "error_message": "Gender must be M, F, U, Unknown, or Not Listed"
+    },
+    {
+      "id": "phone_format",
+      "field_type": "Phone",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(CAST(t.Phone AS STRING)), '') != '' AND NOT REGEXP_CONTAINS(CAST(t.Phone AS STRING), r'^\\d{10}$'), 'Phone can only contain exactly 10 numeric digits', NULL)",
+      "error_message": "Phone can only contain exactly 10 numeric digits"
+    },
+    {
+      "id": "date_format",
+      "field_type": "Date",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(t.Date_Col), '') != '' AND SAFE_CAST(TRIM(t.Date_Col) AS DATE) IS NULL, 'Date must be a valid date', NULL)",
+      "error_message": "Date must be a valid date"
+    },
+    {
+      "id": "date_obsolescence",
+      "field_type": "Date",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": false,
+      "sql": "IF(SAFE.PARSE_DATE('%Y-%m-%d', TRIM(t.Date_Col)) < DATE('1901-01-01'), 'Date is an obsolete date', NULL)",
+      "error_message": "Date is an obsolete date"
+    },
+    {
+      "id": "taxonomy_nucc",
+      "field_type": "Taxonomy",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(t.Primary_Taxonomy), '') != '' AND UPPER(TRIM(t.Primary_Taxonomy)) NOT IN UNNEST(nucc_codes), 'Invalid Taxonomy as per NUCC List', NULL)",
+      "error_message": "Invalid Taxonomy as per NUCC List"
+    },
+    {
+      "id": "degree_reference",
+      "field_type": "Degree",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(t.Degree_1), '') != '' AND UPPER(TRIM(t.Degree_1)) NOT IN UNNEST(valid_degrees), CONCAT(t.Degree_1, ' is not a recognized Degree'), NULL)",
+      "error_message": "{value} is not a recognized Degree"
+    },
+    {
+      "id": "language_reference",
+      "field_type": "Language",
+      "entity": [
+        "practitioner"
+      ],
+      "required": false,
+      "sql": "IF(IFNULL(TRIM(t.Language), '') != '' AND UPPER(TRIM(t.Language)) NOT IN UNNEST(valid_languages), 'Language is not a recognized language', NULL)",
+      "error_message": "Language is not a recognized language"
+    },
+    {
+      "id": "required_field_empty",
+      "field_type": "Any required field",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": true,
+      "sql": "IF(IFNULL(TRIM(CAST(t.{column} AS STRING)), '') = '', '{column_name} is required but is empty', NULL)",
+      "error_message": "{column_name} is required but is empty",
+      "note": "Required columns differ per template and transaction type (term vs non-term)"
+    },
+    {
+      "id": "required_field_empty_term",
+      "field_type": "Term-specific required fields",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": true,
+      "sql": "IF(UPPER(TRIM(t.Transaction_Type)) IN ('TERM','TERM ROLE','TERMINATE FROM LOCATION','TERMINATE FROM NETWORK') AND IFNULL(TRIM(CAST(t.{column} AS STRING)), '') = '', '{column_name} is required for termination but is empty', NULL)",
+      "error_message": "{column_name} is required for termination but is empty"
+    },
+    {
+      "id": "duplicate_row",
+      "field_type": "Row-level",
+      "entity": [
+        "practitioner",
+        "facility"
+      ],
+      "required": true,
+      "sql": "IF(t.dup_ct > 1, 'Duplicate row found within the file', NULL)",
+      "error_message": "Duplicate row found within the file",
+      "note": "Uses: COUNT(*) OVER (PARTITION BY TO_JSON_STRING((SELECT AS STRUCT t.* EXCEPT(Business_Validations)))) as dup_ct"
+    }
+  ],
+  "nppes_validation_flow": {
+    "step_1_bq_check": "LEFT JOIN nppes_raw ON NPI \u2014 check existence",
+    "step_2_identify_failures": "Query Business_Validations for 'Invalid NPI as per NPPES Record'",
+    "step_3_api_fallback": "For each failed NPI: GET https://npiregistry.cms.hhs.gov/api/?number={npi}&version=2.1",
+    "step_4_update_results": "If API valid: remove error. If API invalid: update with API status.",
+    "step_5_name_check": "Compare file first/last name vs NPPES provider name (alpha-only, case-insensitive). Mismatch \u2192 Warning column.",
+    "step_6_entity_type": "NPI-1 = Individual practitioner. NPI-2 = Organization. Report in logs."
+  }
+}

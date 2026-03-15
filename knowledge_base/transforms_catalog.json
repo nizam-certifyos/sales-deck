@@ -1,0 +1,379 @@
+{
+  "_description": "Universal Python transformation patterns \u2014 client-agnostic, applicable to any health plan roster",
+  "_version": "2026-03-12",
+  "transforms": [
+    {
+      "id": "clean_date_series",
+      "category": "date",
+      "applicable_fields": [
+        "any column with date/effective/expiration/term in name"
+      ],
+      "input": "Date strings in any format (M/D/YYYY, YYYY-MM-DD, MM-DD-YYYY, two-digit years)",
+      "output": "ISO YYYY-MM-DD or empty string",
+      "business_rule": "All dates standardized to ISO; years outside 1901-2099 cleared as invalid",
+      "python_code": "def clean_date_series(series: pd.Series) -> pd.Series:\n    s = series.astype(str).str.strip()\n    s = s.where(s.ne('') & ~s.str.lower().isin(['nan', 'none', 'null', 'nat']), None)\n    dt = pd.to_datetime(s, errors='coerce', format='mixed', dayfirst=False)\n    dt.loc[(dt.dt.year < 1901) | (dt.dt.year > 2099)] = pd.NaT\n    return dt.dt.strftime('%Y-%m-%d').fillna('').astype(str)",
+      "scope": "universal",
+      "trigger_type": "universal",
+      "trigger": "Apply to ALL columns whose mapped_field contains 'Date', 'dob', 'expir', 'effective', or 'term' in the field name. Always needed for date columns.",
+      "when_to_skip": "Non-date columns. Already normalized YYYY-MM-DD values (but safe to re-apply)."
+    },
+    {
+      "id": "normalize_id_digits",
+      "category": "identifier",
+      "applicable_fields": [
+        "NPI (10)",
+        "TIN (9)",
+        "SSN (9)",
+        "Phone (10)",
+        "Fax (10)",
+        "CAQH (7-8)"
+      ],
+      "input": "Identifier with possible non-digit chars, scientific notation",
+      "output": "Exact N digits or empty string",
+      "business_rule": "Strip non-digits, zero-pad if shorter, clear if wrong length",
+      "python_code": "def normalize_digits_exact(df, cols, exact_len):\n    for col in cols:\n        if col not in df.columns:\n            continue\n        before = df[col].astype(str).str.strip()\n        before = before.where(~before.str.lower().isin(['nan','none','null','']), '')\n        after = before.str.replace(r'\\D', '', regex=True)\n        after = after.apply(lambda x: x.zfill(exact_len) if 0 < len(x) <= exact_len else x)\n        invalid = after.str.len() != exact_len\n        df.loc[~invalid, col] = after[~invalid]\n        df.loc[invalid & (before != ''), col] = ''",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: (a) sample values contain hyphens, spaces, or parentheses in an ID column; (b) column is NPI/TIN/SSN/Phone/CAQH \u2014 normalize to digit-only with correct length.",
+      "when_to_skip": "ID values already clean digit-only strings of correct length."
+    },
+    {
+      "id": "fix_scientific_notation",
+      "category": "identifier",
+      "applicable_fields": [
+        "NPI",
+        "TIN",
+        "any numeric-looking identifier"
+      ],
+      "input": "String like '1.23E+10' (Excel corruption)",
+      "output": "Full decimal string '12300000000'",
+      "business_rule": "Excel corrupts long numbers to scientific notation; restore to full digits",
+      "python_code": "from decimal import Decimal, InvalidOperation\nimport re\nsci_regex = re.compile(r'^[+-]?\\d+(?:\\.\\d+)?[eE][+-]?\\d+$')\ndef fix_scientific_cell(text: str) -> str:\n    if not text or not sci_regex.match(text):\n        return text\n    try:\n        dec_val = Decimal(text)\n        if dec_val % 1 == 0:\n            return format(dec_val.quantize(Decimal('1')), 'f')\n        return format(dec_val, 'f').rstrip('0').rstrip('.')\n    except InvalidOperation:\n        return text",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: ANY sample value in the column matches scientific notation pattern (e.g., '1.23456789E9', '4.61314303E8'). Even 1 affected value means the whole column needs this. Common in Excel exports of NPI, TIN, ZIP.",
+      "when_to_skip": "No scientific notation values detected in column samples."
+    },
+    {
+      "id": "strip_trailing_decimal_zero",
+      "category": "identifier",
+      "applicable_fields": [
+        "all columns"
+      ],
+      "input": "Values like '12345.0' (Excel float conversion)",
+      "output": "'12345'",
+      "business_rule": "Excel adds .0 to integers; strip for clean IDs",
+      "python_code": "def strip_trailing_decimal_zeros(val: str) -> str:\n    s = str(val).strip()\n    if re.match(r'^\\d+\\.0+$', s):\n        return s.split('.')[0]\n    return s",
+      "scope": "universal",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: sample values end in '.0' (e.g., '1234567890.0'). Common when Excel reads NPI/TIN as float.",
+      "when_to_skip": "Values don't have trailing .0"
+    },
+    {
+      "id": "normalize_time_hhmm",
+      "category": "time",
+      "applicable_fields": [
+        "openTimeMon-Sun",
+        "closeTimeMon-Sun",
+        "any time column"
+      ],
+      "input": "Time in various formats: '8:00AM', '1700', '5PM', '3:30pm', 'Closed'",
+      "output": "24-hour HH:MM or 'Closed' or empty",
+      "business_rule": "Office hours standardized to 24-hour format",
+      "python_code": "def normalize_time_hhmm(text: str) -> str:\n    t = str(text).strip()\n    if not t or t.lower() in ['', 'nan', 'none', 'nat']:\n        return ''\n    if t.lower() == 'closed':\n        return 'Closed'\n    t = t.replace('.', ':')\n    t = re.sub(r'\\s+', '', t)\n    am = t.lower().endswith('am')\n    pm = t.lower().endswith('pm')\n    t = re.sub(r'(?i)(am|pm)$', '', t)\n    parts = t.split(':')\n    try:\n        hh = int(parts[0])\n        mm = int(parts[1]) if len(parts) > 1 else 0\n    except (ValueError, IndexError):\n        return ''\n    if pm and hh < 12: hh += 12\n    if am and hh == 12: hh = 0\n    if 0 <= hh <= 23 and 0 <= mm <= 59:\n        return f'{hh:02d}:{mm:02d}'\n    return ''",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply to openTimeMon-Sun, closeTimeMon-Sun columns \u2014 any column containing time values in non-HH:MM format.",
+      "when_to_skip": "Values already in HH:MM format, or column is not a time column."
+    },
+    {
+      "id": "normalize_null_values",
+      "category": "cleanup",
+      "applicable_fields": [
+        "all columns"
+      ],
+      "input": "Values like 'N/A', 'None', 'null', '#N/A', 'pending', 'not provided'",
+      "output": "Empty string",
+      "business_rule": "All null equivalents standardized to empty for consistent processing",
+      "python_code": "NULL_TOKENS = {'nan', 'n/a', 'na', 'none', '#n/a', 'null', 'empty', 'n.a.', '-', 'pending', 'not provided', 'nat'}\ndef clean_cell_value(value) -> str:\n    if value is None or (isinstance(value, float) and pd.isna(value)):\n        return ''\n    s = str(value).strip()\n    if s.lower() in NULL_TOKENS:\n        return ''\n    return s",
+      "scope": "universal",
+      "trigger_type": "universal",
+      "trigger": "Apply to ALL columns. Always run first in the transform pipeline. Converts 'N/A', 'None', 'null', '#N/A', 'Pending', 'TBD', 'not provided', etc. to empty string.",
+      "when_to_skip": "Never skip \u2014 safe to apply universally."
+    },
+    {
+      "id": "strip_and_collapse_whitespace",
+      "category": "cleanup",
+      "applicable_fields": [
+        "all text columns"
+      ],
+      "input": "Text with tabs, newlines, multiple spaces",
+      "output": "Clean single-spaced text",
+      "python_code": "def strip_and_collapse_whitespace(series: pd.Series) -> pd.Series:\n    s = series.astype(str).str.strip()\n    s = s.str.replace(r'[\\r\\n\\t]+', ' ', regex=True)\n    s = s.str.replace(r' +', ' ', regex=True)\n    return s.str.strip()",
+      "scope": "universal",
+      "trigger_type": "universal",
+      "trigger": "Apply to ALL text columns. Always run early in pipeline. Removes leading/trailing spaces, collapses internal multiple spaces.",
+      "when_to_skip": "Numeric columns (but safe to apply to all)."
+    },
+    {
+      "id": "normalize_state",
+      "category": "address",
+      "applicable_fields": [
+        "State",
+        "License State",
+        "Mailing State",
+        "Billing State"
+      ],
+      "input": "Full state name ('California') or abbreviation ('CA')",
+      "output": "2-letter state code ('CA')",
+      "python_code": "US_STATE_MAP = {'alabama': 'AL', 'alaska': 'AK', ...}  # see reference_data.json\ndef normalize_state(value: str) -> str:\n    s = str(value).strip()\n    if len(s) == 2 and s.upper() in VALID_STATES:\n        return s.upper()\n    return US_STATE_MAP.get(s.lower(), s)",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: column is mapped to any state field (stateLicenseIssuingState, groupPracticeLocationState, etc.) AND sample values contain full state names (e.g., 'California', 'Texas') instead of 2-letter codes.",
+      "when_to_skip": "Values already 2-letter uppercase state codes."
+    },
+    {
+      "id": "normalize_gender",
+      "category": "demographics",
+      "applicable_fields": [
+        "Gender"
+      ],
+      "input": "'Male', 'Female', 'Unknown', 'm', 'f'",
+      "output": "'M', 'F', 'U'",
+      "python_code": "GENDER_MAP = {'male': 'M', 'female': 'F', 'unknown': 'U', 'm': 'M', 'f': 'F', 'u': 'U', 'not listed': 'U'}",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: column is mapped to 'gender' field AND sample values are not already 'M'/'F'/'U' (e.g., 'Male', 'female', 'Unknown', '1', '2').",
+      "when_to_skip": "Values already in M/F/U format."
+    },
+    {
+      "id": "normalize_yes_no",
+      "category": "boolean",
+      "applicable_fields": [
+        "any Y/N column"
+      ],
+      "input": "'Yes', 'No', 'True', 'False', 'Y', 'N'",
+      "output": "'Y', 'N'",
+      "python_code": "YES_NO_MAP = {'yes': 'Y', 'no': 'N', 'true': 'Y', 'false': 'N', 'y': 'Y', 'n': 'N', '1': 'Y', '0': 'N'}",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: column is a boolean/Y-N field AND values are 'Yes'/'No', 'True'/'False', '1'/'0', 'YES'/'NO' instead of 'Y'/'N'.",
+      "when_to_skip": "Values already 'Y'/'N'."
+    },
+    {
+      "id": "normalize_accepts_new_patients",
+      "category": "practice",
+      "applicable_fields": [
+        "acceptsNewPatients"
+      ],
+      "input": "'Y', 'N', 'Existing', 'Closed'",
+      "output": "'Accepting New', 'Closed', 'Existing Patients Only', 'Telemedicine'",
+      "python_code": "NEW_PTS_MAP = {'y': 'Accepting New', 'yes': 'Accepting New', 'n': 'Closed', 'no': 'Closed', 'existing': 'Existing Patients Only', 'telemedicine': 'Telemedicine', 'closed': 'Closed'}",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: column is mapped to 'acceptsNewPatients' AND sample values include 'Existing Patients Only', 'Closed', 'Accepting' etc. beyond simple Y/N.",
+      "when_to_skip": "Values already Y/N or standard platform values."
+    },
+    {
+      "id": "split_degrees",
+      "category": "splitting",
+      "applicable_fields": [
+        "Degree \u2192 Degree_1 through Degree_5"
+      ],
+      "input": "Single column: 'MD, DO' or 'MD/DO'",
+      "output": "5 columns: Degree_1='MD', Degree_2='DO', Degree_3-5=''",
+      "business_rule": "Dots removed, uppercase, split on comma/slash",
+      "python_code": "def split_degrees_inline(df):\n    raw = df['Degree'].astype(str).fillna('')\n    parts = raw.str.replace('.', '', regex=False).str.upper().str.split(r'[,/]', expand=True)\n    for i in range(5):\n        col = f'Degree_{i+1}'\n        df[col] = parts[i].str.strip() if i < parts.shape[1] else ''\n    df.drop(columns=['Degree'], inplace=True)",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: column is mapped to practitionerDegree/providerType AND sample values contain comma or slash separators (e.g., 'MD, DO', 'NP/PA'). Data profile shows multi-value separator present.",
+      "when_to_skip": "Single value per row \u2014 no separators detected."
+    },
+    {
+      "id": "normalize_degree_values",
+      "category": "normalization",
+      "applicable_fields": [
+        "Degree_1 through Degree_5"
+      ],
+      "input": "Raw degree values: 'M.D.', 'ph-d', 'Do'",
+      "output": "Reference-matched: 'MD', 'PHD', 'DO'",
+      "business_rule": "Match against reference list using dots/hyphens/spaces stripped, case-insensitive",
+      "python_code": "def normalize_degree_values(series: pd.Series) -> pd.Series:\n    \"\"\"Normalize degree values to standard abbreviations.\n    'M.D.' \u2192 'MD', 'ph-d' \u2192 'PHD', 'Do' \u2192 'DO'\n    \"\"\"\n    DEGREE_MAP = {\n        \"MD\": [\"M.D.\", \"M.D\", \"MD\", \"Doctor of Medicine\"],\n        \"DO\": [\"D.O.\", \"D.O\", \"DO\", \"Doctor of Osteopathic Medicine\"],\n        \"PHD\": [\"Ph.D.\", \"Ph.D\", \"PHD\", \"Doctor of Philosophy\"],\n        \"DPM\": [\"D.P.M.\", \"DPM\", \"Doctor of Podiatric Medicine\"],\n        \"DDS\": [\"D.D.S.\", \"DDS\", \"Doctor of Dental Surgery\"],\n        \"DMD\": [\"D.M.D.\", \"DMD\", \"Doctor of Dental Medicine\"],\n        \"NP\": [\"N.P.\", \"NP\", \"Nurse Practitioner\", \"NP-C\", \"NP-BC\"],\n        \"PA\": [\"P.A.\", \"PA\", \"PA-C\", \"Physician Assistant\"],\n        \"APRN\": [\"A.P.R.N.\", \"APRN\", \"Advanced Practice Registered Nurse\"],\n        \"RN\": [\"R.N.\", \"RN\", \"Registered Nurse\"],\n        \"LPN\": [\"L.P.N.\", \"LPN\", \"Licensed Practical Nurse\"],\n        \"LCSW\": [\"L.C.S.W.\", \"LCSW\", \"Licensed Clinical Social Worker\"],\n        \"LMFT\": [\"L.M.F.T.\", \"LMFT\", \"Licensed Marriage and Family Therapist\"],\n        \"PSYD\": [\"Psy.D.\", \"PsyD\", \"PSYD\", \"Doctor of Psychology\"],\n        \"OD\": [\"O.D.\", \"OD\", \"Doctor of Optometry\"],\n        \"DC\": [\"D.C.\", \"DC\", \"Doctor of Chiropractic\"],\n        \"MS\": [\"M.S.\", \"MS\", \"Master of Science\"],\n        \"MBA\": [\"M.B.A.\", \"MBA\", \"Master of Business Administration\"],\n    }\n    # Build reverse lookup: normalized_key \u2192 standard\n    reverse_map = {}\n    for standard, variants in DEGREE_MAP.items():\n        for v in variants:\n            key = re.sub(r\"[.\\-\\s]+\", \"\", v.upper())\n            reverse_map[key] = standard\n\n    def normalize_one(val):\n        if pd.isna(val) or str(val).strip() == \"\":\n            return \"\"\n        cleaned = re.sub(r\"[.\\-\\s]+\", \"\", str(val).strip().upper())\n        return reverse_map.get(cleaned, str(val).strip())\n\n    return series.apply(normalize_one)",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: column is mapped to practitionerDegree/providerType/educationDegree AND values have inconsistent formatting (dots, hyphens, full names). Run AFTER split_degrees if both needed.",
+      "when_to_skip": "Values already standard abbreviations (MD, DO, NP, etc.)"
+    },
+    {
+      "id": "split_address_by_type",
+      "category": "splitting",
+      "applicable_fields": [
+        "AddressType + Address fields \u2192 typed address columns"
+      ],
+      "input": "Rows with AddressType='MFC Mailing Address' and generic Address/City/State/Zip",
+      "output": "Typed columns: mailingAddressLine1, billingAddressLine1, w9AddressLine1, practiceAddressLine1",
+      "business_rule": "Address type masks determine which typed columns get populated",
+      "python_code": "def split_address_by_type(df: pd.DataFrame, addr_type_col: str = \"AddressType\",\n                          addr1_col: str = \"Address\", city_col: str = \"City\",\n                          state_col: str = \"State\", zip_col: str = \"Zip\") -> pd.DataFrame:\n    \"\"\"Split address rows by address type mask into typed columns.\n    AddressType='MFC Mailing Address' \u2192 mailingAddressLine1, mailingCity, etc.\n    ADDRESS_TYPE_MAP maps type keywords to column prefixes.\n    \"\"\"\n    ADDRESS_TYPE_MAP = {\n        \"MAILING\": \"mailing\",\n        \"BILLING\": \"billing\",\n        \"PRACTICE\": \"practice\",\n        \"W9\": \"w9\",\n        \"W-9\": \"w9\",\n        \"REMITTANCE\": \"remittance\",\n        \"SERVICE\": \"practice\",\n    }\n    def get_prefix(addr_type):\n        if pd.isna(addr_type):\n            return \"practice\"\n        upper = str(addr_type).upper()\n        for keyword, prefix in ADDRESS_TYPE_MAP.items():\n            if keyword in upper:\n                return prefix\n        return \"practice\"\n\n    df = df.copy()\n    for _, row in df.iterrows():\n        prefix = get_prefix(row.get(addr_type_col, \"\"))\n        for src_col, suffix in [(addr1_col, \"AddressLine1\"), (city_col, \"City\"),\n                                (state_col, \"State\"), (zip_col, \"Zip\")]:\n            dest = f\"{prefix}{suffix}\"\n            if dest not in df.columns:\n                df[dest] = \"\"\n            df.at[row.name, dest] = row.get(src_col, \"\")\n    return df",
+      "scope": "structural",
+      "trigger_type": "structural",
+      "trigger": "Apply ONLY when: file has BOTH a generic address column (e.g., 'PRACTICE ADDRESS') AND a separate 'ADDRESS TYPE' column with routing values (P=practice, C=billing, M=mailing, F=facility). This is rare \u2014 seen in specific client files (Evry/Health Plan 3).",
+      "when_to_skip": "File already has typed address columns (groupPracticeLocationAddressLine1, groupBillingAddress1, etc.) \u2014 system handles routing via entityInstanceGrouping automatically. DO NOT apply universally.",
+      "system_note": "If file has properly named typed columns (Practice Address, Billing Address, etc.), NO transform needed \u2014 the system's entityInstanceGrouping routes them correctly."
+    },
+    {
+      "id": "parse_office_hours",
+      "category": "splitting",
+      "applicable_fields": [
+        "Office Hours text \u2192 openTimeMon/closeTimeMon through Sun"
+      ],
+      "input": "Multi-line: 'Monday: 9:00 AM to 5:00 PM\\nTuesday: 9:00 AM to 5:00 PM'",
+      "output": "14 columns: openTimeMon=09:00, closeTimeMon=17:00, etc.",
+      "business_rule": "Parse day names, extract open/close times, normalize to HH:MM",
+      "python_code": "def parse_office_hours(series: pd.Series) -> pd.DataFrame:\n    \"\"\"Parse multi-line office hours text into 14 open/close time columns (Mon-Sun).\n    Input: 'Monday: 9:00 AM to 5:00 PM\\nTuesday: 9:00 AM to 5:00 PM'\n    Output: DataFrame with openTimeMon=09:00, closeTimeMon=17:00, ..., openTimeSun, closeTimeSun\n    \"\"\"\n    DAYS = [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\", \"Sun\"]\n    DAY_ALIASES = {\n        \"MONDAY\": \"Mon\", \"TUESDAY\": \"Tue\", \"WEDNESDAY\": \"Wed\", \"THURSDAY\": \"Thu\",\n        \"FRIDAY\": \"Fri\", \"SATURDAY\": \"Sat\", \"SUNDAY\": \"Sun\",\n        \"MON\": \"Mon\", \"TUE\": \"Tue\", \"WED\": \"Wed\", \"THU\": \"Thu\",\n        \"FRI\": \"Fri\", \"SAT\": \"Sat\", \"SUN\": \"Sun\",\n    }\n    TIME_RE = re.compile(r\"(\\d{1,2}):?(\\d{2})?\\s*(AM|PM)?\", re.I)\n\n    def parse_time(time_str):\n        if not time_str:\n            return \"\"\n        m = TIME_RE.match(time_str.strip())\n        if not m:\n            return \"\"\n        hour, minute, meridiem = int(m.group(1)), int(m.group(2) or 0), (m.group(3) or \"\").upper()\n        if meridiem == \"PM\" and hour != 12:\n            hour += 12\n        elif meridiem == \"AM\" and hour == 12:\n            hour = 0\n        return f\"{hour:02d}:{minute:02d}\"\n\n    result = pd.DataFrame(index=series.index)\n    for day in DAYS:\n        result[f\"openTime{day}\"] = \"\"\n        result[f\"closeTime{day}\"] = \"\"\n\n    for idx, val in series.items():\n        if pd.isna(val) or not str(val).strip():\n            continue\n        for line in str(val).replace(\";\", \"\\n\").split(\"\\n\"):\n            line = line.strip()\n            if not line:\n                continue\n            parts = re.split(r\"[:\u2013-]\", line, maxsplit=1)\n            if len(parts) < 2:\n                continue\n            day_key = parts[0].strip().upper()\n            day = DAY_ALIASES.get(day_key)\n            if not day:\n                continue\n            time_range = parts[1].strip()\n            times = re.split(r\"\\bto\\b|\\-\", time_range, flags=re.I)\n            if len(times) >= 2:\n                result.at[idx, f\"openTime{day}\"] = parse_time(times[0].strip())\n                result.at[idx, f\"closeTime{day}\"] = parse_time(times[1].strip())\n            elif len(times) == 1:\n                result.at[idx, f\"openTime{day}\"] = parse_time(times[0].strip())\n    return result",
+      "scope": "structural",
+      "trigger_type": "structural",
+      "trigger": "Apply ONLY when: file has a single 'Office Hours' or 'Hours' text column containing multi-day, multi-line hours (e.g., 'Monday: 9AM-5PM; Tuesday: 9AM-5PM'). Detected by sample values showing day+time pattern.",
+      "when_to_skip": "File already has separate openTimeMon, closeTimeMon etc. columns. Or hours column has simple single-line value."
+    },
+    {
+      "id": "duplicate_plan_rows",
+      "category": "splitting",
+      "applicable_fields": [
+        "PlanName, PlanEffectiveDate, PlanTermDate, PlanNPINumber"
+      ],
+      "input": "Single row with PlanName, PlanName.1, PlanName.2 (multiple plans)",
+      "output": "Multiple rows, one per plan, all other fields duplicated",
+      "business_rule": "Each plan-set becomes a separate row for downstream processing",
+      "python_code": "def duplicate_plan_rows(df: pd.DataFrame,\n                        plan_fields: list = None) -> pd.DataFrame:\n    \"\"\"Duplicate rows for multiple plans encoded as numbered columns.\n    PlanName, PlanName.1, PlanName.2 \u2192 3 rows each with one plan name.\n    All non-plan columns are duplicated in each row.\n    \"\"\"\n    if plan_fields is None:\n        plan_fields = [\"planName\", \"planEffectiveDate\", \"planTermDate\", \"planNPINumber\"]\n\n    # Find plan column groups (base + numbered variants)\n    base_pattern = re.compile(r\"^(\" + \"|\".join(plan_fields) + r\")(\\.(\\d+))?$\", re.I)\n    grouped = {}\n    non_plan_cols = []\n    for col in df.columns:\n        m = base_pattern.match(col)\n        if m:\n            base = m.group(1).lower()\n            n = int(m.group(3)) if m.group(3) else 0\n            grouped.setdefault(base, {})[n] = col\n        else:\n            non_plan_cols.append(col)\n\n    if not grouped:\n        return df\n\n    # Max plan count\n    max_plans = max(max(v.keys()) for v in grouped.values()) + 1\n    rows_out = []\n    for _, row in df.iterrows():\n        for plan_idx in range(max_plans):\n            plan_vals = {}\n            for base, idx_map in grouped.items():\n                col = idx_map.get(plan_idx)\n                val = row[col] if col and col in row.index else \"\"\n                plan_vals[base] = val\n            # Skip if all plan fields are empty\n            if not any(str(v).strip() for v in plan_vals.values()):\n                continue\n            new_row = {c: row[c] for c in non_plan_cols if c in row.index}\n            new_row.update(plan_vals)\n            rows_out.append(new_row)\n    return pd.DataFrame(rows_out, columns=non_plan_cols + list(grouped.keys())) if rows_out else df.iloc[0:0]",
+      "scope": "structural",
+      "trigger_type": "structural",
+      "trigger": "Apply ONLY when: file has NUMBERED plan columns like PlanName, PlanName.1, PlanName.2 (multiple plans encoded horizontally in one row). Detected by numbered_columns_pivot structural pattern in column headers.",
+      "when_to_skip": "File has only one plan column, or plan data is already in separate rows."
+    },
+    {
+      "id": "remove_sparse_rows",
+      "category": "cleanup",
+      "applicable_fields": [
+        "row-level"
+      ],
+      "input": "DataFrame with rows that are >80% empty",
+      "output": "Rows removed where non-null ratio < 20%",
+      "business_rule": "Sparse rows are typically formatting artifacts from Excel; 80% threshold",
+      "python_code": "def remove_sparse_rows(df: pd.DataFrame, threshold: float = 0.80) -> pd.DataFrame:\n    \"\"\"Remove rows where more than threshold fraction of columns are empty/null.\n    Threshold default 0.80 means rows with >80% empty columns are removed.\n    Empty = NaN, None, empty string, or null-equivalent values.\n    \"\"\"\n    NULL_TOKENS = {\"\", \"nan\", \"none\", \"null\", \"n/a\", \"na\", \"#n/a\", \"not applicable\"}\n\n    def is_empty(val):\n        if val is None or (isinstance(val, float) and pd.isna(val)):\n            return True\n        return str(val).strip().lower() in NULL_TOKENS\n\n    null_ratio = df.apply(lambda row: sum(is_empty(v) for v in row) / max(len(row), 1), axis=1)\n    return df[null_ratio < threshold].reset_index(drop=True)",
+      "scope": "universal",
+      "trigger_type": "universal",
+      "trigger": "Apply to ALL files during initial loading. Removes rows that are >80% empty (Excel blank rows, header rows, totals rows).",
+      "when_to_skip": "Never skip \u2014 always run as first cleanup step."
+    },
+    {
+      "id": "remove_exact_duplicates",
+      "category": "cleanup",
+      "applicable_fields": [
+        "row-level"
+      ],
+      "input": "DataFrame with duplicate rows",
+      "output": "First occurrence kept, duplicates removed",
+      "python_code": "def remove_exact_duplicates(df: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"Remove exact duplicate rows, keeping first occurrence.\n    Normalizes strings to lowercase+stripped before comparison.\n    \"\"\"\n    normalized = df.apply(lambda col: col.map(\n        lambda v: str(v).strip().lower() if v is not None and not (isinstance(v, float) and pd.isna(v)) else \"\"\n    ))\n    return df[~normalized.duplicated(keep=\"first\")].reset_index(drop=True)",
+      "scope": "universal",
+      "trigger_type": "universal",
+      "trigger": "Apply to ALL files after initial cleanup. Removes exact duplicate rows (same NPI + same group + same location).",
+      "when_to_skip": "File is known to be deduplicated already, but safe to run anyway."
+    },
+    {
+      "id": "sanitize_bq_column_names",
+      "category": "column_naming",
+      "applicable_fields": [
+        "all columns"
+      ],
+      "input": "Column names with special chars: 'Name!@#', '123col'",
+      "output": "BQ-valid: 'Name___' \u2192 'Name', '_123col'",
+      "python_code": "def sanitize_bq_column_name(name: str) -> str:\n    clean = re.sub(r'[^A-Za-z0-9_]', '_', str(name))\n    if not re.match(r'^[A-Za-z_]', clean):\n        clean = '_' + clean\n    clean = re.sub(r'_+', '_', clean)\n    return clean.strip('_')[:300]",
+      "scope": "universal",
+      "trigger_type": "universal",
+      "trigger": "Apply to ALL files before BigQuery upload. Removes special characters from column names, ensures valid BQ column naming.",
+      "when_to_skip": "Never skip if uploading to BigQuery."
+    },
+    {
+      "id": "medicare_id_hyphen_removal",
+      "category": "identifier",
+      "applicable_fields": [
+        "Medicare ID"
+      ],
+      "input": "Medicare ID with hyphens: '7N-2841'",
+      "output": "'7N2841'",
+      "business_rule": "Medicare IDs should not contain hyphens for downstream system processing",
+      "python_code": "def medicare_id_hyphen_removal(series: pd.Series) -> pd.Series:\n    \"\"\"Remove hyphens from Medicare Beneficiary Identifier (MBI) values.\n    '7N-28-41' \u2192 '7N2841'\n    Also handles Medicare legacy HIC numbers.\n    \"\"\"\n    return series.apply(\n        lambda v: re.sub(r\"-\", \"\", str(v).strip()) if v and str(v).strip().lower() not in (\"nan\", \"none\", \"\") else \"\"\n    )",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: column is mapped to 'medicareId' AND sample values contain hyphens (e.g., '7N-28-41').",
+      "when_to_skip": "Medicare IDs already without hyphens."
+    },
+    {
+      "id": "transaction_type_normalization",
+      "category": "normalization",
+      "applicable_fields": [
+        "Transaction Type, pdmTransactionType"
+      ],
+      "input": "Client values: 'New', 'Term', 'Update', 'New Role'",
+      "output": "PDM values: 'Add to Network', 'Terminate from Network', etc.",
+      "business_rule": "See reference_data.json transaction_type_synonyms",
+      "python_code": "def transaction_type_normalization(series: pd.Series,\n                                   synonyms: dict = None) -> pd.Series:\n    \"\"\"Normalize client-supplied transaction type values to PDM canonical values.\n    'New' \u2192 'Add to Network', 'Term' \u2192 'Terminate from Network', etc.\n    Unknown values are passed through unchanged.\n    \"\"\"\n    if synonyms is None:\n        # Default mapping from reference_data.json transaction_type_synonyms\n        synonyms = {\n            \"NEW\": \"Add to Network\",\n            \"NEW LOCATION\": \"Add to Network\",\n            \"NEW ROLE\": \"Add to Network\",\n            \"ADD\": \"Add to Network\",\n            \"ADD TO NETWORK\": \"Add to Network\",\n            \"ADD TO GROUP\": \"Add to Group\",\n            \"ADD TO PLAN\": \"Add to Plan\",\n            \"ADD ROLE\": \"Add Role\",\n            \"ADD SPECIALTY\": \"Add Specialty\",\n            \"ADD LOCATION\": \"Add Location\",\n            \"TERM\": \"Terminate from Network\",\n            \"TERMINATE\": \"Terminate from Network\",\n            \"TERMINATION\": \"Terminate from Network\",\n            \"TERM FROM NETWORK\": \"Terminate from Network\",\n            \"TERM FROM GROUP\": \"Terminate from Group\",\n            \"TERM FROM LOCATION\": \"Terminate from Location\",\n            \"TERMINATE FROM NETWORK\": \"Terminate from Network\",\n            \"TERMINATE FROM GROUP\": \"Terminate from Group\",\n            \"TERMINATE FROM LOCATION\": \"Terminate from Location\",\n            \"UPDATE\": \"Update Information\",\n            \"UPDATE INFORMATION\": \"Update Information\",\n            \"CHANGE\": \"Update Information\",\n            \"CORRECTION\": \"Update Information\",\n            \"RELOCATION\": \"Terminate from Location\",\n        }\n\n    def normalize_one(val):\n        if pd.isna(val) or str(val).strip() == \"\":\n            return \"\"\n        key = str(val).strip().upper()\n        return synonyms.get(key, str(val).strip())\n\n    return series.apply(normalize_one)",
+      "scope": "conditional",
+      "trigger_type": "conditional",
+      "trigger": "Apply when: action/transaction column detected AND values are client-specific variants (e.g., 'New', 'Term', 'Relocation') rather than platform canonical values ('Add to Network', 'Terminate from Location').",
+      "when_to_skip": "Values already match platform canonical transaction type names."
+    },
+    {
+      "id": "state_prefix_extraction",
+      "category": "structural",
+      "scope": "structural",
+      "trigger_type": "structural",
+      "trigger": "Apply when: license/DEA/CDS column HEADER contains a 2-letter state prefix (e.g., 'DC LICENSE NUMBER', 'MD DEA NUMBER', 'VA CDS EXPIRATION'). The state is encoded in the column name, not the data values. Detected by: header matches pattern [A-Z]{2}\\s+(LICENSE|DEA|CDS|CONTROLLED SUBSTANCE) in a practitioner file.",
+      "when_to_skip": "File already has separate 'License State' column alongside the license number column. Or header does not have state prefix.",
+      "applicable_fields": [
+        "stateLicenseNumber (when header has state prefix like 'DC LICENSE NUMBER')",
+        "practitionerDea (when header has state prefix like 'DC DEA NUMBER')",
+        "practitionerControlledSubstanceNumber (when header has state prefix like 'DC CDS NUMBER')"
+      ],
+      "input": "Column header 'DC LICENSE NUMBER' with values ['V0226', 'M1234', ...]",
+      "output": "Maps column to stateLicenseNumber. ALSO creates derived column stateLicenseIssuingState filled with 'DC' for all rows.",
+      "business_rule": "The system's objectArrayGrouping for licenses requires BOTH stateLicenseNumber AND stateLicenseIssuingState to create a complete license record. When the state is in the header, the AI must extract it and populate stateLicenseIssuingState. Without this, license state = null in the system.",
+      "system_requirement": "REQUIRED \u2014 without stateLicenseIssuingState, the license array object has state=null. System stores incomplete license data. Cannot do state-board validation.",
+      "examples": [
+        "DC LICENSE NUMBER \u2192 stateLicenseNumber + derive stateLicenseIssuingState='DC'",
+        "MD DEA NUMBER \u2192 practitionerDea + derive practitionerDeaState='MD'",
+        "VA CDS EXPIRATION \u2192 practitionerControlledSubstanceExpirationDate + derive practitionerControlledSubstanceState='VA'",
+        "TX LICENSE STATE \u2192 stateLicenseIssuingState (this is an explicit state column, no extraction needed)",
+        "LICENSE NUMBER 1 + LICENSE STATE 1 \u2192 stateLicenseNumber + stateLicenseIssuingState (separate columns, no extraction needed)"
+      ],
+      "python_code": "def state_prefix_extraction(df: pd.DataFrame) -> pd.DataFrame:\n    \"\"\"Detect columns with state prefix (e.g., 'DC LICENSE NUMBER') and derive state columns.\n\n    For each column header matching [STATE][SPACE][LICENSE|DEA|CDS]:\n    - Renames column to the appropriate schema field name (stateLicenseNumber, etc.)\n    - Creates a new column with stateLicenseIssuingState / practitionerDeaState / practitionerControlledSubstanceState\n      filled with the detected state abbreviation for all rows.\n\n    The system's objectArrayGrouping requires both number AND state fields to create\n    complete license/DEA/CDS array objects.\n    \"\"\"\n    import re\n\n    STATE_PATTERN = re.compile(\n        r\"^([A-Z]{2})\\s+(LICENSE|DEA|CDS|CONTROLLED\\s+SUBSTANCE)\\s*(NUMBER|NUM|#|EXPIR\\w*|EXP|EXEMPT|WAIVER)?\",\n        re.I\n    )\n    LICENSE_FIELD_MAP = {\n        \"LICENSE\": {None: \"stateLicenseNumber\", \"expir\": \"stateLicenseExpirationDate\",\n                    \"exp\": \"stateLicenseExpirationDate\", \"type\": \"stateLicenseType\"},\n        \"DEA\": {None: \"practitionerDea\", \"expir\": \"practitionerDeaExpirationDate\",\n                \"exp\": \"practitionerDeaExpirationDate\", \"exempt\": \"practitionerDeaExempt\",\n                \"waiver\": \"practitionerDeaWaiver\"},\n        \"CDS\": {None: \"practitionerControlledSubstanceNumber\",\n                \"expir\": \"practitionerControlledSubstanceExpirationDate\",\n                \"exp\": \"practitionerControlledSubstanceExpirationDate\",\n                \"exempt\": \"practitionerControlledSubstanceNumberExempt\",\n                \"waiver\": \"practitionerControlledSubstanceNumberWaiver\"},\n    }\n    STATE_FIELD_MAP = {\n        \"LICENSE\": \"stateLicenseIssuingState\",\n        \"DEA\": \"practitionerDeaState\",\n        \"CDS\": \"practitionerControlledSubstanceState\",\n    }\n\n    df = df.copy()\n    derived_state_cols = {}  # state_field_name \u2192 state_value (for columns we'll add)\n\n    for col in list(df.columns):\n        m = STATE_PATTERN.match(col.strip())\n        if not m:\n            continue\n\n        state = m.group(1).upper()\n        cred_type = m.group(2).upper().replace(\" \", \"\")\n        suffix = (m.group(3) or \"\").lower()[:5]\n\n        # Normalize cred_type\n        if \"CONTROLLED\" in cred_type or cred_type == \"CDS\":\n            cred_type = \"CDS\"\n        elif cred_type == \"DEA\":\n            cred_type = \"DEA\"\n        else:\n            cred_type = \"LICENSE\"\n\n        # Find target schema field\n        field_map = LICENSE_FIELD_MAP.get(cred_type, {})\n        target_field = None\n        for key, field in field_map.items():\n            if key is None and not suffix:\n                target_field = field\n            elif key and suffix and key in suffix:\n                target_field = field\n        if not target_field:\n            target_field = field_map.get(None, col)\n\n        # Rename column to target field\n        if col != target_field and target_field not in df.columns:\n            df.rename(columns={col: target_field}, inplace=True)\n\n        # Record that we need to derive the state column\n        state_field = STATE_FIELD_MAP.get(cred_type, \"stateLicenseIssuingState\")\n        if state_field not in df.columns:\n            derived_state_cols[state_field] = state\n\n    # Add derived state columns (fill all rows with the extracted state)\n    for state_field, state_value in derived_state_cols.items():\n        df[state_field] = state_value\n\n    return df"
+    },
+    {
+      "id": "state_license_matrix_melt",
+      "category": "structural",
+      "scope": "structural",
+      "trigger_type": "structural",
+      "trigger": "Apply ONLY when: file has MANY 2-letter state abbreviations as column HEADERS (e.g., AL, AZ, CA, CO, CT, DC...) with license numbers or boolean values in the cells. This is the state license matrix pattern where a practitioner has one row and licenses for multiple states encoded as separate columns. Detected by: 5+ consecutive column headers that are valid 2-letter US state abbreviations.",
+      "when_to_skip": "File does not have state codes as column headers. File already has stateLicenseNumber + stateLicenseIssuingState as separate columns. Or state codes appear only in data values (not headers).",
+      "applicable_fields": [
+        "stateLicenseNumber (cell value becomes the license number)",
+        "stateLicenseIssuingState (column header becomes the issuing state)"
+      ],
+      "input": "Wide format: columns [NPI, Name, AL, AZ, CA, TX, ...] where AL/AZ/CA/TX contain license numbers",
+      "output": "Long format: multiple rows per practitioner, one per state license. Each row has stateLicenseNumber (the value) + stateLicenseIssuingState (the column header state). Empty/null cells are dropped.",
+      "business_rule": "The system objectArrayGrouping for licenses requires (stateLicenseNumber + stateLicenseIssuingState) pairs. When licenses are in a wide matrix, we must melt to get one pair per row. Without melt, the system sees column headers as field names (not state codes) and cannot build the license array.",
+      "system_requirement": "Required when state matrix pattern detected. Without melt, licenses are lost.",
+      "examples": [
+        "Wide: NPI=1234567890, AL=A1234, AZ=None, CA=C5678 -> Long: row1(stateLicenseNumber=A1234, stateLicenseIssuingState=AL), row2(stateLicenseNumber=C5678, stateLicenseIssuingState=CA)",
+        "Empty/null cells are dropped -- only states where the practitioner has a license are kept"
+      ],
+      "python_code": "def state_license_matrix_melt(df: pd.DataFrame, state_cols: list = None) -> pd.DataFrame:\n    \"\"\"Melt state license matrix (wide) into long format.\n\n    Detects 2-letter state code column headers and melts them into rows.\n    Each non-null cell becomes a stateLicenseNumber row with stateLicenseIssuingState.\n    \"\"\"\n    US_STATES = {\n        \"AL\",\"AK\",\"AZ\",\"AR\",\"CA\",\"CO\",\"CT\",\"DE\",\"FL\",\"GA\",\"HI\",\"ID\",\"IL\",\"IN\",\"IA\",\n        \"KS\",\"KY\",\"LA\",\"ME\",\"MD\",\"MA\",\"MI\",\"MN\",\"MS\",\"MO\",\"MT\",\"NE\",\"NV\",\"NH\",\"NJ\",\n        \"NM\",\"NY\",\"NC\",\"ND\",\"OH\",\"OK\",\"OR\",\"PA\",\"RI\",\"SC\",\"SD\",\"TN\",\"TX\",\"UT\",\"VT\",\n        \"VA\",\"WA\",\"WV\",\"WI\",\"WY\",\"DC\",\"PR\",\"VI\",\"GU\",\"AS\",\"MP\"\n    }\n\n    if state_cols is None:\n        state_cols = [c for c in df.columns if str(c).strip().upper() in US_STATES]\n\n    if not state_cols:\n        return df  # No state matrix columns found\n\n    id_cols = [c for c in df.columns if c not in state_cols]\n\n    melted = df.melt(\n        id_vars=id_cols,\n        value_vars=state_cols,\n        var_name=\"stateLicenseIssuingState\",\n        value_name=\"stateLicenseNumber\"\n    )\n\n    # Drop rows where the practitioner has no license in that state\n    melted = melted.dropna(subset=[\"stateLicenseNumber\"])\n    melted = melted[melted[\"stateLicenseNumber\"].astype(str).str.strip() != \"\"]\n    melted[\"stateLicenseIssuingState\"] = melted[\"stateLicenseIssuingState\"].str.upper()\n\n    return melted.reset_index(drop=True)"
+    }
+  ],
+  "_transform_scopes": {
+    "universal": "Run on ALL files as part of standard pipeline. Always safe to apply.",
+    "conditional": "Run ONLY when the specific trigger condition is detected in data profile.",
+    "structural": "Run ONLY when a specific file structure pattern is detected. Client-specific patterns exist here.",
+    "client_specific": "Do NOT include in universal training \u2014 depends on specific client file format."
+  }
+}

@@ -1,0 +1,5 @@
+tenant_id,client_id,workspace_signature,header_variant,target_field,reason,active
+tenant-a,client-a,,Group Name,groupName,"Client uses legal entity naming for group name",true
+tenant-a,client-a,,Provider Type,practitionerRole,"Client uses PCP/Specialist values indicating role semantics",true
+tenant-a,client-a,,Address in Directory Y/N,includePractitionerLocationInDirectory,"Directory flag is practitioner-location visibility for this client",true
+tenant-b,client-z,,Billing Ph,groupBillingLocationPhone,"Client abbreviation dictionary defines 'Ph' as phone",true

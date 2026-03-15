@@ -1,0 +1,476 @@
+target_field,entity_scope,business_definition,positive_cues,negative_cues,common_confusions,field_type,format,pattern,enum_values,system_required,active
+additionalFacilityAccreditation,facility,Additional Facility Accreditation,additional;facility;accreditation,,,string,,,,False,true
+credentialingContactlastName,facility,Credentialing Contact Last Name,credentialing;contact;last;name,,,string,,,,False,true
+deviceForDeafNumber,facility,Device for deaf number of facility location,device;for;deaf;number,,,string,,,,False,true
+facilityAdditionalSpecialty,facility,Additional specialty of the facility,facility;additional;specialty,,,string,,,,False,true
+facilityAdditionalTaxonomy,facility,Additional taxonomy of the facility,facility;additional;taxonomy,,,string,,,,False,true
+facilityBillingCounty,facility,Billing county for the facility,facility;billing;county,,,string,,,,False,true
+facilityCloseTimeFri,facility,Friday closing time for facility,facility;close;time;friday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityCloseTimeMon,facility,Monday closing time for facility,facility;close;time;monday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityCloseTimeSat,facility,Saturday closing time for facility,facility;close;time;saturday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityCloseTimeSun,facility,Sunday closing time for facility,facility;close;time;sunday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityCloseTimeThu,facility,Thursday closing time for facility,facility;close;time;thursday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityCloseTimeTue,facility,Tuesday closing time for facility,facility;close;time;tuesday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityCloseTimeWed,facility,Wednesday closing time for facility,facility;close;time;wednesday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityContactEmail,facility,Email address of facility contact,facility;contact;email,,,string,email,,,False,true
+facilityContactFirstName,facility,First name of facility contact,facility;contact;first;name,,,string,,,,False,true
+facilityContactLastName,facility,Last name of facility contact,facility;contact;last;name,,,string,,,,False,true
+facilityControlledSubstanceExpirationDate,facility,Controlled Substance Expiration Date,controlled;substance;expiration;date;(yyyy-mm-dd),,,string,date,,,False,true
+facilityControlledSubstanceNumber,facility,Controlled Substance Number,controlled;substance;number,,,string,,,,False,true
+facilityControlledSubstanceState,facility,Controlled Substance Issuing State,controlled;substance;state,,,string,,,,False,true
+facilityDba,facility,Doing Business As name for facility,facility;dba,,,string,,,,False,true
+facilityDea,facility,Drug Enforcement Administration number,dea,,,string,,"^[A-Z][A-Z9]\d{7,8}$",,False,true
+facilityDeaExpirationDate,facility,DEA Expiration Date,dea;expiration;date;(yyyy-mm-dd),,,string,date,,,False,true
+facilityEffectiveDate,facility,Effective date for the facility,facility;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+facilityLegalBusinessName,facility,Legal business name of the facility,facility;legal;business;name,,,string,,,,False,true
+facilityLocationAccreditationExpiryDate,facility,Expiry date of the accreditation for facility location,facility;location;accreditation;expiry;date;(yyyy-mm-dd),,,string,date,,,False,true
+facilityLocationAccreditationName,facility,Name of the accreditation for facility location,facility;location;accreditation;name,,,string,,,,False,true
+facilityLocationAdditionalPracticeLimitation,facility,Additional practice limitation for the facility location,facility;location;additional;practice;limitation,,,string,,,,False,true
+facilityLocationAdditionalService,facility,Additional service for the facility location,facility;location;additional;service,,,string,,,,False,true
+facilityLocationAddressLine1,facility,Address line 1 of facility location,facility;location;address;line,,,string,,,,False,true
+facilityLocationAddressLine2,facility,Address line 2 of facility location,facility;location;address;line,,,string,,,,False,true
+facilityLocationAfterHoursPhone,facility,After hours phone number of facility location,facility;location;after;hours;phone,,facilityLocationAfterHoursFax,string,,,,False,true
+facilityLocationAppointmentPhone,facility,Appointment phone number of facility location,facility;location;appointment;phone,,facilityLocationAppointmentFax,string,,,,False,true
+facilityLocationCity,facility,City of facility location,facility;location;city,,,string,,,,False,true
+facilityLocationCounty,facility,County of facility location,facility;location;county,,,string,,,,False,true
+facilityLocationEmail,facility,Email of facility location,facility;location;email,,,string,,,,False,true
+facilityLocationFax,facility,Fax number of facility location,facility;location;fax,,facilityLocationPhone,string,,,,False,true
+facilityLocationGenderAccepted,facility,Gender accepted at the location,gender;accepted,,,string,,,Both|Male|Female,False,true
+facilityLocationLatitude,facility,Latitude of facility location,facility;location;latitude,,,string,,,,False,true
+facilityLocationLongitude,facility,Longitude of facility location,facility;location;longitude,,,string,,,,False,true
+facilityLocationName,facility,Name of the facility location,facility;location;name,,,string,,,,False,true
+facilityLocationNpi,facility,National Provider Identifier for facility location. This is a unique type 2 NPI where each address can have more than 1 NPI. The multiple NPI can be added via multiple rows.,facility;location;npi,,,string,,^\d{10}$,,False,true
+facilityLocationPhone,facility,Phone number of facility location,facility;location;phone,,facilityLocationFax,string,,,,False,true
+facilityLocationPrimaryService,facility,Primary service for the facility location,facility;location;primary;service,,,string,,,,False,true
+facilityLocationProviderFax,facility,Provider fax number of facility location,facility;location;provider;fax,,facilityLocationProviderPhone,string,,,,False,true
+facilityLocationServiceFax,facility,Service fax number for facility location,facility;location;service;fax,,facilityLocationServicePhone,string,,,,False,true
+facilityLocationServicePhone,facility,Service phone number for facility location,facility;location;service;phone,,facilityLocationServiceFax,string,,,,False,true
+facilityLocationState,facility,State of facility location,facility;location;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+facilityLocationType,facility,"Type of the facility location (e.g., Clinic, Hospital, Office)",facility;location;type,,,string,,,PRI|PRA,False,true
+facilityLocationWebsite,facility,Website URL of the facility location,facility;location;website,,,string,,,,False,true
+facilityLocationZip,facility,Zip code of facility location,facility;location;zip,,,string,,,,False,true
+facilityMailingAddressLine1,facility,Address line 1 of facility mailing address,facility;mailing;address;line,,,string,,,,False,true
+facilityMailingAddressLine2,facility,Address line 2 of facility mailing address,facility;mailing;address;line,,,string,,,,False,true
+facilityMailingCity,facility,City of facility mailing address,facility;mailing;city,,,string,,,,False,true
+facilityMailingCounty,facility,County of facility mailing address,facility;mailing;county,,,string,,,,False,true
+facilityMailingFax,facility,Fax number for facility mailing address,facility;mailing;fax,,facilityMailingPhone,string,,,,False,true
+facilityMailingPhoneNumber,facility,Phone number for facility mailing address,facility;mailing;phone;number,,facilityMailingFaxNumber,string,,,,False,true
+facilityMailingState,facility,State of facility mailing address,facility;mailing;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+facilityMailingZip,facility,Zip code of facility mailing address,facility;mailing;zip,,,string,,^\d{5}(-\d{4})?$,,False,true
+facilityMalpracticeAggregateCoverageAmount,facility,Malpractice aggregate coverage amount,facility;malpractice;aggregate;coverage;amount,,,string,,,,False,true
+facilityMalpracticeCarrierName,facility,Malpractice carrier name,facility;malpractice;carrier;name,,,string,,,,False,true
+facilityMalpracticeEffectiveDate,facility,Malpractice effective date,facility;malpractice;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+facilityMalpracticeExpiryDate,facility,Malpractice expiry date,facility;malpractice;expiry;date;(yyyy-mm-dd),,,string,date,,,False,true
+facilityMalpracticeOccuranceCoverageAmount,facility,Malpractice occurrence coverage amount,facility;malpractice;occurrence;coverage;amount,,,string,,,,False,true
+facilityName,facility,Name of facility,facility;name,,,string,,,,True,true
+facilityNetworkTerminationDate,facility,Network termination date for facility,facility;network;termination;date;(yyyy-mm-dd),,,string,date,,,False,true
+facilityOpen24Hours,facility,Whether facility is open 24 hours,facility;open;hours,,,string,,,Y|N,False,true
+facilityOpenTimeFri,facility,Friday opening time for facility,facility;open;time;friday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityOpenTimeMon,facility,Monday opening time for facility,facility;open;time;monday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityOpenTimeSat,facility,Saturday opening time for facility,facility;open;time;saturday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityOpenTimeSun,facility,Sunday opening time for facility,facility;open;time;sunday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityOpenTimeThu,facility,Thursday opening time for facility,facility;open;time;thursday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityOpenTimeTue,facility,Tuesday opening time for facility,facility;open;time;tuesday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityOpenTimeWed,facility,Wednesday opening time for facility,facility;open;time;wednesday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+facilityPaymentType,facility,Payment type for facility,facility;payment;type,,,string,,,,False,true
+facilityPrimarySpecialty,facility,Primary specialty name of the facility,facility;primary;specialty;name,,,string,,,,False,true
+facilityPrimaryTaxonomy,facility,Primary taxonomy of the facility,facility;primary;taxonomy,,,string,,,,False,true
+facilityReimbursementCode,facility,Reimbursement code for facility,facility;reimbursement;code,,,string,,,,False,true
+facilityRemittanceAddress1,facility,Address line 1 of facility remittance address,facility;remittance;address;line,,,string,,,,False,true
+facilityRemittanceAddress2,facility,Address line 2 of facility remittance address,facility;remittance;address;line,,,string,,,,False,true
+facilityRemittanceCity,facility,City of facility remittance address,facility;remittance;city,,,string,,,,False,true
+facilityRemittanceLatitude,facility,Latitude of facility remittance location,facility;remittance;latitude,,,string,,,,False,true
+facilityRemittanceLongitude,facility,Longitude of facility remittance location,facility;remittance;longitude,,,string,,,,False,true
+facilityRemittanceState,facility,State of facility remittance address,facility;remittance;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+facilityRemittanceType,facility,Remittance type for facility,facility;remittance;type,,,string,,,,False,true
+facilityRemittanceZip,facility,Zip code of facility remittance address,facility;remittance;zip,,,string,,,,False,true
+facilityServiceLocationLatitude,facility,Latitude of facility service location,facility;service;location;latitude,,,string,,,,False,true
+facilityServiceLocationLongitude,facility,Longitude of facility service location,facility;service;location;longitude,,,string,,,,False,true
+facilityStatusInNetwork,facility,Status of the facility in the network,facility;status;network,,,string,,,Active|Inactive,False,true
+facilityTaxEntityChangeDate,facility,Tax entity change date for the facility,facility;tax;entity;change;date;(yyyy-mm-dd),,,string,date,,,False,true
+facilityTermDate,facility,Termination date for the facility,facility;termination;date;(yyyy-mm-dd),,,string,date,,,False,true
+facilityType,facility,Type of facility,facility;type,,,string,,,Ambulatory Surgical Center|Assisted Living Facility|Behavioral Health (Outpatient)|Community Mental Health Center|Comprehensive Outpatient Rehabilitation Facility (CORF)|Custodial Care|Emergency Depar,False,true
+facilityW9AddressLine1,facility,Address line 1 of facility W9 address,facility;address;line,,,string,,,,False,true
+facilityW9AddressLine2,facility,Address line 2 of facility W9 address,facility;address;line,,,string,,,,False,true
+facilityW9City,facility,City of facility W9 address,facility;city,,,string,,,,False,true
+facilityW9County,facility,County of facility W9 address,facility;county,,,string,,,,False,true
+facilityW9Fax,facility,Fax number for facility W9 address,facility;fax,,facilityW9Phone,string,,,,False,true
+facilityW9PhoneNumber,facility,Phone number for facility W9 address,facility;phone;number,,facilityW9FaxNumber,string,,,,False,true
+facilityW9State,facility,State of facility W9 address,facility;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+facilityW9Zip,facility,Zip code of facility W9 address,facility;zip,,,string,,^\d{5}(-\d{4})?$,,False,true
+groupLocationTerminationDate,facility,Termination date for group location,group;location;termination;date;(yyyy-mm-dd),,,string,date,,,False,true
+includeFacilityLocationInDirectory,facility,Whether to include the facility location in directories,include;facility;location;directory,,,string,,,Y|N|Yes|No,False,true
+isFacilityFederallyQualifiedHealthCenter,facility,Whether the facility is a federally qualified health center,facility;federally;qualified;health;center,,,string,,,,False,true
+locationAccessibility,facility,Accessibility of the location,location;accessibility,,,string,,,,False,true
+locationAdaAccessibility,facility,ADA accessibility features of the location,location;ada;accessibility,,,string,,,,False,true
+locationAdditionalLanguage,facility,Additional language of the facility,facility;additional;language,,,string,,,Abkhaz|Afar|Afrikaans|Akan|Albanian|Amharic|Arabic|Aragonese|Armenian|Assamese|Avaric|Avestan|Aymara|Azerbaijani|Bambara|Bashkir|Basque|Belarusian|Bengali - Bangla|Bihari|Bislama|Bosnian|Breton|Bulgar,False,true
+locationAdditionalPracticeLimitation,facility,Additional practice limitation for the location,location;additional;practice;limitation,,,string,,,,False,true
+locationAdditionalService,facility,Additional service of the location,location;additional;service,,,string,,,,False,true
+locationAmendmentEffectiveDate,facility,Effective date for the location amendment,location;amendment;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+locationChangeEffectiveDate,facility,Date when location was/will be changed,location;change;effective;date,,,string,date,,,False,true
+locationDeviceForDeafNumber,facility,Alias to match JSON mapping for device for deaf number,device;for;deaf;number;(alias),,,string,,,,False,true
+locationEffectiveDate,facility,Date when location becomes effective,location;effective;date,,,string,date,,,False,true
+locationPrimaryLanguage,facility,Primary language of the facility,facility;primary;language,,,string,,,Abkhaz|Afar|Afrikaans|Akan|Albanian|Amharic|Arabic|Aragonese|Armenian|Assamese|Avaric|Avestan|Aymara|Azerbaijani|Bambara|Bashkir|Basque|Belarusian|Bengali - Bangla|Bihari|Bislama|Bosnian|Breton|Bulgar,False,true
+locationPrimaryPracticeLimitation,facility,Primary practice limitation for the location,location;primary;practice;limitation,,,string,,,,False,true
+locationPrimaryService,facility,Primary service of the location,location;primary;service,,,string,,,,False,true
+locationTermDate,facility,Location termination date,location;termination;date;(yyyy-mm-dd),,,string,date,,,False,true
+locationTerminationDate,facility,Date when location was/will be terminated,location;termination;date,,,string,date,,,False,true
+locationTextTelephonyNumber,facility,Alias to match JSON mapping for TTY number,text;telephony;number;(alias),,,string,,,,False,true
+networkGroupTerminationDate,facility,Group termination date for network,network;group;termination;date;(yyyy-mm-dd),,,string,date,,,False,true
+networkTermDate,facility,Network termination date,network;termination;date;(yyyy-mm-dd),,,string,date,,,False,true
+primaryFacilityAccreditation,facility,Primary Facility Accreditation,primary;facility;accreditation,,,string,,,,False,true
+suppressSiteFromDirectory,facility,Whether to hide the site from directories,suppress;site;from;directory,,,string,,,Y|N,False,true
+textTelephonyNumber,facility,Text telephony number of facility location,text;telephony;number,,,string,,,,False,true
+udfAppliesAllPractitioners,facility,UDF field indicating if this applies to all practitioners,[udf];applies;all;practitioners,,,string,,,,False,true
+udfFacilityEffectiveDate,facility,Effective date for the facility,[udf];facility;effective;date,,,string,,,,False,true
+udfFacilityEmployed,facility,UDF field indicating if facility is employed,[udf];facility;employed,,,string,,,,False,true
+udfFacilityRecordId,facility,Facility record id,[udf];facility;record,,,string,,,,False,true
+udfGroupTypeIdentifier,facility,UDF field for group type identifier,[udf];group;type;identifier,,,string,,,,False,true
+acceptingMaximumPatientAge,practitioner,Maximum patient age accepted,accepting;maximum;patient;age,,acceptingMinimumPatientAge,string,,,,False,true
+acceptingMinimumPatientAge,practitioner,Minimum patient age accepted,accepting;minimum;patient;age,,acceptingMaximumPatientAge,string,,,,False,true
+acceptsNewPatients,practitioner,"Whether provider accepts new patients (Accepting New, Closed, Existing Patients Only)","accepts;new;patients;(accepting;new,;closed,;existing;patients;only)",,,string,,,Accepting New|Closed|Existing Patients Only|Telemedicine|Urgent Care Only,False,true
+actionType,practitioner,Type of action to be performed,action;type,,,string,,,Add to Plan|Add to Network|Add to Group|Add Role|Add Specialty|Add Location|Add Enrollment|Add Contract|Add Termination|Update Information,False,true
+annualFWATrainingCompleted,practitioner,"Whether annual Fraud, Waste, and Abuse training has been completed",annual;fwa;training;completed,,,boolean,,,,False,true
+bedCount,practitioner,Number of beds in facility,bed;count,,,integer,,,,False,true
+billingGroupName,practitioner,Name of the billing group,billing;group;name,,,string,,,,False,true
+cliaCertificateExpirationDate,practitioner,CLIA Certificate Expiration Date,clia;certificate;expiration;date;(yyyy-mm-dd),,,string,date,,,False,true
+cliaCertificateNumber,practitioner,CLIA Certificate Number,clia;certificate;number,,,string,,,,False,true
+contractEffectiveDate,practitioner,Effective date for the contract,contract;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+contractName,practitioner,Name of the contract,contract;name,,,string,,,,False,true
+contractStatus,practitioner,Status of the contract,contract;status,,,string,,,Active|Terminated|Pending,False,true
+contracteeCity,practitioner,City of contractee,city,,,string,,,,False,true
+contracteeLocationAccessibility,practitioner,Indicates if location is accessible,accessibility,,,boolean,,,,False,true
+contracteeLocationCountry,practitioner,Country of contractee location,country,,,string,,,,False,true
+contracteeLocationCounty,practitioner,County of contractee location,county,,,string,,,,False,true
+contracteeLocationEffectiveDate,practitioner,Date when location becomes effective,location;effective;date,,,string,date,,,False,true
+contracteeLocationFaxNumber,practitioner,Fax number of contractee location,fax;number,,contracteeLocationPhoneNumber,string,,"^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$",,False,true
+contracteeLocationHandicapAccessibility,practitioner,Indicates if location has handicap accessibility,handicap;accessibility,,,boolean,,,,False,true
+contracteeLocationOfficeHours,practitioner,Office hours of contractee location,office;hours,,,string,,,,False,true
+contracteeLocationPhoneNumber,practitioner,Phone number of contractee location,phone;number,,contracteeLocationFaxNumber,string,,"^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$",,False,true
+contracteeLocationPocEmail,practitioner,Email of point of contact at location,point;contact;email,,,string,email,,,False,true
+contracteeLocationPocName,practitioner,Name of point of contact at location,point;contact;name,,,string,,,,False,true
+contracteeLocationTerminationDate,practitioner,Date when location was/will be terminated,location;termination;date,,,string,date,,,False,true
+contracteeLocationTtyNumber,practitioner,TTY number of contractee location,tty;number,,,string,,"^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$",,False,true
+contracteeLocationType,practitioner,Type of contractee location,contractee;location;type,,,string,,,,False,true
+contracteeState,practitioner,State of contractee,state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+contracteeStreetAddress,practitioner,Street address of contractee,street;address,,,string,,,,False,true
+contracteeZipCode,practitioner,Zip code of contractee,zip;code,,,string,,^\d{5}(\d{4})?$,,False,true
+credentialingAffiliation,practitioner,Provider's credentialing affiliation,credentialing;affiliation,,,string,,,Direct|Delegated,False,true
+credentialingContactEmail,practitioner,Email of credentialing contact,credentialing;contact;email,,,string,email,,,False,true
+credentialingContactFax,practitioner,Fax number of credentialing contact,credentialing;contact;fax,,credentialingContactPhone,string,,,,False,true
+credentialingContactFirstName,practitioner,First name of credentialing contact,credentialing;contact;first;name,,,string,,,,False,true
+credentialingContactLastName,practitioner,Last name of credentialing contact,credentialing;contact;last;name,,,string,,,,False,true
+credentialingContactPhone,practitioner,Phone number of credentialing contact,credentialing;contact;phone,,credentialingContactFax,string,,,,False,true
+credentialingStatus,practitioner,Credentialing status of the practitioner,practitioner;credentialing;status,,,string,,,Pending|Approved|Denied|In Progress|Cred Approved|NOT_STARTED|IN_PROGRESS|OUTREACH_IN_PROGRESS|DATA_MISSING|PSV_COMPLETED|PSV_READY|SENT_TO_COMMITTEE|TABLED|WITHDRAWN_CANCELLED|CRED_DENIED|CRED_APPROV,False,true
+criticalIncidentTrainingCompleted,practitioner,Whether critical incident training has been completed,critical;incident;training;completed,,,boolean,,,,False,true
+culturalCompetencyCompleted,practitioner,Whether cultural competency training has been completed,cultural;competency;training;completed,,,string,,,,False,true
+dateOfBirth,practitioner,Provider's date of birth,date;birth;(yyyy-mm-dd),,,string,date,,,False,true
+delegationStatus,practitioner,Credentialing delegation status of the practitioner,credentialing;delegation;status,,,string,,,Direct|Delegated,False,true
+disclosureQuestion,practitioner,Disclosure question for practitioner,disclosure;question,,,string,,,,False,true
+ecfmgNumber,practitioner,ECFMG (Educational Commission for Foreign Medical Graduates) number,ecfmg;number,,,string,,,,False,true
+educationDegree,practitioner,Degree obtained from education,education;degree,,,string,,,AA|ABA|ACNP|ACU|ADC|APN|APN-CNP|APRN|AT|ATR|AUD|BCaBA|BCBA|BSW|BT|CBHT|CDS|CNS|CP|CphT|CRNA|CSP|CSW|DC|DDS|DMD|DO|DPM|DT|EMT|GC|HOS|IBCLC|LBHC|LLMSW|LMFT|LMSW|LN|LP|LPC|LPCC|LPN|LPT|LVN|MA|MD|MFT|MT|M,False,true
+educationFromDate,practitioner,Start date of education,education;from;date;(yyyy-mm-dd),,educationToDate,string,date,,,False,true
+educationSchoolName,practitioner,Name of the educational institution,education;school;name,,,string,,,,False,true
+educationToDate,practitioner,End date of education,education;date;(yyyy-mm-dd),,educationFromDate,string,date,,,False,true
+educationType,practitioner,Type of education,education;type,,,string,,,,False,true
+enrollmentDetail,practitioner,Details about provider enrollment,enrollment;detail,,,string,,,,False,true
+epsdtDate,practitioner,Date of EPSDT certification,epsdt;date;(yyyy-mm-dd),,,string,date,,,False,true
+epsdtState,practitioner,State for EPSDT certification,epsdt;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+epsdtStatus,practitioner,"Early and Periodic Screening, Diagnostic and Treatment status",epsdt;status,,,string,,,Certified|Not Certified,False,true
+ethnicity,practitioner,Provider's ethnicity,ethnicity,,,string,,,White|American Indian or Alaska Native|Hispanic and Latino Americans|Pacific Islander|Asian|Black Or African American|Hawaiian|Mixed Ethnicity|Other,False,true
+facilityExternalId,practitioner,External identifier for facility,facility;external,,,string,,,,False,true
+facilityLocationExternalId,practitioner,External identifier for facility location,facility;location;external,,,string,,,,False,true
+facilityNpi,practitioner,National Provider Identifier for facility,facility;npi,,,string,,^\d{10}$,,False,true
+facilityRemittanceName,practitioner,Name for facility remittance address,facility;remittance;name,,,string,,,,False,true
+facilityTin,practitioner,Tax Identification Number for facility,facility;tin,,,string,,,,False,true
+fellowshipFromDate,practitioner,Start date of fellowship,fellowship;from;date;(yyyy-mm-dd),,fellowshipToDate,string,date,,,False,true
+fellowshipSchoolName,practitioner,Name of the fellowship institution,fellowship;school;name,,,string,,,,False,true
+fellowshipSpecialty,practitioner,Specialty of fellowship,fellowship;specialty,,,string,,,,False,true
+fellowshipToDate,practitioner,End date of fellowship,fellowship;date;(yyyy-mm-dd),,fellowshipFromDate,string,date,,,False,true
+firstName,practitioner,Provider's first name,first;name,,,string,,^[A-Za-z\-\'\s]+$,,False,true
+gender,practitioner,Practitioner's gender,gender,,,string,,,M|F|U|Unknown|Not Listed,False,true
+groupBillingAddress1,practitioner,Billing Address Line 1 of Group,billing;address;line,,,string,,,,False,true
+groupBillingAddress2,practitioner,Billing Address Line 2 of Group,billing;address;line,,,string,,,,False,true
+groupBillingCity,practitioner,Billing City of Group,billing;city,,,string,,,,False,true
+groupBillingCounty,practitioner,Billing County of Group,billing;county,,,string,,,,False,true
+groupBillingLatitude,practitioner,Latitude of group billing location,group;billing;latitude,,,string,,,,False,true
+groupBillingLocationFax,practitioner,Billing Location Fax of Group,billing;location;fax,,groupBillingLocationPhone,string,,,,False,true
+groupBillingLocationPhone,practitioner,Billing Location Phone of Group,billing;location;phone,,groupBillingLocationFax,string,,,,False,true
+groupBillingLocationZipcode,practitioner,Billing Location Zipcode of Group,billing;location;zipcode,,,string,,^\d+$,,False,true
+groupBillingLongitude,practitioner,Longitude of group billing location,group;billing;longitude,,,string,,,,False,true
+groupBillingState,practitioner,Billing State of Group,billing;state,,,string,,,,False,true
+groupContractEffectiveDate,practitioner,Date when group contract becomes effective,group;contract;effective;date,,,string,date,,,False,true
+groupContractTermDate,practitioner,Termination date of group contract,group;contract;term;date,,,string,date,,,False,true
+groupContractingStatus,practitioner,Current contracting status of the group,group;contracting;status,,,string,,,Active|Terminated,False,true
+groupDba,practitioner,Doing Business As name for the group,group;dba,,,string,,,,False,true
+groupDea,practitioner,Drug Enforcement Administration number for the group,group;dea,,,string,,"^[A-Z][A-Z9]\d{7,8}$",,False,true
+groupExternalId,practitioner,External identifier for group,group;external,,,string,,,,False,true
+groupLegalBusinessName,practitioner,Legal business name of the medical group,group;legal;business;name,,,string,,,,False,true
+groupLocationAddressLine1,practitioner,Address line 1 of the practice location,group;location;address;line,,,string,,,,False,true
+groupLocationAddressLine2,practitioner,Address line 2 of the practice location,group;location;address;line,,,string,,,,False,true
+groupLocationCity,practitioner,City of the practice location,group;location;city,,,string,,,,False,true
+groupLocationContractingStatus,practitioner,Contracting status of the group location,group;location;contracting;status,,,string,,,Active|Terminated,False,true
+groupLocationCountry,practitioner,Country of the practice location,group;location;country,,,string,,,,False,true
+groupLocationExternalId,practitioner,External identifier for group location,group;location;external,,,string,,,,False,true
+groupLocationState,practitioner,State of the practice location,group;location;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+groupLocationZip,practitioner,Zip code of the practice location,group;location;zip,,,string,,,,False,true
+groupName,practitioner,Name of the medical group,group;name,,,string,,,,False,true
+groupNpi,practitioner,National Provider Identifier for the group billing,group;npi,,,string,,^\d{10}$,,False,true
+groupOutreachAddressCity,practitioner,City of group outreach location,group;outreach;address;city,,,string,,,,False,true
+groupOutreachAddressCounty,practitioner,County of group outreach location,group;outreach;address;county,,,string,,,,False,true
+groupOutreachAddressFax,practitioner,Fax number of group outreach location,group;outreach;address;fax,,groupOutreachAddressPhone,string,,,,False,true
+groupOutreachAddressLine1,practitioner,Address line 1 of group outreach location,group;outreach;address;line,,,string,,,,False,true
+groupOutreachAddressLine2,practitioner,Address line 2 of group outreach location,group;outreach;address;line,,,string,,,,False,true
+groupOutreachAddressPhone,practitioner,Phone number of group outreach location,group;outreach;address;phone,,groupOutreachAddressFax,string,,,,False,true
+groupOutreachAddressState,practitioner,State of group outreach location,group;outreach;address;state,,,string,,,,False,true
+groupOutreachAddressZipCode,practitioner,Zip code of group outreach location,group;outreach;address;zip;code,,,string,,,,False,true
+groupPracticeLocationAddressLine1,practitioner,Address line 1 of group practice location,group;practice;location;address;line,,,string,,,,False,true
+groupPracticeLocationAddressLine2,practitioner,Address line 2 of group practice location,group;practice;location;address;line,,,string,,,,False,true
+groupPracticeLocationAppointmentPhone,practitioner,Appointment phone number of group practice location,group;practice;location;appointment;phone,,groupPracticeLocationAppointmentFax,string,,,,False,true
+groupPracticeLocationCity,practitioner,City of group practice location,group;practice;location;city,,,string,,,,False,true
+groupPracticeLocationCounty,practitioner,County of group practice location,group;practice;location;county,,,string,,,,False,true
+groupPracticeLocationFax,practitioner,Fax number of group practice location,group;practice;location;fax,,groupPracticeLocationPhone,string,,,,False,true
+groupPracticeLocationLatitude,practitioner,Latitude of group practice location,group;practice;location;latitude,,,string,,,,False,true
+groupPracticeLocationLongitude,practitioner,Longitude of group practice location,group;practice;location;longitude,,,string,,,,False,true
+groupPracticeLocationName,practitioner,Name of the group practice location,group;practice;location;name,,,string,,,,False,true
+groupPracticeLocationNpi,practitioner,National Provider Identifier for group practice location,group;practice;location;npi,,,string,,^\d{10}$,,False,true
+groupPracticeLocationPhone,practitioner,Phone number of group practice location,group;practice;location;phone,,groupPracticeLocationFax,string,,,,False,true
+groupPracticeLocationPracticeLimitation,practitioner,Practice limitation for group practice location,group;practice;location;practice;limitation,,,string,,,,False,true
+groupPracticeLocationPrimaryPracticeLimitation,practitioner,Primary practice limitation for group practice location,group;practice;location;primary;practice;limitation,,,string,,,,False,true
+groupPracticeLocationState,practitioner,State of group practice location,group;practice;location;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+groupPracticeLocationZip,practitioner,Zip code of group practice location,group;practice;location;zip,,,string,,,,False,true
+groupPractitionerEffectiveDate,practitioner,Effective date for group practitioner,group;practitioner;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+groupPractitionerEndDate,practitioner,End date for group practitioner,group;practitioner;end;date;(yyyy-mm-dd),,,string,date,,,False,true
+groupPractitionerLocationType,practitioner,Type of group location,group;location;type,,,string,,,PRI|PRA,False,true
+groupPractitionerNetworkEffectiveDate,practitioner,Effective date for group practitioner in network,group;practitioner;network;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+groupPractitionerNetworkRoleChangeEffectiveDate,practitioner,Group Practitioner Network Role Change Effective Date,group;practitioner;network;role;change;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+groupPractitionerNetworkRoleEffectiveDate,practitioner,Group Practitioner Network Role Effective Date,group;practitioner;network;role;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+groupPractitionerNetworkRoleTerminationDate,practitioner,Group Practitioner Network Role Termination Date,group;practitioner;network;role;termination;date;(yyyy-mm-dd),,,string,date,,,False,true
+groupPractitionerNetworkTermEffectiveDate,practitioner,Termination effective date for group practitioner in network,group;practitioner;network;termination;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+groupPractitionerNetworkTerminationDate,practitioner,Group Practitioner Network Termination Date,practitioner;term;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+groupRemittanceAddressLine1,practitioner,Address line 1 of group remittance location,group;remittance;address;line,,,string,,,,False,true
+groupRemittanceAddressLine2,practitioner,Address line 2 of group remittance location,group;remittance;address;line,,,string,,,,False,true
+groupRemittanceCity,practitioner,City of group remittance location,group;remittance;city,,,string,,,,False,true
+groupRemittanceLatitude,practitioner,Latitude of group remittance location,group;remittance;latitude,,,string,,,,False,true
+groupRemittanceLongitude,practitioner,Longitude of group remittance location,group;remittance;longitude,,,string,,,,False,true
+groupRemittancePhone,practitioner,Phone number of group remittance location,group;remittance;phone,,groupRemittanceFax,string,,,,False,true
+groupRemittanceState,practitioner,State of group remittance location,group;remittance;state,,,string,,,,False,true
+groupRemittanceZip,practitioner,Zip code of group remittance location,group;remittance;zip,,,string,,,,False,true
+groupSpecialtyTaxonomy,practitioner,Specialty taxonomy for group,group;specialty;taxonomy,,,string,,,,False,true
+groupTerminationReason,practitioner,Reason provided during termination of a practitioner from group,practitioner;termination;reason;from;group,,,string,,,,False,true
+groupTin,practitioner,Tax Identification Number for the group,group;tax;identification;number,,,string,,^\w{2}-?\d{7}$,,False,true
+includeGroupInDirectory,practitioner,Include group in directory,include;group;directory,,,boolean,,,,False,true
+includePractitionerLocationInDirectory,practitioner,Whether to include practitioner location in directory,include;practitioner;location;directory,,,string,,,,False,true
+includePractitionerLocationInNetworkDirectory,practitioner,Whether to include practitioner location in network directory,include;practitioner;location;network;directory,,,string,,,Y|N,False,true
+initialCredentialingDate,practitioner,Date of the initial credentialing,initial;credentialing;date;(yyyy-mm-dd),,,string,date,,,False,true
+internshipFromDate,practitioner,Start date of internship,internship;from;date;(yyyy-mm-dd),,internshipToDate,string,date,,,False,true
+internshipSchoolName,practitioner,Name of the internship institution,internship;school;name,,,string,,,,False,true
+internshipSpecialty,practitioner,Specialty of internship,internship;specialty,,,string,,,,False,true
+internshipToDate,practitioner,End date of internship,internship;date;(yyyy-mm-dd),,internshipFromDate,string,date,,,False,true
+isGroupPrimaryTIN,practitioner,Is Group Primary TIN,group;primary;tin,,,boolean,,,,False,true
+isHospitalBased,practitioner,Indicates if provider is hospital-based,hospital;based,,,boolean,,,,False,true
+jurisdictionOfInterest,practitioner,Jurisdiction of interest for the practitioner,jurisdiction;interest,,,string,,,,False,true
+lastCredentialingDate,practitioner,Date of the last credentialing,last;credentialing;date;(yyyy-mm-dd),,,string,date,,,False,true
+lastName,practitioner,Provider's last name,last;name,,,string,,^[A-Za-z\-\'\s]+$,,False,true
+lastOutreachDate,practitioner,Date of last outreach to provider,last;outreach;date,,,string,date,,,False,true
+lineOfBusiness,practitioner,Line of business for the practitioner,line;business,,,string,,,,False,true
+locationCallCoveragePhone,practitioner,Call coverage phone for location,location;call;coverage;phone,,locationCallCoverageFax,string,,,,False,true
+locationExternalId,practitioner,External identifier for location,location;external,,,string,,,,False,true
+locationFipsCode,practitioner,FIPS code for practitioner location,location;fips;code,,,string,,,,False,true
+locationHandicapAccessible,practitioner,Whether location is handicap accessible,location;handicap;accessible,,,string,,,,False,true
+locationNetworkChangeEffectiveDate,practitioner,Change effective date for location in network,location;network;change;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+locationNetworkEffectiveDate,practitioner,Effective date for location in network,location;network;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+locationTerminationReason,practitioner,Reason provided during termination of a practitioner from location,practitioner;termination;reason;from;location,,,string,,,,False,true
+locationUpdateDate,practitioner,Date when location information was updated,location;update;date;(yyyy-mm-dd),,,string,date,,,False,true
+maximumEnrolleesCapacity,practitioner,Maximum enrollees capacity,maximum;enrollees;capacity,,,string,,,,False,true
+medicaidId,practitioner,Practitioner's Medicaid identifier,medicaid,,,string,,"^[a-zA-Z0-9]{5,20}$",,False,true
+medicaidState,practitioner,State of Medicaid ID,medicaid;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+medicareId,practitioner,Practitioner's Medicare identifier,medicare,,,string,,"^[a-zA-Z0-9]{5,20}$",,False,true
+medicareState,practitioner,State of Medicare ID,medicare;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+middleName,practitioner,Provider's middle name,middle;name,,,string,,,,False,true
+minimumEnrolleesCapacity,practitioner,Minimum enrollees capacity,minimum;enrollees;capacity,,,string,,,,False,true
+modelOfCareTrainingCompleted,practitioner,Whether model of care training has been completed,model;care;training;completed,,,boolean,,,,False,true
+networkEffectiveDate,practitioner,Effective Date of the network,network;effective;date,,,string,date,,,False,true
+networkId,practitioner,Identifier for the network,network,,,string,,,,False,true
+networkName,practitioner,Name of the network,network;name,,,string,,,,False,true
+networkNpi,practitioner,National Provider Identifier for network,network;npi,,,string,,^\d{10}$,,False,true
+networkPractitionerCredentialedDate,practitioner,Date when practitioner was credentialed in network,network;practitioner;credentialed;date;(yyyy-mm-dd),,,string,date,,,False,true
+networkTermInformedDate,practitioner,Date when network termination was informed,network;termination;informed;date;(yyyy-mm-dd),,,string,date,,,False,true
+networkTerminationReason,practitioner,Reason provided during termination of a practitioner from network,practitioner;termination;reason;from;network,,,string,,,,False,true
+networkType,practitioner,Type of network,network;type,,,string,,,PPO|HMO|POS|EPO|HSA|HDHP|Other,False,true
+nextCredentialingDate,practitioner,Date of the next credentialing due,next;credentialing;date;(yyyy-mm-dd),,,string,date,,,False,true
+officeHours,practitioner,Office hours of the provider,office;hours,,,array,,,,False,true
+panelStatus,practitioner,Panel status of the practitioner location,panel;status,,,string,,,Open Panel|Closed Panel|No Panel,False,true
+payorName,practitioner,Name of the payor,payor;name,,,string,,,,False,true
+pcp,practitioner,Indicates if provider is a Primary Care Physician,pcp,,,boolean,,,,False,true
+pdmTransactionType,practitioner,Type of PDM transaction,pdm;transaction;type,,,string,,,Add to Plan|Add to Network|Add to Group|Add Role|Add Specialty|Add Location|Add Enrollment|Add Contract|Terminate from Network|Terminate from Group|Terminate from Location|Update Information,False,true
+pdmTransactionTypeDescription,practitioner,Description of PDM transaction type,pdm;transaction;type;description,,,string,,,,False,true
+pdmTransactionTypeEventDate,practitioner,Event date for PDM transaction type,pdm;transaction;type;event;date,,,string,date,,,False,true
+penultimateCredentialingDate,practitioner,Date of the penultimate credentialing,penultimate;credentialing;date;(yyyy-mm-dd),,,string,date,,,False,true
+planEffectiveDate,practitioner,The date when practitioner got effective with the plan,plan;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+planName,practitioner,Name of the plan,plan;name,,,string,,,,False,true
+practitionerAdditionalHospitalAffiliation,practitioner,Additional Hospital Affiliation,additional;hospital;affiliation,,,string,,,,False,true
+practitionerAdditionalHospitalAffiliationAppointmentDate,practitioner,Additional Hospital Affiliation Appointment Date,additional;hospital;affiliation;appointment;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerAdditionalHospitalAffiliationAppointmentType,practitioner,Additional Hospital Affiliation Appointment Type,additional;hospital;affiliation;appointment;type,,,string,,,,False,true
+practitionerAdditionalLanguage,practitioner,Additional Language spoken by provider,additional;provider;language,,,string,,,,False,true
+practitionerCaqhAttestationDate,practitioner,Council for Affordable Quality Healthcare Attestation Date,caqh;attestation;date,,,string,date,,,False,true
+practitionerCaqhId,practitioner,Council for Affordable Quality Healthcare ID,caqh,,,string,,^[A-Za-z0-9-]*$,,False,true
+practitionerCloseTimeFri,practitioner,Friday closing time for practitioner,practitioner;close;time;friday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerCloseTimeMon,practitioner,Monday closing time for practitioner,practitioner;close;time;monday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerCloseTimeSat,practitioner,Saturday closing time for practitioner,practitioner;close;time;saturday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerCloseTimeSun,practitioner,Sunday closing time for practitioner,practitioner;close;time;sunday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerCloseTimeThu,practitioner,Thursday closing time for practitioner,practitioner;close;time;thursday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerCloseTimeTue,practitioner,Tuesday closing time for practitioner,practitioner;close;time;tuesday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerCloseTimeWed,practitioner,Wednesday closing time for practitioner,practitioner;close;time;wednesday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerControlledSubstanceExpirationDate,practitioner,Controlled Substance Expiration Date,controlled;substance;expiration;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerControlledSubstanceNumber,practitioner,Controlled Substance Number,controlled;substance;number,,,string,,,,False,true
+practitionerControlledSubstanceNumberExempt,practitioner,Whether practitioner is exempt from controlled substance number requirements,practitioner;controlled;substance;number;exempt,,,string,,,,False,true
+practitionerControlledSubstanceNumberExemptState,practitioner,State for controlled substance number exemption,practitioner;controlled;substance;number;exempt;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+practitionerControlledSubstanceNumberWaiver,practitioner,Whether practitioner has controlled substance number waiver,practitioner;controlled;substance;number;waiver,,,string,,,,False,true
+practitionerControlledSubstanceNumberWaiverState,practitioner,State for controlled substance number waiver,practitioner;controlled;substance;number;waiver;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+practitionerControlledSubstanceState,practitioner,Controlled Substance Issuing State,controlled;substance;state,,,string,,,,False,true
+practitionerDea,practitioner,Drug Enforcement Administration number,dea,,,string,,"^[A-Z][A-Z9]\d{7,8}$",,False,true
+practitionerDeaExempt,practitioner,Whether practitioner is exempt from DEA requirements,practitioner;dea;exempt,,,string,,,,False,true
+practitionerDeaExemptState,practitioner,State for DEA exemption,practitioner;dea;exempt;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+practitionerDeaExpirationDate,practitioner,DEA Expiration Date,dea;expiration;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerDeaState,practitioner,State for DEA registration,practitioner;dea;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+practitionerDeaWaiver,practitioner,Whether practitioner has DEA waiver,practitioner;dea;waiver,,,string,,,,False,true
+practitionerDeaWaiverState,practitioner,State for DEA waiver,practitioner;dea;waiver;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+practitionerExternalId,practitioner,External identifier for practitioner,practitioner;external,,,string,,,,False,true
+practitionerHospitalAffiliation,practitioner,Hospital affiliation of the practitioner,practitioner;hospital;affiliation,,,string,,,,False,true
+practitionerHospitalAffiliationAppointmentDate,practitioner,Appointment date for hospital affiliation,practitioner;hospital;affiliation;appointment;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerHospitalAffiliationAppointmentType,practitioner,Appointment type for hospital affiliation,practitioner;hospital;affiliation;appointment;type,,,string,,,,False,true
+practitionerHospitalAffiliationEndDate,practitioner,End date for hospital affiliation,practitioner;hospital;affiliation;end;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerHospitalAffiliationStatus,practitioner,Status for hospital affiliation,practitioner;hospital;affiliation;status,,,string,,,,False,true
+practitionerLanguage,practitioner,Additional language of the practitioner,practitioner;language,,,string,,,Abkhaz|Afar|Afrikaans|Akan|Albanian|Amharic|Arabic|Aragonese|Armenian|Assamese|Avaric|Avestan|Aymara|Azerbaijani|Bambara|Bashkir|Basque|Belarusian|Bengali|Bihari|Bislama|Bosnian|Breton|Bulgarian|Burme,False,true
+practitionerLocationChangeEffectiveDate,practitioner,Change effective date for practitioner location,practitioner;location;change;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerLocationEffectiveDate,practitioner,Effective date for practitioner location,practitioner;location;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerLocationFax,practitioner,Fax number for practitioner location,practitioner;location;fax,,practitionerLocationPhone,string,,,,False,true
+practitionerLocationGenderAccepted,practitioner,Gender accepted at practitioner location,practitioner;location;gender;accepted,,,string,,,Both|Male|Female|Unknown,False,true
+practitionerLocationPracticeEmail,practitioner,Practice email for practitioner location,practitioner;location;practice;email,,,string,email,,,False,true
+practitionerLocationSpecialtyEndDate,practitioner,End date for practitioner location specialty,practitioner;location;specialty;end;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerLocationTermEffectiveDate,practitioner,Termination effective date for practitioner location,practitioner;location;termination;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerMalpracticeAggregateCoverageAmount,practitioner,Malpractice aggregate coverage amount,practitioner;malpractice;aggregate;coverage;amount,,,string,,,,False,true
+practitionerMalpracticeCarrierName,practitioner,Malpractice carrier name,practitioner;malpractice;carrier;name,,,string,,,,False,true
+practitionerMalpracticeEffectiveDate,practitioner,Malpractice effective date,practitioner;malpractice;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerMalpracticeExpiryDate,practitioner,Malpractice expiry date,practitioner;malpractice;expiry;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerMalpracticeOccuranceCoverageAmount,practitioner,Malpractice occurrence coverage amount,practitioner;malpractice;occurrence;coverage;amount,,,string,,,,False,true
+practitionerMalpracticePolicyNumber,practitioner,Malpractice insurance policy number,practitioner;malpractice;policy;number,,,string,,,,False,true
+practitionerNetworkSpecialtyEndDate,practitioner,End date for practitioner network specialty,practitioner;network;specialty;end;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerNpi,practitioner,National Provider Identifier for practitioner,practitioner;npi,,,string,,^\d{10}$,,True,true
+practitionerOpenTimeFri,practitioner,Friday opening time for practitioner,practitioner;open;time;friday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerOpenTimeMon,practitioner,Monday opening time for practitioner,practitioner;open;time;monday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerOpenTimeSat,practitioner,Saturday opening time for practitioner,practitioner;open;time;saturday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerOpenTimeSun,practitioner,Sunday opening time for practitioner,practitioner;open;time;sunday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerOpenTimeThu,practitioner,Thursday opening time for practitioner,practitioner;open;time;thursday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerOpenTimeTue,practitioner,Tuesday opening time for practitioner,practitioner;open;time;tuesday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerOpenTimeWed,practitioner,Wednesday opening time for practitioner,practitioner;open;time;wednesday,,,string,,^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$,,False,true
+practitionerPrimaryHospitalAffiliation,practitioner,Primary hospital affiliation of the practitioner,practitioner;primary;hospital;affiliation,,practitionerHospitalAffiliation,string,,,,False,true
+practitionerPrimaryHospitalAffiliationAppointmentDate,practitioner,Appointment date for primary hospital affiliation,practitioner;primary;hospital;affiliation;appointment;date;(yyyy-mm-dd),,practitionerHospitalAffiliationAppointmentDate,string,date,,,False,true
+practitionerPrimaryHospitalAffiliationAppointmentType,practitioner,Appointment type for primary hospital affiliation,practitioner;primary;hospital;affiliation;appointment;type,,practitionerHospitalAffiliationAppointmentType,string,,,,False,true
+practitionerPrimaryHospitalAffiliationEndDate,practitioner,End date for primary hospital affiliation,practitioner;primary;hospital;affiliation;end;date;(yyyy-mm-dd),,practitionerHospitalAffiliationEndDate,string,date,,,False,true
+practitionerPrimaryHospitalAffiliationStatus,practitioner,Status for primary hospital affiliation,practitioner;primary;hospital;affiliation;status,,practitionerHospitalAffiliationStatus,string,,,,False,true
+practitionerPrimaryLanguage,practitioner,Primary language of the practitioner,practitioner;primary;language,,practitionerLanguage,string,,,Abkhaz|Afar|Afrikaans|Akan|Albanian|Amharic|Arabic|Aragonese|Armenian|Assamese|Avaric|Avestan|Aymara|Azerbaijani|Bambara|Bashkir|Basque|Belarusian|Bengali|Bihari|Bislama|Bosnian|Breton|Bulgarian|Burme,False,true
+practitionerPrimarySpecialtyBoardCertificationExpirationDate,practitioner,Board certification expiration date for primary specialty,practitioner;primary;specialty;board;certification;expiration;date;(yyyy-mm-dd),,practitionerSpecialtyBoardCertificationExpirationDate,string,date,,,False,true
+practitionerPrimarySpecialtyBoardCertificationIssueDate,practitioner,Board certification issue date for primary specialty,practitioner;primary;specialty;board;certification;issue;date;(yyyy-mm-dd),,practitionerSpecialtyBoardCertificationIssueDate,string,date,,,False,true
+practitionerPrimarySpecialtyBoardCertificationLifetime,practitioner,Board certification duration type for primary specialty,practitioner;primary;specialty;board;certification;lifetime,,practitionerSpecialtyBoardCertificationLifetime,string,,,,False,true
+practitionerPrimarySpecialtyBoardCertificationName,practitioner,Board certification name for primary specialty,practitioner;primary;specialty;board;certification;name,,practitionerSpecialtyBoardCertificationName,string,,,,False,true
+practitionerPrimarySpecialtyBoardCertificationNumber,practitioner,Board certification number for primary specialty,practitioner;primary;specialty;board;certification;number,,practitionerSpecialtyBoardCertificationNumber,string,,,,False,true
+practitionerPrimarySpecialtyBoardCertified,practitioner,Whether practitioner is board certified in primary specialty,practitioner;primary;specialty;board;certified,,practitionerSpecialtyBoardCertified,string,,,,False,true
+practitionerPrimarySpecialtyName,practitioner,Primary specialty name of the practitioner,practitioner;primary;specialty;name,,practitionerSpecialtyName,string,,,,False,true
+practitionerPrimaryTaxonomy,practitioner,Primary taxonomy of the practitioner,practitioner;primary;taxonomy,,practitionerTaxonomy,string,,,,False,true
+practitionerReimbursementCode,practitioner,Reimbursement code of the practitioner,practitioner;reimbursement;code,,,string,,,,False,true
+practitionerRole,practitioner,Role of the practitioner,practitioner;role,,,string,,,,False,true
+practitionerRoleAutoAssignment,practitioner,Auto assignment of practitioner role,practitioner;role;auto;assignment,,,string,,,,False,true
+practitionerSecondaryHospitalAffiliation,practitioner,Secondary Hospital Affiliation,secondary;hospital;affiliation,,,string,,,,False,true
+practitionerSecondaryHospitalAffiliationAppointmentDate,practitioner,Secondary Hospital Affiliation Appointment Date,secondary;hospital;affiliation;appointment;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerSecondaryHospitalAffiliationAppointmentType,practitioner,Secondary Hospital Affiliation Appointment Type,secondary;hospital;affiliation;appointment;type,,,string,,,,False,true
+practitionerSecondaryLanguage,practitioner,Secondary Language spoken by provider,secondary;provider;language,,,string,,,,False,true
+practitionerSpecializedTraining,practitioner,Practitioner Specialized Training,practitioner;specialized;training,,,string,,,,False,true
+practitionerSpecialtyBoardCertificationExpirationDate,practitioner,Board certification expiration date for specialty,practitioner;specialty;board;certification;expiration;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerSpecialtyBoardCertificationIssueDate,practitioner,Board certification issue date for specialty,practitioner;specialty;board;certification;issue;date;(yyyy-mm-dd),,,string,date,,,False,true
+practitionerSpecialtyBoardCertificationLifetime,practitioner,Board certification duration type for specialty,practitioner;specialty;board;certification;lifetime,,,string,,,,False,true
+practitionerSpecialtyBoardCertificationName,practitioner,Board certification name for specialty,practitioner;specialty;board;certification;name,,,string,,,,False,true
+practitionerSpecialtyBoardCertificationNumber,practitioner,Board certification number for specialty,practitioner;specialty;board;certification;number,,,string,,,,False,true
+practitionerSpecialtyBoardCertified,practitioner,Whether practitioner is board certified in specialty,practitioner;specialty;board;certified,,,boolean,,,,False,true
+practitionerSpecialtyName,practitioner,Specialty name of the practitioner,practitioner;specialty;name,,,string,,,,False,true
+practitionerTaxonomy,practitioner,Taxonomy of the practitioner,practitioner;taxonomy,,,string,,,,False,true
+practitionerTypesToCredential,practitioner,Types of practitioners to credential,practitioner;types;credential,,,string,,,AA|ABA|ACNP|ACU|ADC|APN|APN-CNP|APRN|AT|ATR|AUD|BCaBA|BCBA|BSW|BT|CBHT|CDS|CNS|CP|CphT|CRNA|CSP|CSW|DC|DDS|DMD|DO|DPM|DT|EMT|GC|HOS|IBCLC|LBHC|LLMSW|LMFT|LMSW|LN|LP|LPC|LPCC|LPN|LPT|LVN|MA|MD|MFT|MT|M,False,true
+primaryEmail,practitioner,Primary email address for the practitioner,primary;email,,,string,email,,,False,true
+primarySpecialtyIssueYear,practitioner,Issue year for primary specialty at TenantPractitionerSpecialty,primary;specialty;issue;year,,,string,,,,False,true
+providerCMSTypeCode,practitioner,Provider's CMS type code,cms;type;code,,,string,,,,False,true
+providerCMSTypeName,practitioner,Provider's CMS type description,cms;type;description,,,string,,,,False,true
+providerContractingStatus,practitioner,Current contracting status of the provider,provider;contracting;status,,,string,,,Active|Terminated,False,true
+providerEffectiveDate,practitioner,Date when provider becomes effective,provider;effective;date,,,string,date,,,False,true
+providerLicenseState,practitioner,State of provider's license,license;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+providerMedicaidState,practitioner,Provider's Medicaid identifier,medicaid;state,,,string,,,,False,true
+providerTaxonomyCode,practitioner,Provider's taxonomy code,taxonomy;code,,,string,,,,False,true
+providerTerminationDate,practitioner,Date when provider was/will be terminated,provider;termination;date,,,string,date,,,False,true
+providerType,practitioner,Type of healthcare provider,provider;type,,,string,,,AA|ABA|ACNP|ACU|ADC|APN|APN-CNP|APRN|AT|ATR|AUD|BCaBA|BCBA|BSW|BT|CBHT|CDS|CNS|CP|CphT|CRNA|CSP|CSW|DC|DDS|DMD|DO|DPM|DT|EMT|GC|HOS|IBCLC|LBHC|LLMSW|LMFT|LMSW|LN|LP|LPC|LPCC|LPN|LPT|LVN|MA|MD|MFT|MT|M,False,true
+race,practitioner,Provider's race,race,,,string,,,Alaska Native|American Indian|Asian|Black/African American|Native Hawaiian|Pacific Islander|White,False,true
+residencyFromDate,practitioner,Start date of residency,residency;from;date;(yyyy-mm-dd),,residencyToDate,string,date,,,False,true
+residencySchoolName,practitioner,Name of the residency institution,residency;school;name,,,string,,,,False,true
+residencySpecialty,practitioner,Specialty of residency,residency;specialty,,,string,,,,False,true
+residencyToDate,practitioner,End date of residency,residency;date;(yyyy-mm-dd),,residencyFromDate,string,date,,,False,true
+roleEffectiveDate,practitioner,Effective date for the practitioner role,role;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+roleTerminationDate,practitioner,Termination date for the practitioner role,role;termination;date;(yyyy-mm-dd),,,string,date,,,False,true
+roleType,practitioner,Type of role for practitioner,role;type,,,string,,,,False,true
+secondaryEmail,practitioner,Secondary email address for the practitioner,secondary;email,,,string,email,,,False,true
+specialist,practitioner,Indicates if provider is a specialist,specialist,,,boolean,,,,False,true
+specialtyIssueYear,practitioner,Issue year for specialty at TenantPractitionerSpecialty,specialty;issue;year,,,string,,,,False,true
+ssn,practitioner,Practitioner's Social Security Number,ssn;(no;dashes),,,string,,^\d{9}$,,False,true
+stateLicenseExpirationDate,practitioner,State License Expiration Date,state;license;expiration;date;(yyyy-mm-dd),,,string,date,,,False,true
+stateLicenseIssuingState,practitioner,State License Issuing State (State Abbreviation code),state;license;issuing;state,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+stateLicenseNumber,practitioner,State License Number,state;license;number,,,string,,,,False,true
+stateLicenseType,practitioner,State License Type,state;license;type,,,string,,,,False,true
+statesToCredential,practitioner,States to credential the practitioner for,states;credential,,,string,,,AK|AL|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|UM|VA|VI|VT|WA|WI|WV|WY,False,true
+statusInNetwork,practitioner,Status of the practitioner in the network,practitioner;status;network,,,string,,,Active|Inactive,False,true
+suffix,practitioner,"Name suffix (e.g., Jr., Sr., III)",suffix,,,string,,,,False,true
+supervisingPractitionerFirstName,practitioner,First name of supervising practitioner,supervising;practitioner;first;name,,,string,,,,False,true
+supervisingPractitionerLastName,practitioner,Last name of supervising practitioner,supervising;practitioner;last;name,,,string,,,,False,true
+supervisingPractitionerMiddleName,practitioner,Middle name of supervising practitioner,supervising;practitioner;middle;name,,,string,,,,False,true
+supervisingPractitionerNpi,practitioner,NPI of supervising practitioner,supervising;practitioner;npi,,,string,,,,False,true
+supervisingPractitionerProviderType,practitioner,Provider type of supervising practitioner,supervising;practitioner;provider;type,,,string,,,AA|ABA|ACNP|ACU|ADC|APN|APN-CNP|APRN|AT|ATR|AUD|BCaBA|BCBA|BSW|BT|CBHT|CDS|CNS|CP|CphT|CRNA|CSP|CSW|DC|DDS|DMD|DO|DPM|DT|EMT|GC|HOS|IBCLC|LBHC|LLMSW|LMFT|LMSW|LN|LP|LPC|LPCC|LPN|LPT|LVN|MA|MD|MFT|MT|M,False,true
+supervisingPractitionerStateLicense,practitioner,State license of supervising practitioner,supervising;practitioner;state;license,,,string,,,,False,true
+supervisingPractitionerStateLicenseNumber,practitioner,State license number of supervising practitioner,supervising;practitioner;state;license;number,,,string,,,,False,true
+supervisingProviderType,practitioner,Type of supervising healthcare provider,supervising;provider;type,,,string,,,AA|ABA|ACNP|ACU|ADC|APN|APN-CNP|APRN|AT|ATR|AUD|BCaBA|BCBA|BSW|BT|CBHT|CDS|CNS|CP|CphT|CRNA|CSP|CSW|DC|DDS|DMD|DO|DPM|DT|EMT|GC|HOS|IBCLC|LBHC|LLMSW|LMFT|LMSW|LN|LP|LPC|LPCC|LPN|LPT|LVN|MA|MD|MFT|MT|M,False,true
+telemedicineAvailable,practitioner,Indicates if telemedicine services are available,telemedicine;available,,,boolean,,,,False,true
+telemedicineURL,practitioner,URL for telemedicine practitioners,telemedicine;url,,,string,uri,,,False,true
+title,practitioner,Professional title,title,,,string,,,,False,true
+udfAddressStatus,practitioner,Address status of the practitioner,[udf];address;status,,,string,,,,False,true
+udfContractEffectiveDate,practitioner,Effective date for the contract,[udf];contract;effective;date;(yyyy-mm-dd),,,string,date,,,False,true
+udfContractName,practitioner,Name of the contract,[udf];contract;name,,,string,,,,False,true
+udfContractStatus,practitioner,Contracting status of the practitioner,[udf];contracting;status,,,string,,,,False,true
+udfContractedThrough,practitioner,Indicates through whom/which entity the practitioner is contracted,[udf];contracted;through,,,string,,,,False,true
+udfFlaggedAddress,practitioner,UDF field for flagged address,[udf];flagged;address,,,string,,,,False,true
+udfFluorideVarnish,practitioner,Fluoride varnish status,[udf];fluoride;varnish,,,string,,,,False,true
+udfFluorideVarnishVerifDate,practitioner,Fluoride varnish verification date,[udf];fluoride;varnish;verification;date;(yyyy-mm-dd),,,string,date,,,False,true
+udfGroupEmployed,practitioner,Group employment status,[udf];group;employed,,,string,,,,False,true
+udfHealthPlanSpecialty,practitioner,UDF field for TDI provider specialty,[udf];tdi;provider;specialty,,,string,,,,False,true
+udfNameOnCard,practitioner,Name on card for practitioner location,[udf];name;card,,,string,,,,False,true
+udfNetworkName,practitioner,Name of the network,[udf];network;name,,,string,,,,False,true
+udfNewRecords,practitioner,UDF field for new records,[udf];new;records,,,string,,,,False,true
+udfNotes,practitioner,UDF field for notes,[udf];notes,,,string,,,,False,true
+udfOrgNpi,practitioner,Org NPI of the practitioner,[udf];org;npi,,,string,,,,False,true
+udfPlanNoPractitionerStatus,practitioner,UDF field for plan no practitioner status,[udf];plan;practitioner;status,,,string,,,,False,true
+udfPractitionerContractEntityType,practitioner,Contract entity type of the practitioner,[udf];practitioner;contract;entity;type,,,string,,,,False,true
+udfPractitionerDirectoryGrouping,practitioner,Practitioner directory grouping of the practitioner,[udf];practitioner;directory;grouping,,,string,,,,False,true
+udfPractitionerEffectiveDate,practitioner,Effective date for the practitioner at location,[udf];practitioner;effective;date,,,string,,,,False,true
+udfPractitionerRecordId,practitioner,Record id of the practitioner,[udf];record,,,string,,,,False,true
+udfProviderDirectorySpecialty,practitioner,Provider directory specialty value,[udf];provider;directory;specialty,,,string,,,,False,true
+udfProviderLinkedToMoreThanOneContract,practitioner,UDF field indicating if provider is linked to multiple contracts,[udf];provider;linked;more;than;one;contract,,,string,,,,False,true
+udfRosterSourceFileID,practitioner,Roster source file id of the practitioner,[udf];roster;source;file,,,string,,,,False,true
+udfStaffStatus,practitioner,Staff status of the practitioner,[udf];staff;status,,,string,,,,False,true
+udfStateMaxPanel,practitioner,DC MA maximum panel for practitioner location,[udf];max;panel,,,string,,,,False,true
+udfTooltipDescription,practitioner,UDF field for tooltip description,[udf];tooltip;description,,,string,,,,False,true
+udfTooltipHeader,practitioner,UDF field for tooltip header,[udf];tooltip;header,,,string,,,,False,true
+udfUSTHCreationDate,practitioner,USTH creation date of the practitioner,[udf];usth;creation;date,,,string,,,,False,true
+udfUSTHModifiedDate,practitioner,Modified date of the practitioner,[udf];modified;date,,,string,,,,False,true
+udfUSTHVersion,practitioner,USTH version of the practitioner,[udf];usth;version,,,string,,,,False,true
+udfUSTHVersionDate,practitioner,USTH version date of the practitioner,[udf];usth;version;date,,,string,,,,False,true
+udfVBCAttribution,practitioner,VBC attribution of the practitioner,[udf];vbc;attribution,,,string,,,,False,true
+udfVendorProviderGroupName,practitioner,Zing provider group name of the practitioner,[udf];zing;provider;group;name,,,string,,,,False,true
+udfVendorSupplierLinkId,practitioner,Zing supplier link id of the practitioner,[udf];zing;supplier;link,,,string,,,,False,true
+udfVendorValueBasedGroupRef,practitioner,Zing provider value based group ref of the practitioner,[udf];zing;provider;value;based;group;ref,,,string,,,,False,true
+xRayLicenseExpirationDate,practitioner,X-Ray License Expiration Date,x-ray;license;expiration;date;(yyyy-mm-dd),,,string,date,,,False,true
+xRayLicenseNumber,practitioner,X-Ray License Number,x-ray;license;number,,,string,,,,False,true

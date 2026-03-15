@@ -1,0 +1,90 @@
+"""Auto-generated standalone roster processor."""
+
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import Dict, Tuple
+
+import pandas as pd
+
+from universal_roster_v2.core.business_rules import apply_business_rules
+from universal_roster_v2.core.output_builder import build_target_output
+from universal_roster_v2.core.runtime_validations import run_runtime_validations
+from universal_roster_v2.core.transforms import apply_transformation
+from universal_roster_v2.core.validations import compile_bq_validation_sql
+
+
+PIPELINE_NAME = {{ pipeline_name }}
+ROSTER_TYPE = {{ roster_type }}
+WORKSPACE_SCOPE = {{ workspace_scope_json }}
+INSTRUCTIONS_CONTEXT = {{ instructions_context_json }}
+
+COLUMN_MAPPINGS = {{ mappings_json }}
+TRANSFORMATIONS = {{ transformations_json }}
+BQ_VALIDATIONS = {{ bq_validations_json }}
+
+
+def transform_data(df: pd.DataFrame) -> pd.DataFrame:
+    out = df.copy()
+
+    for tx in TRANSFORMATIONS:
+        if not bool(tx.get("approved", False)):
+            continue
+        name = str(tx.get("name", "") or "").strip()
+        params = tx.get("params") or {}
+        for source in tx.get("source_columns", []) or []:
+            if source not in out.columns:
+                continue
+            out[source] = apply_transformation(out[source], name=name, params=params)
+
+    return out
+
+
+def process_roster(df: pd.DataFrame, file_name: str = "") -> Tuple[pd.DataFrame, pd.DataFrame, Dict]:
+    started = datetime.now(timezone.utc).isoformat()
+    transformed = transform_data(df)
+
+    approved_mappings = [
+        {
+            "source_column": source,
+            "target_field": target,
+            "approved": True,
+        }
+        for source, target in (COLUMN_MAPPINGS or {}).items()
+    ]
+
+    output_df, _ = build_target_output(transformed, approved_mappings=approved_mappings)
+    output_df = apply_business_rules(
+        output_df,
+        context={
+            "pipeline_name": PIPELINE_NAME,
+            "roster_type": ROSTER_TYPE,
+            "workspace_scope": WORKSPACE_SCOPE,
+            "instructions_context": INSTRUCTIONS_CONTEXT,
+        },
+    )
+
+    clean_df, errors_df, runtime_stats = run_runtime_validations(output_df=output_df, validations=BQ_VALIDATIONS)
+
+    stats = {
+        "pipeline_name": PIPELINE_NAME,
+        "roster_type": ROSTER_TYPE,
+        "file_name": file_name,
+        "processed_at": started,
+        "total_records": int(len(df)),
+        "clean_records": runtime_stats["clean_records"],
+        "error_records": runtime_stats["error_records"],
+        "approved_mappings": int(len(COLUMN_MAPPINGS)),
+        "approved_transformations": int(len([tx for tx in TRANSFORMATIONS if bool(tx.get("approved", False))])),
+        "approved_bq_validations": int(len([v for v in BQ_VALIDATIONS if bool(v.get("approved", False))])),
+        "workspace_scope": WORKSPACE_SCOPE,
+        "trace": {
+            "target_fields": list(output_df.columns),
+        },
+    }
+
+    return clean_df, errors_df, stats
+
+
+def compile_validation_sql(table_id: str = "project.dataset.staging") -> str:
+    return compile_bq_validation_sql(BQ_VALIDATIONS, table_id=table_id)

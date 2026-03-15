@@ -1,0 +1,1860 @@
+{
+  "CreateMasterProviderRecordDto": {
+    "description": "",
+    "required_fields": [
+      "firstName",
+      "lastName",
+      "providerType"
+    ],
+    "total_properties": 28,
+    "properties": {
+      "firstName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "middleName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "lastName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "dateOfBirth": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "npi": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "primaryEmail": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "caqhProviderId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "lastCredentialedDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "nextCredentialingDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "externalId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "specialty": {
+        "type": "string",
+        "description": "",
+        "enum": [
+          "Audiology",
+          "Acute Care",
+          "Adult Psychiatric-Mental Health",
+          "Adult-Gerontology Acute Care",
+          "Adult-Gerontology Primary Care",
+          "Advanced Diabetes Management",
+          "Aerospace Medicine",
+          "Allergy and Immunology",
+          "Anatomic Pathology and Clinical Pathology",
+          "Anesthesiology",
+          "Behavioral Analyst",
+          "Cardiac Surgery",
+          "Cardiology",
+          "Cardiothoracic Surgery",
+          "Cataract Surgery",
+          "Certified Registered Nurse Anesthetist",
+          "Chiropractor",
+          "Clinical Biochemical Genetics",
+          "Clinical Cytogenetics",
+          "Clinical Genetics (MD)",
+          "Clinical Genetics and Genomics (MD)",
+          "Clinical Mental Health Counselor",
+          "Clinical Molecular Genetics",
+          "Clinical Neurophysiology",
+          "Clinical Nurse Specialist",
+          "Clinical Psychology",
+          "Colon and Rectal Surgery",
+          "Community Behavioral Health Clinician",
+          "Dental",
+          "Dermatology",
+          "Diagnostic Radiology",
+          "Diplomate in Clinical Social Work",
+          "Emergency Medicine",
+          "Emergency Nurse Practitioner",
+          "Endocrinology",
+          "ENT/Otolaryngology",
+          "Family Medicine",
+          "Family Nurse Practitioner",
+          "Gastroenterology",
+          "General Practice",
+          "General Surgery",
+          "Geriatrics",
+          "Gerontological",
+          "Gerontology",
+          "Gynecology",
+          "Infectious Diseases",
+          "Internal Medicine",
+          "Interventional Radiology and Diagnostic Radiology",
+          "Laboratory Genetics and Genomics",
+          "Medical Physics (Diagnostic, Nuclear, Therapeutic)",
+          "Nephrology",
+          "Neurological Surgery",
+          "Neurology",
+          "Neurology with Special Qualification in Child Neurology",
+          "Nuclear Medicine",
+          "Nurse Practitioner",
+          "Obstetrics & Gynecology",
+          "Obstetrics and Gynecology",
+          "Occupational Medicine",
+          "Oncology - Medical",
+          "Oncology - Radiation",
+          "Oncology - Surgical",
+          "Ophthalmology",
+          "Oral and Maxillofacial Surgery",
+          "Orthopaedic Surgery",
+          "Otolaryngology",
+          "Otolaryngology - Head and Neck Surgery",
+          "Pathology - Clinical",
+          "Pathology - Anatomic",
+          "Pathology - Anatomic/Pathology - Clinical",
+          "Pediatric Nurse Practitioner - Primary Care",
+          "Pediatric Primary Care",
+          "Pediatrics",
+          "Pediatrics: Developmental-Behavioral Pediatrics",
+          "Physical Medicine and Rehabilitation",
+          "Physician Assistant",
+          "Plastic Surgery",
+          "Podiatry",
+          "Psychiatric Mental Health Nurse Practitioner",
+          "Psychiatric-Mental Health",
+          "Psychiatry",
+          "Psychiatry & Neurology",
+          "Psychiatry: Child and Adolescent Psychiatry",
+          "Psychiatry: Geriatric Psychiatry",
+          "Psychology",
+          "Psychotherapy",
+          "Public Health and General Preventive Medicine",
+          "Radiation Oncology",
+          "Radiologic Physics",
+          "Radiology",
+          "School Nurse Practitioner",
+          "Surgery",
+          "Therapeutic Radiology",
+          "Thoracic Surgery",
+          "Thoracic and Cardiac Surgery",
+          "Urgent Care Medicine",
+          "Urology",
+          "Vascular Surgery",
+          "Occupational Therapist",
+          "Speech-Language Pathology"
+        ],
+        "required": false
+      },
+      "orgEntityLocations": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "orgEntityEnrollments": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "impactsNetworkAdequacy": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "assignedNetwork": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "lastOutreachDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "nextFollowUpDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "providerLastRosterDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "providerSuffix": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "providerDegree": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "providerSalutation": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "providerEthinicity": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "admittingPrivilegeStatus": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "networkStatus": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "acceptsNewPatients": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "taxonomyCode": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "providerType": {
+        "type": "string",
+        "description": "",
+        "enum": [
+          "AA",
+          "ABA",
+          "ACU",
+          "ADC",
+          "APN",
+          "AT",
+          "ATR",
+          "AUD",
+          "BT",
+          "CNS",
+          "CP",
+          "CphT",
+          "CRNA",
+          "CSP",
+          "CSW",
+          "DC",
+          "DDS",
+          "DMD",
+          "DO",
+          "DPM",
+          "DT",
+          "EMT",
+          "GC",
+          "HOS",
+          "LN",
+          "LPN",
+          "MD",
+          "MFT",
+          "MT",
+          "MW",
+          "ND",
+          "NEU",
+          "NMW",
+          "NP",
+          "OD",
+          "OPT",
+          "OT",
+          "OTA",
+          "PA",
+          "PC",
+          "PDH",
+          "PHA",
+          "PHD",
+          "PT",
+          "PTA",
+          "PTNL",
+          "RD",
+          "RDH",
+          "RN",
+          "RNFA",
+          "Rph",
+          "RPSGT",
+          "RT",
+          "SA",
+          "SLP"
+        ],
+        "required": true
+      },
+      "states": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": false
+      }
+    }
+  },
+  "Facility": {
+    "description": "",
+    "required_fields": [
+      "name",
+      "address",
+      "city",
+      "organizationId",
+      "zipcode",
+      "contactName",
+      "contactPhone",
+      "contactEmail",
+      "contactFax",
+      "contractEntity",
+      "type",
+      "state",
+      "tin",
+      "npi",
+      "fileType",
+      "tins",
+      "skipOnSiteReview",
+      "providers",
+      "practiceLicense",
+      "businessLicense",
+      "accreditations",
+      "onsiteReviews",
+      "certifications",
+      "licensureActions",
+      "sanctions",
+      "liabilityInsurances",
+      "npdb",
+      "siteVisits",
+      "perfIndicator",
+      "stateLicenses",
+      "deas",
+      "credentialingStatus",
+      "facilitySupportingDocuments",
+      "timelines"
+    ],
+    "total_properties": 51,
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "address": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "city": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "organizationId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "zipcode": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactPhone": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactEmail": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactFax": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contractEntity": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "credentialingStartDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "attestationDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "lastCredentialingDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "psvCompleteDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "nextCredentialingDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "credentialingDecisionDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "medicalDirectorId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "medicalDirectorName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "type": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "state": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "tin": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "npi": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "externalId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "fileType": {
+        "type": "object",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "surveyResponse": {
+        "type": "object",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "tins": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "skipOnSiteReview": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "providers": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "practiceLicense": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "businessLicense": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "accreditations": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "onsiteReviews": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "certifications": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "licensureActions": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "sanctions": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "liabilityInsurances": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "npdb": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "siteVisits": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "perfIndicator": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "stateLicenses": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "deas": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "credentialingStatus": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "facilitySupportingDocuments": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "timelines": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "id": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "createdAt": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "createdBy": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "createdByName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "updatedAt": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "updatedBy": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "updatedByName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      }
+    }
+  },
+  "FacilityFileTypeConfig": {
+    "description": "",
+    "required_fields": [
+      "id",
+      "organizationId",
+      "organization",
+      "sanctionsMatchFoundEnabled",
+      "sanctionsMatchFoundThreshold",
+      "sanctionsMatchFoundScore",
+      "npdbAdverseActionsFoundEnabled",
+      "npdbAdverseActionsFoundThreshold",
+      "npdbAdverseActionsFoundScore",
+      "missingLicensesEnabled",
+      "missingLicensesThreshold",
+      "missingLicensesScore",
+      "cleanThreshold",
+      "expiredLicensesFoundEnabled",
+      "expiredLicensesFoundThreshold",
+      "expiredLicensesFoundScore",
+      "sanctionsEnabled",
+      "licensesEnabled",
+      "npdbEnabled"
+    ],
+    "total_properties": 22,
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "createdAt": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "updatedAt": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "deletedAt": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "organizationId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "organization": {
+        "type": "#/components/schemas/Organization",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "sanctionsMatchFoundEnabled": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "sanctionsMatchFoundThreshold": {
+        "type": "number",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "sanctionsMatchFoundScore": {
+        "type": "number",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "npdbAdverseActionsFoundEnabled": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "npdbAdverseActionsFoundThreshold": {
+        "type": "number",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "npdbAdverseActionsFoundScore": {
+        "type": "number",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "missingLicensesEnabled": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "missingLicensesThreshold": {
+        "type": "number",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "missingLicensesScore": {
+        "type": "number",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "cleanThreshold": {
+        "type": "number",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "expiredLicensesFoundEnabled": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "expiredLicensesFoundThreshold": {
+        "type": "number",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "expiredLicensesFoundScore": {
+        "type": "number",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "sanctionsEnabled": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "licensesEnabled": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "npdbEnabled": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": true
+      }
+    }
+  },
+  "CreateFacilityDto": {
+    "description": "",
+    "required_fields": [
+      "name",
+      "dba",
+      "type",
+      "tin",
+      "address",
+      "city",
+      "zipcode",
+      "contactName",
+      "contactPhone",
+      "contactEmail",
+      "contactFax",
+      "state",
+      "skipOnSiteReview",
+      "stateLicenses",
+      "facilitySupportingDocuments",
+      "accreditations",
+      "siteVisits",
+      "certifications",
+      "npdb",
+      "sanctions",
+      "perfIndicator",
+      "liabilityInsurances"
+    ],
+    "total_properties": 27,
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "dba": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "type": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "tin": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "medicareNumber": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "medicaidNumber": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "address": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "city": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "zipcode": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactPhone": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactEmail": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactFax": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "state": {
+        "type": "string",
+        "description": "",
+        "enum": [
+          "AK",
+          "AL",
+          "AR",
+          "AS",
+          "AZ",
+          "CA",
+          "CO",
+          "CT",
+          "DC",
+          "DE",
+          "FL",
+          "FM",
+          "GA",
+          "GU",
+          "HI",
+          "IA",
+          "ID",
+          "IL",
+          "IN",
+          "KS",
+          "KY",
+          "LA",
+          "MA",
+          "MD",
+          "ME",
+          "MH",
+          "MI",
+          "MN",
+          "MO",
+          "MP",
+          "MS",
+          "MT",
+          "NC",
+          "ND",
+          "NE",
+          "NH",
+          "NJ",
+          "NM",
+          "NV",
+          "NY",
+          "OH",
+          "OK",
+          "OR",
+          "PA",
+          "PR",
+          "PW",
+          "RI",
+          "SC",
+          "SD",
+          "TN",
+          "TX",
+          "UT",
+          "UM",
+          "VA",
+          "VI",
+          "VT",
+          "WA",
+          "WI",
+          "WV",
+          "WY"
+        ],
+        "required": true
+      },
+      "fileType": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "npi": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "externalId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "skipOnSiteReview": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "stateLicenses": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "facilitySupportingDocuments": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "accreditations": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "siteVisits": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "certifications": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "npdb": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "sanctions": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "perfIndicator": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "liabilityInsurances": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      }
+    }
+  },
+  "CreateProviderDto": {
+    "description": "",
+    "required_fields": [
+      "firstName",
+      "lastName",
+      "providerType"
+    ],
+    "total_properties": 16,
+    "properties": {
+      "firstName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "middleName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "lastName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "dateOfBirth": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "gender": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "npi": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "homeAddress": {
+        "type": "#/components/schemas/Address",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "primaryEmail": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "caqhProviderId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "hasLicensureActions": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "externalId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "allProviderStates": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "lastCredentialedDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "nextCredentialingDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "providerType": {
+        "type": "string",
+        "description": "",
+        "enum": [
+          "AA",
+          "ABA",
+          "ACU",
+          "ADC",
+          "APN",
+          "AT",
+          "ATR",
+          "AUD",
+          "BT",
+          "CNS",
+          "CP",
+          "CphT",
+          "CRNA",
+          "CSP",
+          "CSW",
+          "DC",
+          "DDS",
+          "DMD",
+          "DO",
+          "DPM",
+          "DT",
+          "EMT",
+          "GC",
+          "HOS",
+          "LN",
+          "LPN",
+          "MD",
+          "MFT",
+          "MT",
+          "MW",
+          "ND",
+          "NEU",
+          "NMW",
+          "NP",
+          "OD",
+          "OPT",
+          "OT",
+          "OTA",
+          "PA",
+          "PC",
+          "PDH",
+          "PHA",
+          "PHD",
+          "PT",
+          "PTA",
+          "PTNL",
+          "RD",
+          "RDH",
+          "RN",
+          "RNFA",
+          "Rph",
+          "RPSGT",
+          "RT",
+          "SA",
+          "SLP"
+        ],
+        "required": true
+      },
+      "states": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": false
+      }
+    }
+  },
+  "CreateProviderDtoV2": {
+    "description": "",
+    "required_fields": [
+      "first_name",
+      "last_name",
+      "states",
+      "caqh_provider_id",
+      "degree",
+      "error"
+    ],
+    "total_properties": 11,
+    "properties": {
+      "first_name": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "middle_name": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "last_name": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "npi": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "states": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "caqh_provider_id": {
+        "type": "object",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "last_credentialed_date": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "next_credentialing_date": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "external_id": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "degree": {
+        "type": "string",
+        "description": "",
+        "enum": [
+          "AA",
+          "ABA",
+          "ACU",
+          "ADC",
+          "APN",
+          "AT",
+          "ATR",
+          "AUD",
+          "BT",
+          "CNS",
+          "CP",
+          "CphT",
+          "CRNA",
+          "CSP",
+          "CSW",
+          "DC",
+          "DDS",
+          "DMD",
+          "DO",
+          "DPM",
+          "DT",
+          "EMT",
+          "GC",
+          "HOS",
+          "LN",
+          "LPN",
+          "MD",
+          "MFT",
+          "MT",
+          "MW",
+          "ND",
+          "NEU",
+          "NMW",
+          "NP",
+          "OD",
+          "OPT",
+          "OT",
+          "OTA",
+          "PA",
+          "PC",
+          "PDH",
+          "PHA",
+          "PHD",
+          "PT",
+          "PTA",
+          "PTNL",
+          "RD",
+          "RDH",
+          "RN",
+          "RNFA",
+          "Rph",
+          "RPSGT",
+          "RT",
+          "SA",
+          "SLP"
+        ],
+        "required": true
+      },
+      "error": {
+        "type": "object",
+        "description": "",
+        "enum": null,
+        "required": true
+      }
+    }
+  },
+  "CreateRosterUploadDto": {
+    "description": "",
+    "required_fields": [
+      "mapping",
+      "file",
+      "rosterId"
+    ],
+    "total_properties": 4,
+    "properties": {
+      "mapping": {
+        "type": "object",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "file": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "label": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "rosterId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      }
+    }
+  },
+  "CreateFacilityByWebhookDto": {
+    "description": "",
+    "required_fields": [
+      "name",
+      "dba",
+      "type",
+      "tin",
+      "address",
+      "city",
+      "zipcode",
+      "contactName",
+      "contactPhone",
+      "contactEmail",
+      "contactFax",
+      "state",
+      "skipOnSiteReview",
+      "stateLicenses",
+      "facilitySupportingDocuments",
+      "accreditations",
+      "siteVisits",
+      "certifications",
+      "npdb",
+      "sanctions",
+      "perfIndicator",
+      "liabilityInsurances"
+    ],
+    "total_properties": 28,
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "dba": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "type": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "tin": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "medicareNumber": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "medicaidNumber": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "address": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "city": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "zipcode": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactPhone": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactEmail": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "contactFax": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "state": {
+        "type": "string",
+        "description": "",
+        "enum": [
+          "AK",
+          "AL",
+          "AR",
+          "AS",
+          "AZ",
+          "CA",
+          "CO",
+          "CT",
+          "DC",
+          "DE",
+          "FL",
+          "FM",
+          "GA",
+          "GU",
+          "HI",
+          "IA",
+          "ID",
+          "IL",
+          "IN",
+          "KS",
+          "KY",
+          "LA",
+          "MA",
+          "MD",
+          "ME",
+          "MH",
+          "MI",
+          "MN",
+          "MO",
+          "MP",
+          "MS",
+          "MT",
+          "NC",
+          "ND",
+          "NE",
+          "NH",
+          "NJ",
+          "NM",
+          "NV",
+          "NY",
+          "OH",
+          "OK",
+          "OR",
+          "PA",
+          "PR",
+          "PW",
+          "RI",
+          "SC",
+          "SD",
+          "TN",
+          "TX",
+          "UT",
+          "UM",
+          "VA",
+          "VI",
+          "VT",
+          "WA",
+          "WI",
+          "WV",
+          "WY"
+        ],
+        "required": true
+      },
+      "fileType": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "npi": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "externalId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "skipOnSiteReview": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "stateLicenses": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "facilitySupportingDocuments": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "accreditations": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "siteVisits": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "certifications": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "npdb": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "sanctions": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "perfIndicator": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "liabilityInsurances": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "surveyResponse": {
+        "type": "object",
+        "description": "",
+        "enum": null,
+        "required": false
+      }
+    }
+  },
+  "CreateProviderByWebhookDto": {
+    "description": "",
+    "required_fields": [
+      "firstName",
+      "lastName",
+      "providerType"
+    ],
+    "total_properties": 17,
+    "properties": {
+      "firstName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "middleName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "lastName": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": true
+      },
+      "dateOfBirth": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "gender": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "npi": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "homeAddress": {
+        "type": "#/components/schemas/Address",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "primaryEmail": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "caqhProviderId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "hasLicensureActions": {
+        "type": "boolean",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "externalId": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "allProviderStates": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "lastCredentialedDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "nextCredentialingDate": {
+        "type": "string",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "surveyResponse": {
+        "type": "object",
+        "description": "",
+        "enum": null,
+        "required": false
+      },
+      "providerType": {
+        "type": "string",
+        "description": "",
+        "enum": [
+          "AA",
+          "ABA",
+          "ACU",
+          "ADC",
+          "APN",
+          "AT",
+          "ATR",
+          "AUD",
+          "BT",
+          "CNS",
+          "CP",
+          "CphT",
+          "CRNA",
+          "CSP",
+          "CSW",
+          "DC",
+          "DDS",
+          "DMD",
+          "DO",
+          "DPM",
+          "DT",
+          "EMT",
+          "GC",
+          "HOS",
+          "LN",
+          "LPN",
+          "MD",
+          "MFT",
+          "MT",
+          "MW",
+          "ND",
+          "NEU",
+          "NMW",
+          "NP",
+          "OD",
+          "OPT",
+          "OT",
+          "OTA",
+          "PA",
+          "PC",
+          "PDH",
+          "PHA",
+          "PHD",
+          "PT",
+          "PTA",
+          "PTNL",
+          "RD",
+          "RDH",
+          "RN",
+          "RNFA",
+          "Rph",
+          "RPSGT",
+          "RT",
+          "SA",
+          "SLP"
+        ],
+        "required": true
+      },
+      "states": {
+        "type": "array",
+        "description": "",
+        "enum": null,
+        "required": false
+      }
+    }
+  }
+}

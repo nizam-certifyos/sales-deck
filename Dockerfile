@@ -1,0 +1,23 @@
+# Stage 1: Build frontend
+FROM node:20-slim AS frontend
+WORKDIR /app/frontend
+COPY src/universal_roster_v2/web/frontend/package*.json ./
+RUN npm ci --silent
+COPY src/universal_roster_v2/web/frontend/ ./
+RUN npm run build
+
+# Stage 2: Python runtime
+FROM python:3.13-slim
+RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY pyproject.toml ./
+RUN pip install --no-cache-dir -e ".[web]" google-cloud-bigquery>=3.20 gunicorn>=22.0
+COPY src/ ./src/
+COPY knowledge_base/ ./knowledge_base/
+COPY --from=frontend /app/frontend/dist/ ./src/universal_roster_v2/web/static/dist/
+RUN python -m compileall -q src/
+ENV PORT=8080 PYTHONPATH=/app/src PYTHONUNBUFFERED=1
+CMD exec gunicorn universal_roster_v2.web.server:app \
+    --bind 0.0.0.0:$PORT \
+    --worker-class uvicorn.workers.UvicornWorker \
+    --workers 2 --threads 4 --timeout 300 --keep-alive 30 --preload
