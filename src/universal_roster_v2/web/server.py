@@ -617,8 +617,9 @@ def create_app(workspace_root: Optional[str | Path] = None) -> FastAPI:
 
         # Get sample rows
         sample_rows = profile.get("sample_rows", [])
+        _psv_logger.warning(f"PROVIDERS API: profile_keys={list(profile.keys())}, sample_rows={len(sample_rows)}, mappings={len(mappings)}, tgt_to_src_keys={list(tgt_to_src.keys())[:5]}")
         if not sample_rows:
-            return {"providers": [], "debug": "no sample_rows in profile"}
+            return {"providers": [], "debug": f"no sample_rows in profile. profile_keys={list(profile.keys())}"}
 
         # Helper to get value from a row using target field name
         def get_val(row: dict, *target_fields: str) -> str:

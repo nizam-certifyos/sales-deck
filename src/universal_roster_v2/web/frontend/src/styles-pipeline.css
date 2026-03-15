@@ -1,7 +1,8 @@
 /* ============================================================
-   Full Pipeline Demo — /new2
+   Full Pipeline Demo
    Extends styles-demo-v2.css with credentialing + monitoring
    ============================================================ */
+@import url("./styles-demo-v2.css");
 
 @import "./styles-demo-v2.css";
 

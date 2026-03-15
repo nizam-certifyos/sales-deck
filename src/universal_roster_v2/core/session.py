@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -354,7 +355,9 @@ class UniversalRosterSession:
         validation_result = {}
         quality_audit_result = {}
 
-        _demo = bool(getattr(self.settings, "demo_mode", False))
+        # HARDCODE demo_mode=True for Cloud Run — skip LLM for transforms/validations/quality_audit
+        _demo = True
+        logging.warning(f"SESSION SUGGEST: demo_mode={_demo} (hardcoded for Cloud Run)")
 
         def _run_transforms():
             return suggest_transformations(
