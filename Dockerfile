@@ -17,7 +17,7 @@ COPY src/ ./src/
 COPY knowledge_base/ ./knowledge_base/
 
 # Install as non-editable (no -e flag)
-RUN pip install --no-cache-dir ".[web]" google-cloud-bigquery>=3.20 gunicorn>=22.0 google-genai>=1.0.0
+RUN pip install --no-cache-dir ".[web]" google-cloud-bigquery>=3.20 google-cloud-secret-manager>=2.20 gunicorn>=22.0 google-genai>=1.0.0
 
 # Copy built frontend from stage 1
 COPY --from=frontend /app/static/dist/ ./src/universal_roster_v2/web/static/dist/

@@ -25,24 +25,54 @@ from universal_roster_v2.web.session_store import SessionStore
 # ---------------------------------------------------------------------------
 
 _PSV_CACHE: Dict[str, dict] = {}
-_PSV_SA_PATH = os.getenv("PSV_SERVICE_ACCOUNT_KEY_PATH", "/secrets/bqsaprd")
-_PSV_PROJECT = "certifyos-production-platform"
+_PSV_PROJECT = os.getenv("PSV_BQ_PROJECT", "certifyos-production-platform")
+_PSV_SECRET_NAME = os.getenv("PSV_SECRET_NAME", "bqsaprd")
+_PSV_SECRET_PROJECT = os.getenv("PSV_SECRET_PROJECT", "certifyos-development")
 
 _psv_logger = logging.getLogger("universal_roster_v2.web.psv")
 
 
 _bq_psv_client_cache = None
+_psv_sa_info_cache = None
+
+
+def _load_psv_sa_from_secret_manager() -> dict:
+    """Load the production SA JSON from Secret Manager."""
+    global _psv_sa_info_cache
+    if _psv_sa_info_cache is not None:
+        return _psv_sa_info_cache
+
+    # Try Secret Manager first
+    try:
+        from google.cloud import secretmanager
+        sm_client = secretmanager.SecretManagerServiceClient()
+        secret_path = f"projects/{_PSV_SECRET_PROJECT}/secrets/{_PSV_SECRET_NAME}/versions/latest"
+        response = sm_client.access_secret_version(request={"name": secret_path})
+        _psv_sa_info_cache = json.loads(response.payload.data.decode("UTF-8"))
+        _psv_logger.info("Loaded PSV SA from Secret Manager: %s", _PSV_SECRET_NAME)
+        return _psv_sa_info_cache
+    except Exception as e:
+        _psv_logger.warning("Secret Manager failed: %s. Trying file fallback.", e)
+
+    # Fallback: try file path
+    sa_path = os.getenv("PSV_SERVICE_ACCOUNT_KEY_PATH", "")
+    if sa_path and os.path.isfile(sa_path):
+        _psv_sa_info_cache = json.load(open(sa_path))
+        _psv_logger.info("Loaded PSV SA from file: %s", sa_path)
+        return _psv_sa_info_cache
+
+    raise RuntimeError("Cannot load PSV SA: Secret Manager and file fallback both failed")
 
 
 def _get_bq_psv_client():
-    """Create (or return cached) BQ client using the service account."""
+    """Create (or return cached) BQ client using the production SA from Secret Manager."""
     global _bq_psv_client_cache
     if _bq_psv_client_cache is not None:
         return _bq_psv_client_cache
     from google.oauth2 import service_account as _sa
     from google.cloud import bigquery as _bq
 
-    sa_info = json.load(open(_PSV_SA_PATH))
+    sa_info = _load_psv_sa_from_secret_manager()
     creds = _sa.Credentials.from_service_account_info(
         sa_info, scopes=["https://www.googleapis.com/auth/cloud-platform"]
     )
