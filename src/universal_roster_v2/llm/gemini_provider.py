@@ -105,6 +105,8 @@ class GeminiVertexProvider(BaseLLMProvider):
 
     def is_available(self) -> bool:
         if not self.settings.enable_gemini:
+            import logging
+            logging.warning("GEMINI: enable_gemini is False")
             return False
         sa_path = self.settings.gemini_service_account_key_path
         api_key = self.settings.gemini_api_key
@@ -114,9 +116,13 @@ class GeminiVertexProvider(BaseLLMProvider):
             return True
         try:
             from google.auth import default as google_auth_default
-            google_auth_default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+            creds, project = google_auth_default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+            import logging
+            logging.warning(f"GEMINI: ADC available, project={project}, creds_type={type(creds).__name__}")
             return True
-        except Exception:
+        except Exception as e:
+            import logging
+            logging.error(f"GEMINI: ADC failed: {e}")
             return False
 
     def generate(self, prompt: str, task_type: str = "analysis") -> LLMResponse:

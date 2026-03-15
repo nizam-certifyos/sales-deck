@@ -193,7 +193,7 @@ class Settings:
 
     demo_mode: bool = False
 
-    enable_gemini: bool = False
+    enable_gemini: bool = True
     gemini_pro_model: str = "gemini-2.5-pro"
     gemini_flash_model: str = "gemini-2.5-flash"
     gemini_api_key: str = ""
@@ -494,9 +494,9 @@ def get_settings() -> Settings:
         quality_audit_bq_project_id=os.getenv("UR2_QUALITY_AUDIT_BQ_PROJECT_ID", "").strip(),
         quality_audit_bq_dataset=os.getenv("UR2_QUALITY_AUDIT_BQ_DATASET", "").strip(),
 
-        demo_mode=_env_bool("UR2_DEMO_MODE", False),
+        demo_mode=_env_bool("UR2_DEMO_MODE", True),
 
-        enable_gemini=_env_bool("UR2_ENABLE_GEMINI", False),
+        enable_gemini=_env_bool("UR2_ENABLE_GEMINI", True),
         gemini_pro_model=os.getenv("UR2_GEMINI_PRO_MODEL", "gemini-2.5-pro").strip() or "gemini-2.5-pro",
         gemini_flash_model=os.getenv("UR2_GEMINI_FLASH_MODEL", "gemini-2.5-flash").strip() or "gemini-2.5-flash",
         gemini_api_key=os.getenv("UR2_GEMINI_API_KEY", "").strip(),
