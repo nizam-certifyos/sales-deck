@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Universal Roster Chat</title>
+    <link rel="stylesheet" href="/styles.css?v=20260304" />
+  </head>
+  <body>
+    <main class="chat-shell" aria-label="Universal Roster AI workspace">
+      <header class="chat-header">
+        <div class="header-copy">
+          <h1>Universal Roster AI</h1>
+          <p id="workspaceLabel" class="subtle" role="status" aria-live="polite">Connecting workspace…</p>
+        </div>
+        <div class="transport-row">
+          <span id="transportBadge" class="transport-badge">transport: connecting</span>
+          <button id="debugToggle" class="secondary-button" type="button">Debug</button>
+        </div>
+      </header>
+
+      <section id="operationCard" class="operation-card" aria-live="polite" hidden>
+        <div class="operation-head">
+          <div>
+            <p id="operationKind" class="operation-kind">Operation</p>
+            <p id="operationPhase" class="operation-phase">Waiting…</p>
+          </div>
+          <p id="operationStatus" class="operation-status">queued</p>
+        </div>
+        <div id="operationTrack" class="activity-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="operationBarFill" class="activity-fill"></div>
+        </div>
+        <div class="operation-actions">
+          <button id="cancelOperationButton" class="danger-button" type="button">Cancel</button>
+          <button id="retryOperationButton" class="secondary-button" type="button">Retry</button>
+        </div>
+      </section>
+
+      <section id="pendingChoicePanel" class="pending-choice-panel" hidden>
+        <p class="pending-choice-title">Choose roster to analyze</p>
+        <div id="pendingChoiceButtons" class="pending-choice-buttons"></div>
+      </section>
+
+      <section id="reviewCockpit" class="review-cockpit" aria-label="Review cockpit">
+        <div class="review-head">
+          <p class="review-title">Review cockpit</p>
+          <p id="reviewStatus" class="review-status">Waiting for roster profile…</p>
+        </div>
+        <div class="review-tabs" role="tablist" aria-label="Review sections">
+          <button id="reviewTabSchema" class="review-tab is-active" type="button" role="tab" aria-selected="true" aria-controls="reviewPanelSchema" data-review-tab="schema">Schema</button>
+          <button id="reviewTabTransformations" class="review-tab" type="button" role="tab" aria-selected="false" aria-controls="reviewPanelTransformations" data-review-tab="transformations">Transformations</button>
+          <button id="reviewTabValidations" class="review-tab" type="button" role="tab" aria-selected="false" aria-controls="reviewPanelValidations" data-review-tab="bq_validations">BQ Validations</button>
+        </div>
+        <div id="reviewPanelSchema" class="review-panel" role="tabpanel" data-review-panel="schema">
+          <div id="reviewSchemaContent" class="review-content"></div>
+        </div>
+        <div id="reviewPanelTransformations" class="review-panel" role="tabpanel" data-review-panel="transformations" hidden>
+          <div id="reviewTransformationsContent" class="review-content"></div>
+        </div>
+        <div id="reviewPanelValidations" class="review-panel" role="tabpanel" data-review-panel="bq_validations" hidden>
+          <div id="reviewValidationsContent" class="review-content"></div>
+        </div>
+      </section>
+
+      <section id="chatMessages" class="chat-messages" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Chat transcript"></section>
+
+      <section id="debugDrawer" class="debug-drawer" hidden>
+        <div class="debug-header">
+          <p class="debug-title">Debug</p>
+          <button id="debugClose" class="secondary-button" type="button">Close</button>
+        </div>
+        <pre id="debugContent" class="debug-content"></pre>
+      </section>
+
+      <div class="composer" aria-label="Message composer">
+        <div class="composer-actions">
+          <label id="uploadButton" class="upload-button" for="uploadInput" role="button" tabindex="0">Upload file or folder</label>
+          <input
+            id="uploadInput"
+            type="file"
+            accept=".csv,.xlsx,.xls,.txt,.md,.json"
+            multiple
+            webkitdirectory
+            directory
+            mozdirectory
+            hidden
+          />
+          <button id="sendButton" class="primary-button" type="button" disabled>Send</button>
+        </div>
+        <label class="visually-hidden" for="chatInput">Message</label>
+        <textarea
+          id="chatInput"
+          rows="3"
+          placeholder="Ask in plain English. Example: Analyze this roster and explain the suggested validations."
+          disabled
+        ></textarea>
+      </div>
+    </main>
+
+    <script src="/app.js?v=20260304" defer></script>
+  </body>
+</html>
