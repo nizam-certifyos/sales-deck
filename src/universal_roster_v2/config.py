@@ -346,10 +346,10 @@ def get_settings() -> Settings:
     claude_verifier_model = os.getenv("UR2_CLAUDE_VERIFIER_MODEL", claude_fallback_model).strip() or claude_fallback_model
     claude_cli_model = os.getenv("UR2_CLAUDE_CLI_MODEL", claude_verifier_model).strip() or claude_verifier_model
 
-    analysis_default = "gemini_pro,local_ollama,claude_cli"
-    verifier_default = "gemini_pro,claude_cli,local_ollama"
-    generation_default = "gemini_flash,local_ollama,claude_cli"
-    supervisor_default = "gemini_pro,claude_cli,claude_api,local_ollama"
+    analysis_default = "gemini_vertex"
+    verifier_default = "gemini_vertex"
+    generation_default = "gemini_vertex"
+    supervisor_default = "gemini_vertex"
 
     collaboration_mode = _env_choice(
         "UR2_COLLABORATION_MODE",
