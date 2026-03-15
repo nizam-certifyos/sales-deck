@@ -20,7 +20,7 @@ COPY knowledge_base/ ./knowledge_base/
 RUN pip install --no-cache-dir ".[web]" google-cloud-bigquery>=3.20 gunicorn>=22.0 google-genai>=1.0.0
 
 # Copy built frontend from stage 1
-COPY --from=frontend /app/frontend/dist/ ./src/universal_roster_v2/web/static/dist/
+COPY --from=frontend /app/static/dist/ ./src/universal_roster_v2/web/static/dist/
 
 # Pre-compile Python bytecode
 RUN python -m compileall -q src/
