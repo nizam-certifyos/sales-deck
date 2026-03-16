@@ -30,4 +30,4 @@ ENV PORT=8080 PYTHONPATH=/app/src PYTHONUNBUFFERED=1
 CMD exec gunicorn universal_roster_v2.web.server:app \
     --bind 0.0.0.0:$PORT \
     --worker-class uvicorn.workers.UvicornWorker \
-    --workers 2 --threads 4 --timeout 300 --keep-alive 30 --preload
+    --workers 1 --threads 8 --timeout 600 --keep-alive 30
