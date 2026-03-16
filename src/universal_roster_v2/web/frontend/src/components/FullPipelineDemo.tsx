@@ -316,14 +316,42 @@ function isExpiringSoon(dateStr: string, daysAhead: number): boolean {
   } catch { return false; }
 }
 
-function computeFlags(p: DemoProvider): string[] {
+function computeFlags(p: DemoProvider, psvForNpi?: any): string[] {
   const flags: string[] = [];
-  if (isExpired(p.licenseExpiry)) flags.push("State License Expired");
-  if (isExpired(p.boardExpiry)) flags.push("Board Certification Expired");
-  if (isExpired(p.deaExpiry)) flags.push("DEA License Expired");
-  if (isExpiringSoon(p.boardExpiry, 90)) flags.push("Board Cert Expiring Soon");
-  if (isExpiringSoon(p.licenseExpiry, 90)) flags.push("License Expiring Soon");
-  if (isExpiringSoon(p.deaExpiry, 90)) flags.push("DEA Expiring Soon");
+
+  // Use PSV data (primary source) when available, fall back to roster data
+  const psv = psvForNpi || null;
+
+  // License expiry: check PSV state_licenses first
+  const licExpired = psv?.state_licenses?.length
+    ? psv.state_licenses.every((l: any) => { if (!l.expiry) return false; try { return new Date(l.expiry) < new Date(); } catch { return false; } })
+    : isExpired(p.licenseExpiry);
+  const licExpiringSoon = psv?.state_licenses?.length
+    ? psv.state_licenses.some((l: any) => isExpiringSoon(l.expiry, 90))
+    : isExpiringSoon(p.licenseExpiry, 90);
+
+  // Board cert expiry: check PSV ABMS first
+  const boardExp = psv?.abms?.length
+    ? psv.abms.every((a: any) => { if (!a.expiry) return false; try { return new Date(a.expiry) < new Date(); } catch { return false; } })
+    : isExpired(p.boardExpiry);
+  const boardExpSoon = psv?.abms?.length
+    ? psv.abms.some((a: any) => isExpiringSoon(a.expiry, 90))
+    : isExpiringSoon(p.boardExpiry, 90);
+
+  // DEA expiry: check PSV DEA first
+  const deaExp = psv?.dea?.length
+    ? psv.dea.every((d: any) => { if (!d.expiry) return false; try { return new Date(d.expiry) < new Date(); } catch { return false; } })
+    : isExpired(p.deaExpiry);
+  const deaExpSoon = psv?.dea?.length
+    ? psv.dea.some((d: any) => isExpiringSoon(d.expiry, 90))
+    : isExpiringSoon(p.deaExpiry, 90);
+
+  if (licExpired) flags.push("State License Expired");
+  if (boardExp) flags.push("Board Certification Expired");
+  if (deaExp) flags.push("DEA License Expired");
+  if (boardExpSoon) flags.push("Board Cert Expiring Soon");
+  if (licExpiringSoon) flags.push("License Expiring Soon");
+  if (deaExpSoon) flags.push("DEA Expiring Soon");
   if (p.oigClear === false) flags.push("OIG Exclusion");
   if (p.nppesData) {
     const nppesFirst = (p.nppesData.basic?.first_name || "").toUpperCase();
@@ -932,18 +960,25 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { pro
     : credStatus === "Review Required" ? "pipe-status--red"
     : "pipe-status--amber";
 
-  const licenseExpired = isExpired(provider.licenseExpiry);
-  const boardExpired = isExpired(provider.boardExpiry);
-  const deaExpired = isExpired(provider.deaExpiry);
-
-  // Derive monitoring flags from LLM or fallback
-  const monFlags = llmResult?.monitoring.flags || [];
-
   // Helper: check if a date string is expired
   const isDateExpired = (d: string) => {
     if (!d) return false;
     try { return new Date(d) < new Date(); } catch { return false; }
   };
+
+  // When PSV data is available, use PSV dates (primary source) instead of roster dates
+  const licenseExpired = psvData && psvData.state_licenses.length > 0
+    ? psvData.state_licenses.every(lic => isDateExpired(lic.expiry))
+    : isExpired(provider.licenseExpiry);
+  const boardExpired = psvData && psvData.abms.length > 0
+    ? psvData.abms.every(cert => isDateExpired(cert.expiry))
+    : isExpired(provider.boardExpiry);
+  const deaExpired = psvData && psvData.dea.length > 0
+    ? psvData.dea.every(d => isDateExpired(d.expiry))
+    : isExpired(provider.deaExpiry);
+
+  // Derive monitoring flags from LLM or fallback
+  const monFlags = llmResult?.monitoring.flags || [];
 
   // Source badge component
   const SourceBadge = ({ label }: { label: string }) => (
@@ -1101,7 +1136,7 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { pro
               <CardRow label="Entity Type" value={psvData.nppes.entity_type === "1" ? "Individual (Type 1)" : "Organization (Type 2)"} />
               <CardRow label="Deactivation" value={psvData.nppes.deactivation_date || "None"} valueClass={psvData.nppes.deactivation_date ? "pipe-card-value--red" : "pipe-card-value--green"} />
               <CardRow label="Address" value={`${psvData.nppes.address || ""}, ${psvData.nppes.city || ""}, ${psvData.nppes.state || ""} ${psvData.nppes.postal_code || ""}`} />
-              <div style={{ fontSize: 10, color: "var(--d-accent)", textAlign: "right", marginTop: 4 }}>Source: NPPES Registry</div>
+              <div style={{ fontSize: 11, color: "#666", textAlign: "right", marginTop: 4 }}>Source: NPPES Registry</div>
             </>
           ) : provider.nppesData ? (
             <>
@@ -1123,7 +1158,7 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { pro
         </DataCard>
 
         {/* Card 3: State Licenses */}
-        <DataCard title="State Licenses" icon={"\uD83C\uDFDB"} flagged={showFlags && (licenseExpired || (psvData?.state_licenses || []).some(l => l.status?.toUpperCase() === "INACTIVE"))}>
+        <DataCard title="State Licenses" icon={"\uD83C\uDFDB"} flagged={showFlags && licenseExpired}>
           {psvData && psvData.state_licenses.length > 0 ? (
             <>
               {psvData.state_licenses.map((lic, i) => {
@@ -1135,11 +1170,11 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { pro
                     <CardRow label="Type" value={lic.type || "Medical"} />
                     <CardRow label="Status" value={isActive ? "ACTIVE" : lic.status || "INACTIVE"} valueClass={isActive ? "pipe-card-value--green" : "pipe-card-value--red"} />
                     <CardRow label="Expiration" value={lic.expiry || "N/A"} valueClass={exp ? "pipe-card-value--red" : "pipe-card-value--green"} />
-                    {lic.source && <div style={{ fontSize: 10, color: "var(--d-accent)", textAlign: "right" }}>Source: {lic.source.includes("http") ? lic.state + " Medical Board" : lic.source}</div>}
+                    {lic.source && <div style={{ fontSize: 11, color: "#666", textAlign: "right" }}>Source: {lic.source.includes("http") ? lic.state + " Medical Board" : lic.source}</div>}
                   </div>
                 );
               })}
-              <div style={{ fontSize: 10, color: "var(--d-accent)", textAlign: "right", marginTop: 4 }}>Source: State Medical Boards</div>
+              <div style={{ fontSize: 11, color: "#666", textAlign: "right", marginTop: 4 }}>Source: State Medical Boards</div>
             </>
           ) : (
             <>
@@ -1152,7 +1187,7 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { pro
         </DataCard>
 
         {/* Card 4: Board Certifications -- show ABMS data */}
-        <DataCard title="Board Certifications" icon={"\uD83C\uDF93"} flagged={showFlags && (boardExpired || (psvData?.abms || []).some(a => a.status?.toLowerCase().includes("expire")))}>
+        <DataCard title="Board Certifications" icon={"\uD83C\uDF93"} flagged={showFlags && boardExpired}>
           {psvData && psvData.abms.length > 0 ? (
             <>
               {psvData.abms.map((cert, i) => {
@@ -1168,7 +1203,7 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { pro
                   </div>
                 );
               })}
-              <div style={{ fontSize: 10, color: "var(--d-accent)", textAlign: "right", marginTop: 4 }}>Source: ABMS</div>
+              <div style={{ fontSize: 11, color: "#666", textAlign: "right", marginTop: 4 }}>Source: ABMS</div>
             </>
           ) : (
             <>
@@ -1180,7 +1215,7 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { pro
         </DataCard>
 
         {/* Card 5: DEA License -- show real DEA data */}
-        <DataCard title="DEA License" icon={"\uD83D\uDC8A"} flagged={showFlags && (deaExpired || (psvData?.dea || []).some(d => isDateExpired(d.expiry)))}>
+        <DataCard title="DEA License" icon={"\uD83D\uDC8A"} flagged={showFlags && deaExpired}>
           {psvData && psvData.dea.length > 0 ? (
             <>
               {psvData.dea.map((d, i) => {
@@ -1196,7 +1231,7 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { pro
                   </div>
                 );
               })}
-              <div style={{ fontSize: 10, color: "var(--d-accent)", textAlign: "right", marginTop: 4 }}>Source: DEA</div>
+              <div style={{ fontSize: 11, color: "#666", textAlign: "right", marginTop: 4 }}>Source: DEA</div>
             </>
           ) : (
             <>
@@ -1247,7 +1282,7 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { pro
                 </div>
               )}
               <CardRow label="Check Date" value={today} />
-              <div style={{ fontSize: 10, color: "var(--d-accent)", textAlign: "right", marginTop: 4 }}>Source: OIG/SAM/State Boards</div>
+              <div style={{ fontSize: 11, color: "#666", textAlign: "right", marginTop: 4 }}>Source: OIG/SAM/State Boards</div>
             </>
           ) : (
             <>
@@ -1517,6 +1552,7 @@ export function FullPipelineDemo() {
     setOigChecked(true);
 
     // Batch pre-fetch PSV data for all providers
+    let psvResults: Record<string, any> = {};
     const npis = withOig.map(p => p.npi).filter(Boolean);
     console.log("[PIPELINE] Batch PSV pre-fetch for", npis.length, "NPIs:", npis);
     if (npis.length > 0) {
@@ -1530,7 +1566,8 @@ export function FullPipelineDemo() {
           const psvBatchData = await psvResp.json();
           const resultKeys = Object.keys(psvBatchData.results || {});
           console.log("[PIPELINE] PSV batch loaded:", resultKeys.length, "NPIs cached");
-          setPsvCache(psvBatchData.results || {});
+          psvResults = psvBatchData.results || {};
+          setPsvCache(psvResults);
         } else {
           console.error("[PIPELINE] PSV batch failed:", psvResp.status);
         }
@@ -1539,9 +1576,9 @@ export function FullPipelineDemo() {
       }
     }
 
-    // Compute flags and statuses
+    // Compute flags and statuses using PSV data (primary source) when available
     const final = withOig.map((p) => {
-      const flags = computeFlags(p);
+      const flags = computeFlags(p, psvResults[p.npi]);
       const credentialingStatus = computeCredStatus({ ...p, flags });
       const monitoringStatus = computeMonStatus({ ...p, flags });
       return { ...p, flags, credentialingStatus, monitoringStatus };
