@@ -195,6 +195,7 @@ class SessionStore:
         return web_session
 
     def state_payload(self, session_id: str) -> Dict[str, Any]:
+        import logging as _sp_log
         web_session = self.get(session_id)
         session = web_session.session
         conversation = self.conversation_store.load(web_session.scope)
@@ -204,6 +205,11 @@ class SessionStore:
         review_summary = self._review_summary(session, plan)
         profile_summary = self._profile_summary(session)
         plan_views = self._plan_views(session, plan)
+        _sp_log.warning(f"STATE_PAYLOAD: plan_keys={list(plan.keys())[:10]}, "
+                        f"mappings={len(plan_views['mappings'])}, "
+                        f"mappings_with_target={sum(1 for m in plan_views['mappings'] if m.get('target_field'))}, "
+                        f"transforms={len(plan_views['transformations'])}, "
+                        f"qa={len(plan_views['quality_audit'])}")
         column_bundle = self._build_column_audit_bundle(
             profile=session.state.profile or {},
             mappings=plan_views["mappings"],

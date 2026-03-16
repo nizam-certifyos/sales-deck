@@ -334,8 +334,12 @@ class UniversalRosterSession:
 
         if progress_callback:
             progress_callback("mappings_started", "Generating mapping suggestions", 30)
+        columns_list = list(profile.get("columns", []))
+        logging.warning(f"SESSION SUGGEST: columns={len(columns_list)}, roster_type={roster_type}, "
+                        f"schema_fields={len(self.schema_registry.list_fields(roster_type))}, "
+                        f"provider_order={self.mapping_engine.primary_router.provider_names()}")
         mapping_result = self.mapping_engine.suggest_mappings(
-            columns=list(profile.get("columns", [])),
+            columns=columns_list,
             sample_values=samples,
             roster_type=roster_type,
             use_llm_for_unresolved=use_llm_for_unresolved,
@@ -344,9 +348,13 @@ class UniversalRosterSession:
             learning_scope=self.state.workspace_scope,
         )
         mappings = mapping_result["mappings"]
+        mapped_count = sum(1 for m in mappings if m.get("target_field"))
+        logging.warning(f"SESSION SUGGEST: total_mappings={len(mappings)}, with_target={mapped_count}, "
+                        f"valid={mapping_result.get('valid_count', '?')}, invalid={mapping_result.get('invalid_count', '?')}, "
+                        f"llm_used={mapping_result.get('llm_trace', {}).get('used', False)}")
 
         if progress_callback:
-            progress_callback("mappings_completed", f"Generated {len(mappings)} mappings", 45)
+            progress_callback("mappings_completed", f"Generated {mapped_count} mappings", 45)
             progress_callback("parallel_started", "Generating transforms, validations & quality audit in parallel", 50)
 
         # Run transforms, validations, and quality audit in PARALLEL

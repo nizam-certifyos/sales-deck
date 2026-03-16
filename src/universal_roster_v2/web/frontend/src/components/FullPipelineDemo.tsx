@@ -863,8 +863,8 @@ function ProviderDetail({ provider, onBack, showFlags }: { provider: DemoProvide
    LLM-Powered Provider Detail
    ================================================================ */
 
-function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData, cachedCredCheck }: { provider: DemoProvider; onBack: () => void; showFlags?: boolean; cachedPsvData?: PsvData | null; cachedCredCheck?: CredentialCheckResponse | null }) {
-  const [llmResult, setLlmResult] = useState<CredentialCheckResponse | null>(cachedCredCheck || null);
+function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { provider: DemoProvider; onBack: () => void; showFlags?: boolean; cachedPsvData?: PsvData | null }) {
+  const [llmResult, setLlmResult] = useState<CredentialCheckResponse | null>(null);
   const [psvData, setPsvData] = useState<PsvData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -873,7 +873,7 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData, cachedC
   useEffect(() => {
     let cancelled = false;
     setError(null);
-    setLlmResult(cachedCredCheck || null);
+    setLlmResult(null);
     setVisiblePsvCount(0);
 
     // If we have cached PSV data, show data cards IMMEDIATELY (no loading spinner)
@@ -881,29 +881,21 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData, cachedC
       setPsvData(cachedPsvData);
       setLoading(false);  // Data cards show instantly
 
-      // Use cached credential check if available, otherwise fetch individually
-      if (cachedCredCheck) {
-        console.log("[CRED] Using cached batch credential check for NPI:", provider.npi);
-      } else {
-        fetchCredentialCheck(provider)
-          .then((llm) => {
-            if (!cancelled) setLlmResult(llm);
-          })
-          .catch((err) => {
-            if (!cancelled) setError(err.message || "AI assessment unavailable");
-          });
-      }
+      // LLM assessment loads in background
+      fetchCredentialCheck(provider)
+        .then((llm) => {
+          if (!cancelled) setLlmResult(llm);
+        })
+        .catch((err) => {
+          if (!cancelled) setError(err.message || "AI assessment unavailable");
+        });
     } else {
       // No cached data — show spinner and fetch both
       setLoading(true);
       setPsvData(null);
 
-      const credPromise = cachedCredCheck
-        ? Promise.resolve(cachedCredCheck)
-        : fetchCredentialCheck(provider);
-
       Promise.all([
-        credPromise,
+        fetchCredentialCheck(provider),
         fetchPsvData(provider.npi),
       ])
         .then(([llm, psv]) => {
@@ -1294,18 +1286,16 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData, cachedC
    Credentialing Tab
    ================================================================ */
 
-function CredentialingTab({ providers, onSelectProvider, selectedProvider, onBack, psvCache, credCheckCache }: {
+function CredentialingTab({ providers, onSelectProvider, selectedProvider, onBack, psvCache }: {
   providers: DemoProvider[];
   onSelectProvider: (p: DemoProvider) => void;
   selectedProvider: DemoProvider | null;
   onBack: () => void;
   psvCache?: Record<string, any>;
-  credCheckCache?: Record<string, CredentialCheckResponse>;
 }) {
   if (selectedProvider) {
     const cached = psvCache?.[selectedProvider.npi] || null;
-    const cachedCred = credCheckCache?.[selectedProvider.npi] || null;
-    return <LlmProviderDetail provider={selectedProvider} onBack={onBack} cachedPsvData={cached} cachedCredCheck={cachedCred} />;
+    return <LlmProviderDetail provider={selectedProvider} onBack={onBack} cachedPsvData={cached} />;
   }
 
   return (
@@ -1321,18 +1311,16 @@ function CredentialingTab({ providers, onSelectProvider, selectedProvider, onBac
    Monitoring Tab
    ================================================================ */
 
-function MonitoringTab({ providers, onSelectProvider, selectedProvider, onBack, psvCache, credCheckCache }: {
+function MonitoringTab({ providers, onSelectProvider, selectedProvider, onBack, psvCache }: {
   providers: DemoProvider[];
   onSelectProvider: (p: DemoProvider) => void;
   selectedProvider: DemoProvider | null;
   onBack: () => void;
   psvCache?: Record<string, any>;
-  credCheckCache?: Record<string, CredentialCheckResponse>;
 }) {
   if (selectedProvider) {
     const cached = psvCache?.[selectedProvider.npi] || null;
-    const cachedCred = credCheckCache?.[selectedProvider.npi] || null;
-    return <LlmProviderDetail provider={selectedProvider} onBack={onBack} showFlags cachedPsvData={cached} cachedCredCheck={cachedCred} />;
+    return <LlmProviderDetail provider={selectedProvider} onBack={onBack} showFlags cachedPsvData={cached} />;
   }
 
   // Flag summary counts
@@ -1444,7 +1432,6 @@ export function FullPipelineDemo() {
   const [oigChecked, setOigChecked] = useState(false);
   const [nppesChecked, setNppesChecked] = useState(false);
   const [psvCache, setPsvCache] = useState<Record<string, any>>({});
-  const [credCheckCache, setCredCheckCache] = useState<Record<string, CredentialCheckResponse>>({});
 
   useEffect(() => {
     return () => {
@@ -1562,43 +1549,6 @@ export function FullPipelineDemo() {
 
     setProviders(final);
     setAnalysisComplete(true);
-
-    // Batch credential check in background (ONE LLM call for all providers)
-    if (final.length > 0) {
-      try {
-        const batchPayload = final.map((p) => ({
-          npi: p.npi,
-          firstName: p.firstName,
-          lastName: p.lastName,
-          specialty: p.specialty,
-          licenseState: p.licenseState,
-          licenseNumber: p.licenseNumber,
-          deaNumber: p.deaNumber,
-          boardName: p.boardName,
-          nppesData: p.nppesData ? {
-            first_name: p.nppesData.basic?.first_name || "",
-            last_name: p.nppesData.basic?.last_name || "",
-          } : {},
-          oigClear: p.oigClear !== false,
-        }));
-        console.log("[PIPELINE] Batch credential check for", batchPayload.length, "providers");
-        const credResp = await fetch("/api/credential-check/batch", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ providers: batchPayload }),
-        });
-        if (credResp.ok) {
-          const credData = await credResp.json();
-          const assessments = credData.assessments || {};
-          console.log("[PIPELINE] Batch credential check loaded:", Object.keys(assessments).length, "assessments in", credData.elapsed_seconds, "s");
-          setCredCheckCache(assessments);
-        } else {
-          console.error("[PIPELINE] Batch credential check failed:", credResp.status);
-        }
-      } catch (err) {
-        console.error("[PIPELINE] Batch credential check error:", err);
-      }
-    }
   }, []);
 
   async function handleFiles(files: File[]) {
@@ -1638,36 +1588,22 @@ export function FullPipelineDemo() {
       const ws = await getWorkspace(workspace_id);
       setSnapshot(ws);
 
-      // Force polling mode (SSE unreliable on Cloud Run) with faster interval
-      const pollMs = Math.min(ws.frontend_config?.poll_interval_ms ?? 1500, 2000);
-      let transitioned = false;
-
-      const doTransition = async (wsId: string) => {
-        if (transitioned) return;
-        transitioned = true;
-        const latest = await getWorkspace(wsId);
-        setSnapshot(latest);
-        setElapsed(Math.round((Date.now() - startTime) / 1000));
-        setPhase("results");
-        transportRef.current?.dispose();
-        pollPreprocessing(wsId);
-        void onAnalysisComplete(wsId);
-      };
-
       transportRef.current = new WorkspaceTransportManager({
         workspaceId: workspace_id,
-        pollIntervalMs: pollMs,
-        sseEnabled: false, // Disabled: SSE unreliable on Cloud Run
+        pollIntervalMs: ws.frontend_config?.poll_interval_ms ?? 1500,
+        sseEnabled: false, // Disabled for Cloud Run reliability — use polling only
         handlers: {
           onModeChange: () => {},
           onWorkspace: (next) => {
             setSnapshot(next);
-            // Check: analysis done (no active non-preprocess ops) + any data exists
             const active = next.operations?.find(
               (o) => (o.status === "queued" || o.status === "running") && o.kind !== "preprocess_roster"
             );
             if (!active && (next.mappings?.length || next.quality_audit?.length || next.transformations?.length)) {
-              void doTransition(workspace_id);
+              setPhase("results");
+              transportRef.current?.dispose();
+              pollPreprocessing(workspace_id);
+              void onAnalysisComplete(workspace_id);
             }
           },
           onOperation: (op) => {
@@ -1678,7 +1614,15 @@ export function FullPipelineDemo() {
             }
             if (op.status === "completed" || op.status === "failed" || op.status === "canceled") {
               if (op.status !== "failed") {
-                setTimeout(() => void doTransition(workspace_id), 500);
+                setTimeout(async () => {
+                  const latest = await getWorkspace(workspace_id);
+                  setSnapshot(latest);
+                  setElapsed(Math.round((Date.now() - startTime) / 1000));
+                  setPhase("results");
+                  transportRef.current?.dispose();
+                  pollPreprocessing(workspace_id);
+                  void onAnalysisComplete(workspace_id);
+                }, 800);
               } else {
                 setError(String(op.error?.message || "Analysis failed. Please try again."));
                 setPhase("upload");
@@ -1687,7 +1631,7 @@ export function FullPipelineDemo() {
             }
           },
           onEvent: () => {},
-          onError: (e) => console.error("[PIPELINE] Transport error:", e.message),
+          onError: (e) => setError(e.message),
         },
       });
 
@@ -1867,21 +1811,21 @@ export function FullPipelineDemo() {
               <div className="demo-spinner" />
               <div className="demo-processing-title">Analyzing your roster</div>
               <div className="demo-processing-steps">
-                <div className={`demo-step ${elapsed >= 3 ? "demo-step--done" : elapsed >= 1 ? "demo-step--active" : ""}`}>
+                <div className={`demo-step ${percent >= 10 ? "demo-step--done" : percent > 0 ? "demo-step--active" : ""}`}>
                   <span className="demo-step-dot" />Reading file structure
                 </div>
-                <div className={`demo-step ${elapsed >= 50 ? "demo-step--done" : elapsed >= 5 ? "demo-step--active" : ""}`}>
+                <div className={`demo-step ${percent >= 45 ? "demo-step--done" : percent >= 20 ? "demo-step--active" : ""}`}>
                   <span className="demo-step-dot" />Mapping {colCount || ""} columns to schema
                 </div>
-                <div className={`demo-step ${elapsed >= 65 ? "demo-step--done" : elapsed >= 52 ? "demo-step--active" : ""}`}>
+                <div className={`demo-step ${percent >= 75 ? "demo-step--done" : percent >= 50 ? "demo-step--active" : ""}`}>
                   <span className="demo-step-dot" />Detecting data quality issues
                 </div>
-                <div className={`demo-step ${elapsed >= 75 ? "demo-step--done" : elapsed >= 65 ? "demo-step--active" : ""}`}>
+                <div className={`demo-step ${percent >= 90 ? "demo-step--done" : percent >= 75 ? "demo-step--active" : ""}`}>
                   <span className="demo-step-dot" />Analyzing provider credentials
                 </div>
               </div>
               <div className="demo-proc-bar">
-                <div className="demo-proc-fill" style={{ width: `${Math.min(Math.max(elapsed * 1.2, 3), 95)}%` }} />
+                <div className="demo-proc-fill" style={{ width: `${Math.max(percent, 5)}%` }} />
               </div>
               <div className="demo-processing-timer">{elapsed}s</div>
             </div>
@@ -2025,7 +1969,6 @@ export function FullPipelineDemo() {
             selectedProvider={selectedProvider}
             onBack={() => setSelectedProvider(null)}
             psvCache={psvCache}
-            credCheckCache={credCheckCache}
           />
         )}
 
@@ -2037,7 +1980,6 @@ export function FullPipelineDemo() {
             selectedProvider={selectedProvider}
             onBack={() => setSelectedProvider(null)}
             psvCache={psvCache}
-            credCheckCache={credCheckCache}
           />
         )}
       </div>
