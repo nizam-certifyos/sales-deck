@@ -1811,21 +1811,21 @@ export function FullPipelineDemo() {
               <div className="demo-spinner" />
               <div className="demo-processing-title">Analyzing your roster</div>
               <div className="demo-processing-steps">
-                <div className={`demo-step ${percent >= 10 ? "demo-step--done" : percent > 0 ? "demo-step--active" : ""}`}>
+                <div className={`demo-step ${elapsed >= 3 ? "demo-step--done" : elapsed >= 1 ? "demo-step--active" : ""}`}>
                   <span className="demo-step-dot" />Reading file structure
                 </div>
-                <div className={`demo-step ${percent >= 45 ? "demo-step--done" : percent >= 20 ? "demo-step--active" : ""}`}>
+                <div className={`demo-step ${elapsed >= 50 ? "demo-step--done" : elapsed >= 5 ? "demo-step--active" : ""}`}>
                   <span className="demo-step-dot" />Mapping {colCount || ""} columns to schema
                 </div>
-                <div className={`demo-step ${percent >= 75 ? "demo-step--done" : percent >= 50 ? "demo-step--active" : ""}`}>
+                <div className={`demo-step ${elapsed >= 65 ? "demo-step--done" : elapsed >= 52 ? "demo-step--active" : ""}`}>
                   <span className="demo-step-dot" />Detecting data quality issues
                 </div>
-                <div className={`demo-step ${percent >= 90 ? "demo-step--done" : percent >= 75 ? "demo-step--active" : ""}`}>
+                <div className={`demo-step ${elapsed >= 75 ? "demo-step--done" : elapsed >= 65 ? "demo-step--active" : ""}`}>
                   <span className="demo-step-dot" />Analyzing provider credentials
                 </div>
               </div>
               <div className="demo-proc-bar">
-                <div className="demo-proc-fill" style={{ width: `${Math.max(percent, 5)}%` }} />
+                <div className="demo-proc-fill" style={{ width: `${Math.min(Math.max(elapsed * 1.2, 3), 95)}%` }} />
               </div>
               <div className="demo-processing-timer">{elapsed}s</div>
             </div>
