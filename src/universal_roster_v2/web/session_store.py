@@ -1771,97 +1771,106 @@ class SessionStore:
         except Exception:
             pass
 
-        # Phase 2: LLM verification for transforms/validations/quality_audit
-        # (Mapping already done in Phase 1 — no need to redo)
+        # Phase 2: ONE combined LLM verification call (replaces 6 separate calls)
+        import logging as _pp_log
+        import json as _pp_json
         if progress:
-            progress("preprocess_llm_verify", "AI verifying transformations and validations", 25)
+            progress("preprocess_llm_verify", "AI verifying analysis results (single batch call)", 25)
 
         try:
-            from universal_roster_v2.core.transforms import suggest_transformations
-            from universal_roster_v2.core.validations import suggest_bq_validations
-            from universal_roster_v2.core.quality_audit import suggest_quality_audit
             from universal_roster_v2.core.profile import sample_values_by_column
-            from universal_roster_v2.llm.router import LLMRouterFactory
-            from concurrent.futures import ThreadPoolExecutor, as_completed
+            from universal_roster_v2.core.plan import PlanManager as _PM2
+            _pm2 = _PM2()
 
-            router_factory = LLMRouterFactory(settings=session.settings)
-            mappings_list = approved_mappings
             samples = sample_values_by_column(profile)
             roster_type = str(profile.get("roster_type_detected", "practitioner"))
 
-            def _verify_transforms():
+            # Gather Phase 1 candidates
+            transforms_list = list(_pm2.combined_items(plan, "transformations")) if plan else []
+            validations_list = list(_pm2.combined_items(plan, "bq_validations")) if plan else []
+            qa_list = list(plan.get("quality_audit", []))
+
+            # Only call LLM if there are candidates to verify
+            has_candidates = bool(transforms_list or validations_list or qa_list)
+            if has_candidates:
+                # Build combined verification prompt
+                tx_summary = [
+                    {"id": t.get("id", ""), "name": t.get("name", ""), "source_columns": t.get("source_columns", []),
+                     "target_fields": t.get("target_fields", []), "confidence": t.get("confidence", 0)}
+                    for t in transforms_list[:30]
+                ]
+                val_summary = [
+                    {"id": v.get("id", ""), "name": v.get("name", ""), "rule_type": v.get("rule_type", ""),
+                     "source_column": v.get("source_column", ""), "target_field": v.get("target_field", ""),
+                     "severity": v.get("severity", ""), "confidence": v.get("confidence", 0)}
+                    for v in validations_list[:40]
+                ]
+                qa_summary = [
+                    {"id": q.get("id", ""), "category": q.get("category", ""), "severity": q.get("severity", ""),
+                     "title": q.get("title", ""), "affected_rows": q.get("affected_rows", 0),
+                     "confidence": q.get("confidence", 0)}
+                    for q in qa_list[:30]
+                ]
+                # Limit sample values to mapped columns only
+                mapped_cols = {m.get("source_column", "") for m in approved_mappings}
+                sample_hint = {col: vals[:6] for col, vals in samples.items() if col in mapped_cols}
+
+                verify_prompt = f"""You are a healthcare roster data verification expert.
+Review the Phase 1 analysis candidates below and decide which to keep or reject.
+Roster type: {roster_type}
+
+## TRANSFORM CANDIDATES
+{_pp_json.dumps(tx_summary, indent=1)}
+
+## VALIDATION CANDIDATES
+{_pp_json.dumps(val_summary, indent=1)}
+
+## QUALITY AUDIT FINDINGS
+{_pp_json.dumps(qa_summary, indent=1)}
+
+## SAMPLE DATA (mapped columns)
+{_pp_json.dumps(sample_hint, indent=1)}
+
+Return JSON with three arrays. For each candidate, decide "keep" or "reject":
+{{
+  "transform_decisions": [{{"id":"tx::...", "action":"keep"}}],
+  "validation_decisions": [{{"id":"bq::...", "action":"keep"}}],
+  "quality_decisions": [{{"id":"qa::...", "action":"keep"}}]
+}}
+Only reject candidates that are clearly wrong. When in doubt, keep."""
+
+                from universal_roster_v2.llm.router import LLMRouterFactory
+                router_factory = LLMRouterFactory(settings=session.settings)
+                verify_router = router_factory.for_task("quality_audit")
+
+                _pp_log.warning(f"PREPROCESS: Running combined verification call ({len(tx_summary)} transforms, {len(val_summary)} validations, {len(qa_summary)} QA)")
+                routed = verify_router.generate(prompt=verify_prompt, task_type="quality_audit")
+                from universal_roster_v2.core.mapping import extract_json_object
+                decisions = extract_json_object(routed.response.text)
+
+                # Apply rejection decisions
+                reject_ids = set()
+                for section_key in ("transform_decisions", "validation_decisions", "quality_decisions"):
+                    for d in decisions.get(section_key, []):
+                        if isinstance(d, dict) and str(d.get("action", "")).lower() == "reject":
+                            reject_ids.add(str(d.get("id", "")))
+
+                if reject_ids:
+                    _pp_log.warning(f"PREPROCESS: LLM rejected {len(reject_ids)} candidates: {reject_ids}")
+                else:
+                    _pp_log.warning("PREPROCESS: LLM kept all candidates")
+
                 if progress:
-                    progress("preprocess_llm_transforms", "AI reviewing transformation rules", 30)
-                return suggest_transformations(
-                    mappings=mappings_list,
-                    schema_registry=session.schema_registry,
-                    roster_type=roster_type,
-                    sample_values=samples,
-                    learning_kb=session.learning_kb,
-                    learning_retrieval=session.learning_retrieval,
-                    instructions_context=session.state.instructions_context,
-                    learning_scope=session.state.workspace_scope,
-                    settings=session.settings,
-                    primary_router=router_factory.for_task("transformations"),
-                    verifier_router=router_factory.for_task("verifier"),
-                    collaboration_mode=session.settings.collaboration_mode,
-                    demo_mode=False,
-                )
-
-            def _verify_validations():
+                    progress("preprocess_llm_done", f"AI verification complete ({len(reject_ids)} rejected)", 45)
+            else:
+                _pp_log.warning("PREPROCESS: No candidates to verify, skipping LLM call")
                 if progress:
-                    progress("preprocess_llm_validations", "AI reviewing validation rules", 35)
-                return suggest_bq_validations(
-                    mappings=mappings_list,
-                    schema_registry=session.schema_registry,
-                    roster_type=roster_type,
-                    sample_values=samples,
-                    learning_kb=session.learning_kb,
-                    learning_retrieval=session.learning_retrieval,
-                    instructions_context=session.state.instructions_context,
-                    learning_scope=session.state.workspace_scope,
-                    settings=session.settings,
-                    primary_router=router_factory.for_task("validations"),
-                    verifier_router=router_factory.for_task("verifier"),
-                    collaboration_mode=session.settings.collaboration_mode,
-                    demo_mode=False,
-                )
+                    progress("preprocess_llm_done", "No candidates to verify", 45)
 
-            def _verify_quality_audit():
-                if progress:
-                    progress("preprocess_llm_quality", "AI reviewing quality findings", 40)
-                return suggest_quality_audit(
-                    profile=profile,
-                    mappings=mappings_list,
-                    instructions_context=session.state.instructions_context,
-                    settings=session.settings,
-                    learning_kb=session.learning_kb,
-                    learning_retrieval=session.learning_retrieval,
-                    learning_scope=session.state.workspace_scope,
-                    roster_type=roster_type,
-                    primary_router=router_factory.for_task("quality_audit"),
-                    verifier_router=router_factory.for_task("verifier"),
-                    collaboration_mode=session.settings.collaboration_mode,
-                    demo_mode=False,
-                )
-
-            # Run all 3 LLM verifications in parallel
-            with ThreadPoolExecutor(max_workers=3) as executor:
-                ft = executor.submit(_verify_transforms)
-                fv = executor.submit(_verify_validations)
-                fq = executor.submit(_verify_quality_audit)
-
-                for future in as_completed([ft, fv, fq]):
-                    try:
-                        future.result()
-                    except Exception:
-                        pass  # LLM verification failure is non-fatal
-
+        except Exception as exc:
+            _pp_log.warning(f"PREPROCESS: Combined verification failed (non-fatal): {exc}")
             if progress:
-                progress("preprocess_llm_done", "AI verification complete", 45)
-
-        except Exception:
-            pass  # If LLM verification fails entirely, use Phase 1 results
+                progress("preprocess_llm_done", "Using Phase 1 results (verification skipped)", 45)
 
         if progress:
             progress("preprocess_transforms", "Applying data transforms", 50)

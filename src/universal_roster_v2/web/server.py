@@ -933,6 +933,130 @@ def create_app(workspace_root: Optional[str | Path] = None) -> FastAPI:
                 },
             }
 
+    @app.post("/api/credential-check/batch")
+    def credential_check_batch(request_body: dict) -> Dict[str, Any]:
+        """Batch credentialing assessment for multiple providers in ONE LLM call."""
+        batch_logger = logging.getLogger("universal_roster_v2.web.credential_check_batch")
+        providers_input = request_body.get("providers", [])
+        if not providers_input:
+            return {"assessments": {}}
+
+        import time as _bt
+        t0 = _bt.time()
+        today_str = datetime.date.today().isoformat()
+
+        # 1. Fetch PSV data for all NPIs in parallel
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        npi_list = [str(p.get("npi", "")) for p in providers_input if p.get("npi")]
+        psv_cache: Dict[str, Dict[str, Any]] = {}
+
+        def _fetch_psv(npi: str) -> tuple:
+            try:
+                return npi, lookup_psv_data(npi)
+            except Exception:
+                return npi, {}
+
+        with ThreadPoolExecutor(max_workers=min(10, len(npi_list))) as ex:
+            for npi, data in ex.map(lambda n: _fetch_psv(n), npi_list):
+                psv_cache[npi] = data
+
+        # 2. Build ONE combined prompt with all providers
+        provider_blocks = []
+        for i, prov in enumerate(providers_input[:10]):  # max 10
+            npi = str(prov.get("npi", ""))
+            psv = psv_cache.get(npi, {})
+            nppes = prov.get("nppesData", {})
+            oig_clear = prov.get("oigClear", True)
+
+            # Format PSV text (compact version)
+            psv_parts = []
+            if psv.get("nppes", {}).get("found"):
+                n = psv["nppes"]
+                psv_parts.append(f"NPPES: {n.get('first_name','')} {n.get('last_name','')}, NPI={npi}, Entity={n.get('entity_type','')}")
+            for lic in psv.get("state_licenses", [])[:3]:
+                psv_parts.append(f"License: {lic.get('state','')} #{lic.get('number','')}, Status={lic.get('status','')}, Expiry={lic.get('expiry','')}")
+            for cert in psv.get("abms", [])[:2]:
+                psv_parts.append(f"ABMS: {cert.get('board','')}, Status={cert.get('status','')}, Expiry={cert.get('expiry','')}")
+            for dea in psv.get("dea", [])[:2]:
+                psv_parts.append(f"DEA: #{dea.get('number','')}, Active={dea.get('activity','')}, Expiry={dea.get('expiry','')}")
+            oig = psv.get("oig", {})
+            psv_parts.append(f"OIG: {'FOUND - EXCLUDED' if oig.get('found') else 'CLEAR'}")
+            sam = psv.get("sam", {})
+            psv_parts.append(f"SAM: {'FOUND - EXCLUDED' if sam.get('found') else 'CLEAR'}")
+            sanctions = psv.get("state_sanctions", {})
+            psv_parts.append(f"State Sanctions: {'FOUND' if sanctions.get('found') else 'CLEAR'}")
+            psv_parts.append(f"Medicare Opt-Out: {'YES' if psv.get('medicare_opt_out', {}).get('opted_out') else 'CLEAR'}")
+            psv_parts.append(f"Deceased: {'FLAGGED' if psv.get('deceased', {}).get('flagged') else 'CLEAR'}")
+            ba = psv.get("board_actions", {})
+            psv_parts.append(f"Board Actions: {ba.get('count', 0)} found")
+
+            roster_info = f"Name={prov.get('firstName','')} {prov.get('lastName','')}, NPI={npi}, " \
+                          f"Specialty={prov.get('specialty','')}, License={prov.get('licenseState','')}/{prov.get('licenseNumber','')}, " \
+                          f"DEA={prov.get('deaNumber','')}, Board={prov.get('boardName','')}"
+
+            provider_blocks.append(
+                f"--- PROVIDER {i+1} (NPI: {npi}) ---\n"
+                f"PSV DATA:\n" + "\n".join(psv_parts) + "\n"
+                f"ROSTER DATA: {roster_info}"
+            )
+
+        batch_prompt = (
+            f"Perform credentialing assessment for {len(provider_blocks)} providers.\n"
+            f"Today's date: {today_str}\n\n"
+            + "\n\n".join(provider_blocks) +
+            "\n\nReturn JSON with assessments keyed by NPI:\n"
+            '{"assessments": {"<npi>": {"credentialing": {"status": "PSV Complete|Review Required", '
+            '"summary": "...", "psvChecks": [{"source": "...", "status": "verified|expired|warning|missing|clear|excluded", "detail": "..."}]}, '
+            '"monitoring": {"status": "No Issues|Flags Found", "flags": [{"category": "...", "severity": "critical|warning|info", '
+            '"title": "...", "detail": "..."}], "summary": "..."}}, ...}}\n'
+            "Mark expired credentials as critical. Compare ALL dates against today."
+        )
+
+        batch_system = (
+            "You are a healthcare credentialing analyst performing Primary Source Verification (PSV) "
+            "for multiple providers. Use the REAL PSV data provided. Be specific with dates and names. "
+            f"TODAY'S DATE: {today_str}. Credentials with expiry BEFORE today are EXPIRED (critical). "
+            "Within 90 days = EXPIRING SOON (warning). Return valid JSON only."
+        )
+
+        # 3. ONE Gemini call for all providers
+        try:
+            from universal_roster_v2.llm.gemini_provider import GeminiVertexProvider
+            from google.genai import types as genai_types
+
+            gemini = GeminiVertexProvider(settings=settings, model=settings.gemini_flash_model)
+            if not gemini.is_available():
+                raise RuntimeError("Gemini not available")
+
+            client = gemini._get_client()
+            config = genai_types.GenerateContentConfig(
+                system_instruction=batch_system,
+                temperature=0.1,
+                max_output_tokens=16384,
+                response_mime_type="application/json",
+            )
+
+            batch_logger.info("Batch credential check: %d providers, prompt_chars=%d", len(provider_blocks), len(batch_prompt))
+            response = client.models.generate_content(
+                model=settings.gemini_flash_model,
+                contents=batch_prompt,
+                config=config,
+            )
+            text = response.text.strip() if response.text else ""
+            if not text:
+                raise RuntimeError("Empty response")
+
+            result = json.loads(text)
+            assessments = result.get("assessments", result)  # Handle both wrapped and unwrapped
+            elapsed = _bt.time() - t0
+            batch_logger.info("Batch credential check OK: %.1fs, %d assessments", elapsed, len(assessments))
+            return {"assessments": assessments, "elapsed_seconds": round(elapsed, 1)}
+
+        except Exception as exc:
+            batch_logger.warning("Batch credential check failed: %s", exc)
+            return {"assessments": {}, "error": str(exc)}
+
     @app.get("/health")
     def health() -> Dict[str, Any]:
         return {"ok": True}

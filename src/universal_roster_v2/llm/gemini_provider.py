@@ -129,7 +129,10 @@ class GeminiVertexProvider(BaseLLMProvider):
         if not self.is_available():
             raise RuntimeError("Gemini provider not available (missing credentials or disabled)")
 
+        import logging
+        import time
         from google.genai import types
+        from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 
         client = self._get_client()
         model_name = self._model_override or _select_model(task_type, self.settings)
@@ -144,13 +147,38 @@ class GeminiVertexProvider(BaseLLMProvider):
             response_mime_type="application/json" if use_json else "text/plain",
         )
 
-        response = client.models.generate_content(
-            model=model_name,
-            contents=prompt,
-            config=config,
+        logging.warning(
+            f"GEMINI CALL: model={model_name}, task={task_type}, "
+            f"prompt_chars={len(prompt)}, system_chars={len(system_prompt)}, json={use_json}"
         )
+        t0 = time.time()
 
+        # Use a thread + timeout to prevent indefinite hangs
+        _TIMEOUT_SECONDS = 120
+
+        def _call():
+            return client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=config,
+            )
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(_call)
+            try:
+                response = future.result(timeout=_TIMEOUT_SECONDS)
+            except FuturesTimeoutError:
+                elapsed = time.time() - t0
+                logging.error(f"GEMINI TIMEOUT: {elapsed:.1f}s > {_TIMEOUT_SECONDS}s for task={task_type}, model={model_name}")
+                raise RuntimeError(f"Gemini call timed out after {_TIMEOUT_SECONDS}s for task={task_type}")
+            except Exception as exc:
+                elapsed = time.time() - t0
+                logging.error(f"GEMINI ERROR: {elapsed:.1f}s, task={task_type}, model={model_name}, error={exc}")
+                raise
+
+        elapsed = time.time() - t0
         text = response.text.strip() if response.text else ""
+        logging.warning(f"GEMINI OK: {elapsed:.1f}s, task={task_type}, model={model_name}, response_chars={len(text)}")
 
         if not text:
             raise RuntimeError("Gemini returned empty response")
@@ -163,6 +191,7 @@ class GeminiVertexProvider(BaseLLMProvider):
                 "task_type": task_type,
                 "transport": "vertex_ai",
                 "system_prompt_chars": len(system_prompt),
+                "elapsed_seconds": round(elapsed, 1),
             },
         )
 
