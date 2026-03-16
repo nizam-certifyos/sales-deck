@@ -193,20 +193,22 @@ class GeminiVertexProvider(BaseLLMProvider):
         # Check for pre-warmed cache (no API call — just memory lookup)
         cache_name = self._get_cache(model_name, system_prompt)
 
-        if cache_name:
-            config = types.GenerateContentConfig(
-                cached_content=cache_name,
-                temperature=0.1,
-                max_output_tokens=16384,
-                response_mime_type="application/json" if use_json else "text/plain",
-            )
-        else:
-            config = types.GenerateContentConfig(
+        def _build_config(use_cache_name: Optional[str] = None):
+            if use_cache_name:
+                return types.GenerateContentConfig(
+                    cached_content=use_cache_name,
+                    temperature=0.1,
+                    max_output_tokens=16384,
+                    response_mime_type="application/json" if use_json else "text/plain",
+                )
+            return types.GenerateContentConfig(
                 system_instruction=system_prompt,
                 temperature=0.1,
                 max_output_tokens=16384,
                 response_mime_type="application/json" if use_json else "text/plain",
             )
+
+        config = _build_config(cache_name)
 
         logging.warning(
             f"GEMINI CALL: model={model_name}, task={task_type}, "
@@ -217,15 +219,15 @@ class GeminiVertexProvider(BaseLLMProvider):
 
         _TIMEOUT_SECONDS = 120
 
-        def _call():
+        def _call(cfg):
             return client.models.generate_content(
                 model=model_name,
                 contents=prompt,
-                config=config,
+                config=cfg,
             )
 
         with ThreadPoolExecutor(max_workers=1) as executor:
-            future = executor.submit(_call)
+            future = executor.submit(_call, config)
             try:
                 response = future.result(timeout=_TIMEOUT_SECONDS)
             except FuturesTimeoutError:
@@ -233,9 +235,36 @@ class GeminiVertexProvider(BaseLLMProvider):
                 logging.error(f"GEMINI TIMEOUT: {elapsed:.1f}s > {_TIMEOUT_SECONDS}s for task={task_type}, model={model_name}")
                 raise RuntimeError(f"Gemini call timed out after {_TIMEOUT_SECONDS}s for task={task_type}")
             except Exception as exc:
-                elapsed = time.time() - t0
-                logging.error(f"GEMINI ERROR: {elapsed:.1f}s, task={task_type}, model={model_name}, error={exc}")
-                raise
+                # If cached call failed (e.g. cache expired), retry WITHOUT cache
+                if cache_name:
+                    elapsed = time.time() - t0
+                    logging.warning(f"GEMINI CACHE EXPIRED: {elapsed:.1f}s, retrying without cache for task={task_type}")
+                    # Remove stale cache from registry
+                    key = self._cache_key(model_name, system_prompt)
+                    _context_cache.pop(key, None)
+                    # Recreate cache for next time (async-ish, best effort)
+                    try:
+                        self._create_cache(client, model_name, system_prompt)
+                    except Exception:
+                        pass
+                    # Retry without cache
+                    config = _build_config(None)
+                    t0 = time.time()
+                    future2 = executor.submit(_call, config)
+                    try:
+                        response = future2.result(timeout=_TIMEOUT_SECONDS)
+                    except FuturesTimeoutError:
+                        elapsed = time.time() - t0
+                        logging.error(f"GEMINI TIMEOUT (retry): {elapsed:.1f}s")
+                        raise RuntimeError(f"Gemini call timed out after {_TIMEOUT_SECONDS}s for task={task_type}")
+                    except Exception as exc2:
+                        elapsed = time.time() - t0
+                        logging.error(f"GEMINI ERROR (retry): {elapsed:.1f}s, error={exc2}")
+                        raise
+                else:
+                    elapsed = time.time() - t0
+                    logging.error(f"GEMINI ERROR: {elapsed:.1f}s, task={task_type}, model={model_name}, error={exc}")
+                    raise
 
         elapsed = time.time() - t0
         text = response.text.strip() if response.text else ""
