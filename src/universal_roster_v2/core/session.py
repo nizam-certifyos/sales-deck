@@ -332,12 +332,14 @@ class UniversalRosterSession:
         self.mapping_engine.primary_router = mapping_router
         self.mapping_engine.verifier_router = verifier_router
 
+        import time as _st
         if progress_callback:
             progress_callback("mappings_started", "Generating mapping suggestions", 30)
         columns_list = list(profile.get("columns", []))
         logging.warning(f"SESSION SUGGEST: columns={len(columns_list)}, roster_type={roster_type}, "
                         f"schema_fields={len(self.schema_registry.list_fields(roster_type))}, "
                         f"provider_order={self.mapping_engine.primary_router.provider_names()}")
+        _map_t0 = _st.time()
         mapping_result = self.mapping_engine.suggest_mappings(
             columns=columns_list,
             sample_values=samples,
@@ -347,15 +349,17 @@ class UniversalRosterSession:
             semantic_profile=semantic_profile,
             learning_scope=self.state.workspace_scope,
         )
+        _map_t1 = _st.time()
         mappings = mapping_result["mappings"]
         mapped_count = sum(1 for m in mappings if m.get("target_field"))
-        logging.warning(f"SESSION SUGGEST: total_mappings={len(mappings)}, with_target={mapped_count}, "
+        logging.warning(f"SESSION SUGGEST: mapping_time={_map_t1-_map_t0:.1f}s, total_mappings={len(mappings)}, with_target={mapped_count}, "
                         f"valid={mapping_result.get('valid_count', '?')}, invalid={mapping_result.get('invalid_count', '?')}, "
                         f"llm_used={mapping_result.get('llm_trace', {}).get('used', False)}")
 
         if progress_callback:
             progress_callback("mappings_completed", f"Generated {mapped_count} mappings", 45)
             progress_callback("parallel_started", "Generating transforms, validations & quality audit in parallel", 50)
+        _parallel_t0 = _st.time()
 
         # Run transforms, validations, and quality audit in PARALLEL
         # (they all depend on mappings but NOT on each other)
@@ -448,9 +452,12 @@ class UniversalRosterSession:
                     elif future is future_quality_audit:
                         quality_audit_result = {"quality_audit": [], "llm_trace": {"error": str(exc)}}
 
+        _parallel_t1 = _st.time()
         transformations = transform_result.get("transformations", [])
         bq_validations = validation_result.get("bq_validations", [])
         quality_audit = quality_audit_result.get("quality_audit", [])
+        logging.warning(f"SESSION SUGGEST: parallel_time={_parallel_t1-_parallel_t0:.1f}s, "
+                        f"transforms={len(transformations)}, validations={len(bq_validations)}, qa={len(quality_audit)}")
 
         llm_trace = {
             "policy": {

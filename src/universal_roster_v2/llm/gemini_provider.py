@@ -1,9 +1,12 @@
-"""Gemini LLM provider via Vertex AI for Universal Roster V2."""
+"""Gemini LLM provider via Vertex AI with context caching for speed."""
 
 from __future__ import annotations
 
+import hashlib
 import json
+import logging
 import os
+import time
 from typing import Any, Dict, List, Optional
 
 from universal_roster_v2.config import Settings, get_settings
@@ -39,6 +42,10 @@ _TASK_SYSTEM_PROMPTS = {
     "chat_review": build_quality_audit_system_prompt,
 }
 
+# Module-level cache: maps (model, prompt_hash) -> cache resource name
+_context_cache: Dict[str, str] = {}
+_cache_warmup_done = False
+
 
 def _get_system_prompt(task_type: str) -> str:
     key = (task_type or "analysis").strip().lower()
@@ -55,7 +62,7 @@ def _select_model(task_type: str, settings: Settings) -> str:
 
 
 class GeminiVertexProvider(BaseLLMProvider):
-    """Gemini provider via google.genai SDK with deep domain knowledge system prompts."""
+    """Gemini provider with optional context caching for system prompts."""
 
     name = "gemini_vertex"
 
@@ -72,8 +79,7 @@ class GeminiVertexProvider(BaseLLMProvider):
             from google.oauth2 import service_account
 
             sa_path = self.settings.gemini_service_account_key_path
-            import logging as _glog
-            _glog.warning(f"GEMINI INIT: sa_path={sa_path!r}, exists={os.path.isfile(sa_path) if sa_path else False}, enable={self.settings.enable_gemini}")
+            logging.warning(f"GEMINI INIT: sa_path={sa_path!r}, exists={os.path.isfile(sa_path) if sa_path else False}, enable={self.settings.enable_gemini}")
             if sa_path and os.path.isfile(sa_path):
                 sa_info = json.load(open(sa_path))
                 project_id = self.settings.gemini_project_id or sa_info.get("project_id", "")
@@ -92,7 +98,6 @@ class GeminiVertexProvider(BaseLLMProvider):
                 if api_key:
                     self._client = genai.Client(api_key=api_key)
                 else:
-                    # ADC fallback — works on Cloud Run with SA that has Vertex AI access
                     self._client = genai.Client(
                         vertexai=True,
                         project=self.settings.gemini_project_id or os.getenv("GOOGLE_CLOUD_PROJECT", "certifyos-development"),
@@ -105,7 +110,6 @@ class GeminiVertexProvider(BaseLLMProvider):
 
     def is_available(self) -> bool:
         if not self.settings.enable_gemini:
-            import logging
             logging.warning("GEMINI: enable_gemini is False")
             return False
         sa_path = self.settings.gemini_service_account_key_path
@@ -117,43 +121,100 @@ class GeminiVertexProvider(BaseLLMProvider):
         try:
             from google.auth import default as google_auth_default
             creds, project = google_auth_default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-            import logging
             logging.warning(f"GEMINI: ADC available, project={project}, creds_type={type(creds).__name__}")
             return True
         except Exception as e:
-            import logging
             logging.error(f"GEMINI: ADC failed: {e}")
             return False
+
+    def warmup_cache(self) -> None:
+        """Pre-create context caches for all task types at startup. Non-blocking."""
+        global _cache_warmup_done
+        if _cache_warmup_done:
+            return
+        _cache_warmup_done = True
+
+        try:
+            client = self._get_client()
+            model = self.settings.gemini_flash_model
+            # Only cache the mapping prompt (largest, most frequently used)
+            system_prompt = build_mapping_system_prompt()
+            self._create_cache(client, model, system_prompt)
+            logging.warning("GEMINI WARMUP: mapping cache ready")
+        except Exception as e:
+            logging.warning(f"GEMINI WARMUP failed (non-fatal): {e}")
+
+    def _cache_key(self, model_name: str, system_prompt: str) -> str:
+        prompt_hash = hashlib.sha256(system_prompt.encode()).hexdigest()[:16]
+        return f"{model_name}:{prompt_hash}"
+
+    def _create_cache(self, client, model_name: str, system_prompt: str) -> Optional[str]:
+        """Create a context cache. Returns cache name or None."""
+        global _context_cache
+        from google.genai import types
+
+        key = self._cache_key(model_name, system_prompt)
+        if key in _context_cache:
+            return _context_cache[key]
+
+        try:
+            cached = client.caches.create(
+                model=model_name,
+                config=types.CreateCachedContentConfig(
+                    system_instruction=system_prompt,
+                    display_name=f"ur2-{key}",
+                    ttl="3600s",
+                ),
+            )
+            _context_cache[key] = cached.name
+            logging.warning(f"GEMINI CACHE CREATED: {cached.name}")
+            return cached.name
+        except Exception as e:
+            logging.warning(f"GEMINI CACHE failed: {e}")
+            return None
+
+    def _get_cache(self, model_name: str, system_prompt: str) -> Optional[str]:
+        """Get existing cache name or None (no API calls if not cached)."""
+        key = self._cache_key(model_name, system_prompt)
+        return _context_cache.get(key)
 
     def generate(self, prompt: str, task_type: str = "analysis") -> LLMResponse:
         if not self.is_available():
             raise RuntimeError("Gemini provider not available (missing credentials or disabled)")
 
-        import logging
-        import time
         from google.genai import types
         from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 
         client = self._get_client()
         model_name = self._model_override or _select_model(task_type, self.settings)
         system_prompt = _get_system_prompt(task_type)
-
         use_json = task_type not in {"generation", "codegen"}
 
-        config = types.GenerateContentConfig(
-            system_instruction=system_prompt,
-            temperature=0.1,
-            max_output_tokens=16384,
-            response_mime_type="application/json" if use_json else "text/plain",
-        )
+        # Check for pre-warmed cache (no API call — just memory lookup)
+        cache_name = self._get_cache(model_name, system_prompt)
+
+        if cache_name:
+            config = types.GenerateContentConfig(
+                cached_content=cache_name,
+                temperature=0.1,
+                max_output_tokens=16384,
+                response_mime_type="application/json" if use_json else "text/plain",
+            )
+        else:
+            config = types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                temperature=0.1,
+                max_output_tokens=16384,
+                response_mime_type="application/json" if use_json else "text/plain",
+            )
 
         logging.warning(
             f"GEMINI CALL: model={model_name}, task={task_type}, "
-            f"prompt_chars={len(prompt)}, system_chars={len(system_prompt)}, json={use_json}"
+            f"prompt_chars={len(prompt)}, system_chars={len(system_prompt)}, "
+            f"cached={'yes' if cache_name else 'no'}, json={use_json}"
         )
         t0 = time.time()
 
-        # Use a thread + timeout to prevent indefinite hangs
         _TIMEOUT_SECONDS = 120
 
         def _call():
@@ -178,7 +239,10 @@ class GeminiVertexProvider(BaseLLMProvider):
 
         elapsed = time.time() - t0
         text = response.text.strip() if response.text else ""
-        logging.warning(f"GEMINI OK: {elapsed:.1f}s, task={task_type}, model={model_name}, response_chars={len(text)}")
+        logging.warning(
+            f"GEMINI OK: {elapsed:.1f}s, task={task_type}, model={model_name}, "
+            f"cached={'yes' if cache_name else 'no'}, response_chars={len(text)}"
+        )
 
         if not text:
             raise RuntimeError("Gemini returned empty response")
@@ -192,6 +256,7 @@ class GeminiVertexProvider(BaseLLMProvider):
                 "transport": "vertex_ai",
                 "system_prompt_chars": len(system_prompt),
                 "elapsed_seconds": round(elapsed, 1),
+                "cached": bool(cache_name),
             },
         )
 

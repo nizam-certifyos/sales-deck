@@ -442,7 +442,7 @@ def create_app(workspace_root: Optional[str | Path] = None) -> FastAPI:
 
     @app.on_event("startup")
     async def _warmup():
-        """Pre-load knowledge base and BQ client at startup."""
+        """Pre-load knowledge base, BQ client, and Gemini context cache at startup."""
         try:
             from universal_roster_v2.llm import knowledge_loader as _kl
             _kl.load_field_ontology()
@@ -457,6 +457,15 @@ def create_app(workspace_root: Optional[str | Path] = None) -> FastAPI:
             _logger.info("BQ PSV client initialized successfully")
         except Exception as exc:
             _logger.warning("BQ PSV client warmup failed (non-fatal): %s", exc)
+        # Pre-create Gemini context cache for the mapping system prompt (40K tokens)
+        # This runs at startup so the first user request doesn't pay the cache creation cost
+        try:
+            from universal_roster_v2.llm.gemini_provider import GeminiVertexProvider
+            gp = GeminiVertexProvider(settings=settings)
+            gp.warmup_cache()
+            _logger.info("Gemini context cache warmed up successfully")
+        except Exception as exc:
+            _logger.warning("Gemini cache warmup failed (non-fatal): %s", exc)
 
     @app.middleware("http")
     async def request_correlation_middleware(request: Request, call_next):

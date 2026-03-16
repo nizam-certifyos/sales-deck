@@ -322,25 +322,25 @@ function computeFlags(p: DemoProvider, psvForNpi?: any): string[] {
   // Use PSV data (primary source) when available, fall back to roster data
   const psv = psvForNpi || null;
 
-  // License expiry: check PSV state_licenses first
+  // License expiry: flag if ANY PSV license is expired
   const licExpired = psv?.state_licenses?.length
-    ? psv.state_licenses.every((l: any) => { if (!l.expiry) return false; try { return new Date(l.expiry) < new Date(); } catch { return false; } })
+    ? psv.state_licenses.some((l: any) => { if (!l.expiry) return false; try { return new Date(l.expiry) < new Date(); } catch { return false; } })
     : isExpired(p.licenseExpiry);
   const licExpiringSoon = psv?.state_licenses?.length
     ? psv.state_licenses.some((l: any) => isExpiringSoon(l.expiry, 90))
     : isExpiringSoon(p.licenseExpiry, 90);
 
-  // Board cert expiry: check PSV ABMS first
+  // Board cert expiry: flag if ANY PSV board cert is expired
   const boardExp = psv?.abms?.length
-    ? psv.abms.every((a: any) => { if (!a.expiry) return false; try { return new Date(a.expiry) < new Date(); } catch { return false; } })
+    ? psv.abms.some((a: any) => { if (!a.expiry) return false; try { return new Date(a.expiry) < new Date(); } catch { return false; } })
     : isExpired(p.boardExpiry);
   const boardExpSoon = psv?.abms?.length
     ? psv.abms.some((a: any) => isExpiringSoon(a.expiry, 90))
     : isExpiringSoon(p.boardExpiry, 90);
 
-  // DEA expiry: check PSV DEA first
+  // DEA expiry: flag if ANY PSV DEA is expired
   const deaExp = psv?.dea?.length
-    ? psv.dea.every((d: any) => { if (!d.expiry) return false; try { return new Date(d.expiry) < new Date(); } catch { return false; } })
+    ? psv.dea.some((d: any) => { if (!d.expiry) return false; try { return new Date(d.expiry) < new Date(); } catch { return false; } })
     : isExpired(p.deaExpiry);
   const deaExpSoon = psv?.dea?.length
     ? psv.dea.some((d: any) => isExpiringSoon(d.expiry, 90))
@@ -967,14 +967,15 @@ function LlmProviderDetail({ provider, onBack, showFlags, cachedPsvData }: { pro
   };
 
   // When PSV data is available, use PSV dates (primary source) instead of roster dates
+  // Flag if ANY credential of that type is expired (.some), not all (.every)
   const licenseExpired = psvData && psvData.state_licenses.length > 0
-    ? psvData.state_licenses.every(lic => isDateExpired(lic.expiry))
+    ? psvData.state_licenses.some((lic: any) => isDateExpired(lic.expiry))
     : isExpired(provider.licenseExpiry);
   const boardExpired = psvData && psvData.abms.length > 0
-    ? psvData.abms.every(cert => isDateExpired(cert.expiry))
+    ? psvData.abms.some((cert: any) => isDateExpired(cert.expiry))
     : isExpired(provider.boardExpiry);
   const deaExpired = psvData && psvData.dea.length > 0
-    ? psvData.dea.every(d => isDateExpired(d.expiry))
+    ? psvData.dea.some((d: any) => isDateExpired(d.expiry))
     : isExpired(provider.deaExpiry);
 
   // Derive monitoring flags from LLM or fallback

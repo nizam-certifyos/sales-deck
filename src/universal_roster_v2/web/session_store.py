@@ -1510,15 +1510,26 @@ class SessionStore:
                 progress=progress,
             )
         elif kind == "analyze_selected_roster":
+            import time as _at
             selected = payload.get("selected_roster") if isinstance(payload.get("selected_roster"), dict) else {}
             file_path = str(selected.get("path") or "")
             roster_type = str(selected.get("roster_type") or "").strip() or None
             if not file_path or file_path.startswith("__browser_upload__"):
                 raise ValueError("Selected roster path is not uploaded yet")
+            _t0 = _at.time()
             self._do_load_file(web_session, file_path=file_path, roster_type=roster_type, progress=progress)
+            _t1 = _at.time()
             plan = self._do_suggest(web_session, progress=progress)
+            _t2 = _at.time()
             bundle = self._sync_plan_audit_views(web_session, plan)
+            _t3 = _at.time()
             self.conversation_store.append_plan_snapshot(web_session.scope, plan)
+            _t4 = _at.time()
+            import logging as _atlog
+            _atlog.warning(
+                f"ANALYZE TIMING: load_file={_t1-_t0:.1f}s, suggest={_t2-_t1:.1f}s, "
+                f"sync_views={_t3-_t2:.1f}s, save_snapshot={_t4-_t3:.1f}s, TOTAL={_t4-_t0:.1f}s"
+            )
             review_summary = self._review_summary(web_session.session, plan)
             result = {
                 "profile_summary": self._profile_summary(web_session.session),
